@@ -12,7 +12,7 @@ for node in tree.body:
         input_names = [arg.arg for arg in node.args.args]
         num_inputs = len(input_names)
         return_vars = []
-        
+
         for stmt in node.body:
             if isinstance(stmt, ast.Return):
                 if isinstance(stmt.value, ast.Name):

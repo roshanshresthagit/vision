@@ -24,7 +24,7 @@ class NodeData(BaseModel):
     func: str
     inputs: List[Any]  # Accept any type of input
 
-# Define a more complex function handler (examples for illustration)
+
 
 
 @app.get("/function_dict")
@@ -57,7 +57,8 @@ function_handlers = {
     "load_image":function.load_image,
     "convert_to_grayscale":function.convert_to_grayscale,
     "find_contours":function.find_contours,
-    "threshold_image":function.threshold_image
+    "get_largest_contour":function.get_largest_contour,
+    "threshold_image":function.threshold_image,
     # Add more functions as needed
 }
 
@@ -72,6 +73,8 @@ async def get_functions():
         "add": get_function_code(function.add),
         "sub": get_function_code(function.sub),
         "convert_to_grayscale": get_function_code(function.convert_to_grayscale),
+        "find_contours":get_function_code(function.find_contours),
+        "get_largest_contour":get_function_code(function.get_largest_contour),
         "threshold_image": get_function_code(function.threshold_image),
     }
     return function_dict
@@ -85,14 +88,15 @@ async def execute_function(data: NodeData):
 
 
     func = function_handlers[data.func]
-    # print((data.inputs))
     data111 = json.dumps(data.inputs, indent=2)
 
-    # print(data)
+    # print("hhdhhdhdhdh",data)
     with open("image.json", "w") as file:
         file.write(str(data111))
     try:
-        result = func(*data.inputs)  
+        print("ttt")
+        result = func(*data.inputs) 
+        print("result",result) 
         return {"result": result}
     except TypeError as e:
         raise HTTPException(status_code=400, detail=f"Invalid input arguments: {str(e)}")

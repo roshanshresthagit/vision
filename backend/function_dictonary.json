@@ -44,7 +44,7 @@
     "inputs": 1,
     "outputs": 1,
     "inputNames": [
-      "image_data"
+      "image"
     ],
     "outputNames": [
       "gray_image"
@@ -69,16 +69,18 @@
       "image"
     ],
     "outputNames": [
-      "contours"
+      "contours_serializable"
     ]
   },
   "get_largest_contour": {
     "inputs": 1,
-    "outputs": 0,
+    "outputs": 1,
     "inputNames": [
       "contours"
     ],
-    "outputNames": []
+    "outputNames": [
+      "maximum"
+    ]
   },
   "draw_contours": {
     "inputs": 2,

@@ -119,7 +119,7 @@ export default function App() {
       setNodes((nds) => [...nds, newNode]);
       setNodeId((id) => id + 1);
       if (func.id === "input") {
-        setInputNodeCount((count) => count + 1); // Increment count only for input nodes
+        setInputNodeCount((count) => count + 1); 
       }
     },
     [setNodes, nodeId,inputNodeCount,functionDict]

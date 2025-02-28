@@ -1,0 +1,94 @@
+{
+  "add": {
+    "inputs": 2,
+    "outputs": 1,
+    "inputNames": [
+      "a",
+      "b"
+    ],
+    "outputNames": [
+      "sum"
+    ]
+  },
+  "sub": {
+    "inputs": 2,
+    "outputs": 1,
+    "inputNames": [
+      "a",
+      "b"
+    ],
+    "outputNames": [
+      "subtract"
+    ]
+  },
+  "multiply": {
+    "inputs": 2,
+    "outputs": 1,
+    "inputNames": [
+      "a",
+      "b"
+    ],
+    "outputNames": [
+      "subtract"
+    ]
+  },
+  "load_image": {
+    "inputs": 1,
+    "outputs": 0,
+    "inputNames": [
+      "image_path"
+    ],
+    "outputNames": []
+  },
+  "convert_to_grayscale": {
+    "inputs": 1,
+    "outputs": 1,
+    "inputNames": [
+      "image_data"
+    ],
+    "outputNames": [
+      "gray_image"
+    ]
+  },
+  "threshold_image": {
+    "inputs": 3,
+    "outputs": 1,
+    "inputNames": [
+      "image",
+      "lower_th",
+      "upper_th"
+    ],
+    "outputNames": [
+      "thresholded_image"
+    ]
+  },
+  "find_contours": {
+    "inputs": 1,
+    "outputs": 1,
+    "inputNames": [
+      "image"
+    ],
+    "outputNames": [
+      "contours"
+    ]
+  },
+  "get_largest_contour": {
+    "inputs": 1,
+    "outputs": 0,
+    "inputNames": [
+      "contours"
+    ],
+    "outputNames": []
+  },
+  "draw_contours": {
+    "inputs": 2,
+    "outputs": 1,
+    "inputNames": [
+      "image",
+      "contours"
+    ],
+    "outputNames": [
+      "contour_image"
+    ]
+  }
+}

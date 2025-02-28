@@ -1,0 +1,47 @@
+[
+  {
+    "id": "add",
+    "label": "Add",
+    "func": "add"
+  },
+  {
+    "id": "sub",
+    "label": "Sub",
+    "func": "sub"
+  },
+  {
+    "id": "multiply",
+    "label": "Multiply",
+    "func": "multiply"
+  },
+  {
+    "id": "load_image",
+    "label": "Load_image",
+    "func": "load_image"
+  },
+  {
+    "id": "convert_to_grayscale",
+    "label": "Convert_to_grayscale",
+    "func": "convert_to_grayscale"
+  },
+  {
+    "id": "threshold_image",
+    "label": "Threshold_image",
+    "func": "threshold_image"
+  },
+  {
+    "id": "find_contours",
+    "label": "Find_contours",
+    "func": "find_contours"
+  },
+  {
+    "id": "get_largest_contour",
+    "label": "Get_largest_contour",
+    "func": "get_largest_contour"
+  },
+  {
+    "id": "draw_contours",
+    "label": "Draw_contours",
+    "func": "draw_contours"
+  }
+]

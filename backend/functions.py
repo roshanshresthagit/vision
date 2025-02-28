@@ -42,40 +42,73 @@ def threshold_image(image, lower_th, upper_th):
     """Apply thresholding to the given image using lower and upper threshold values."""
     _, thresholded_image = cv2.threshold(image, lower_th, upper_th, cv2.THRESH_BINARY)
     return thresholded_image
-from json import JSONEncoder
-class NumpyArrayEncoder(JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return JSONEncoder.default(self, obj)
+
 @image_preprocessing_decorator
 def find_contours(image):
-    
-    """Find contours in the given thresholded image and return contours along with their count."""
+    """Find contours in the given thresholded image and return contours as a list."""
     contours, _ = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    # contours_serializable = [c.tolist() for c in contours]
-    # with open("contours.json", "w") as json_file:
-    #     json.dump(contours, json_file, indent=4)
-    encodedNumpyData = json.dumps(contours, cls=NumpyArrayEncoder)
-    print(encodedNumpyData)
-    return encodedNumpyData
+    
+    if not contours:
+        print("No contours found.")
+        return []
+
+    contours_serializable = [c.tolist() for c in contours]
+
+    # Debugging
+    print(f"Found {len(contours_serializable)} contours.")
+
+    # Save to JSON if needed (can remove if unnecessary)
+    with open("contours.json", "w") as json_file:
+        json.dump(contours_serializable, json_file, indent=4)
+
+    return contours_serializable
 
 
 def get_largest_contour(contours):
-    # print(contours)
-    print(type(contours),len(contours))
-    contours = np.asarray(contours)
+    if not contours or len(contours) < 2:
+        print("Not enough contours to find the second largest.")
+        return None, None  # Return None if there aren't at least two contours
 
-    """Find and return the contour with the maximum area."""
-    if not contours:
-        return None
-    maximum = max(contours, key=cv2.contourArea)
-    return maximum
+    # Convert list to np.ndarray
+    contours = [np.array(c, dtype=np.int32) for c in contours]
 
-def draw_contours(image, contours):
-    """Draw contours on the given image and return the plotted image."""
+    # Sort contours by area in descending order
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)
+
+    largest_contour = contours[0]
+    second_largest_contour = contours[1]
+
+    print(f"Largest contour area: {cv2.contourArea(largest_contour)}")
+    print(f"Second largest contour area: {cv2.contourArea(second_largest_contour)}")
+
+    # Convert contours back to a serializable format (lists)
+    largest_contour = largest_contour.tolist()
+    second_largest_contour = second_largest_contour.tolist()
+
+    return  second_largest_contour
+
+@image_preprocessing_decorator
+def draw_contours(image, contour_data):
+    """Draw the largest contour on the given image and return the plotted image."""
+
+    if not contour_data or len(contour_data) == 0:
+        print("No contour provided.")
+        return image
+
+    # Convert list back to NumPy array
+    contour = np.array(contour_data, dtype=np.int32)
+
+    # Ensure contour has the correct shape (N, 1, 2)
+    if len(contour.shape) == 2:
+        contour = contour.reshape(-1, 1, 2)
+
+    # Wrap the single contour in a list
+    contours = [contour]
+
+    # Copy image before drawing
     contour_image = image.copy()
-    if contours[0].shape[0] == 1:
-        contours=[contours]
+
+    # Draw contour on image
     cv2.drawContours(contour_image, contours, -1, (0, 255, 0), 2)
+
     return contour_image

@@ -59,6 +59,7 @@ function_handlers = {
     "find_contours":function.find_contours,
     "get_largest_contour":function.get_largest_contour,
     "threshold_image":function.threshold_image,
+    "draw_contours":function.draw_contours,
     # Add more functions as needed
 }
 
@@ -96,7 +97,6 @@ async def execute_function(data: NodeData):
     try:
         print("ttt")
         result = func(*data.inputs) 
-        print("result",result) 
         return {"result": result}
     except TypeError as e:
         raise HTTPException(status_code=400, detail=f"Invalid input arguments: {str(e)}")

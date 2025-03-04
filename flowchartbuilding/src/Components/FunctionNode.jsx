@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Handle, useUpdateNodeInternals } from "reactflow";
 
+
 export default function FunctionNode({ id, data }) {
   const [activeInput, setActiveInput] = useState(null);
   const updateNodeInternals = useUpdateNodeInternals();

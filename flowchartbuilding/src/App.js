@@ -9,11 +9,7 @@ import ResultNode from "./Components/ResultNode";
 import "./App.css";
 import GeneratePythonCode from "./Components/CodeGeneration";
 
-const defaultfunctionList = [
-  { id: "add", label: "Add", func: "add" },
-  { id: "subtract", label: "Subtract", func: "subtract" },
-  { id: "multiply", label: "Multiply", func: "multiply" },
-];
+const defaultfunctionList = [];
 
 
 const nodeTypes = {
@@ -35,7 +31,6 @@ export default function App() {
   const [functionList,setfunctionList]= useState(defaultfunctionList)
 
   useEffect(() => {
-
     const fetchFunctionDict = async () => {
       try {
         const response = await fetch("http://localhost:8000/function_dict");
@@ -127,7 +122,7 @@ export default function App() {
 
 
   // Handle node connections from here
-  const onConnect = (params) => setEdges((eds) => addEdge(params, eds));
+  const onConnect = (params) => setEdges((eds) => addEdge({...params,animated:true,style: { stroke: 'green' }}, eds));
 
 
 
@@ -141,8 +136,9 @@ export default function App() {
     }
   };
 
-
+//execution flow after execute button press
   const executeFlow = async () => {
+    console.log("thi si node", nodes)
     const nodeValues = {};
     for (const node of nodes) {
       if (node.type === "inputNode") {

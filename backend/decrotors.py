@@ -25,9 +25,6 @@ def image_preprocessing_decorator(func: Callable) -> Callable:
                 raise TypeError("Unsupported image format. Expected Base64 string, dictionary, or numpy.ndarray.")
             
             processed_image = func(image, *args, **kwargs)
-            # if isinstance(processed_image, list):
-            #     print("its returned")
-            #     return processed_image
             if isinstance(processed_image, list):
                 print("here list")
                 return processed_image

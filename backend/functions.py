@@ -46,6 +46,7 @@ def threshold_image(image, lower_th, upper_th):
 @image_preprocessing_decorator
 def find_contours(image):
     """Find contours in the given thresholded image and return contours as a list."""
+    #contours is a np.ndarray
     contours, _ = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     
     if not contours:
@@ -54,12 +55,7 @@ def find_contours(image):
 
     contours_serializable = [c.tolist() for c in contours]
 
-    # Debugging
-    print(f"Found {len(contours_serializable)} contours.")
-
-    # Save to JSON if needed (can remove if unnecessary)
-    with open("contours.json", "w") as json_file:
-        json.dump(contours_serializable, json_file, indent=4)
+    
 
     return contours_serializable
 
@@ -72,7 +68,6 @@ def get_largest_contour(contours):
     # Convert list to np.ndarray
     contours = [np.array(c, dtype=np.int32) for c in contours]
 
-    # Sort contours by area in descending order
     contours = sorted(contours, key=cv2.contourArea, reverse=True)
 
     largest_contour = contours[0]

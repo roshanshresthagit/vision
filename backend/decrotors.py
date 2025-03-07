@@ -1,6 +1,7 @@
 import base64
 import io
 import functools
+import time
 from typing import Callable, Union, Tuple
 
 import cv2
@@ -9,6 +10,8 @@ from PIL import Image
 
 
 def image_preprocessing_decorator(func: Callable) -> Callable:
+    st =time.time()
+    print("yeta aayo")
     """
     A decorator that preprocesses an image input (Base64 string, dictionary, or numpy array) 
     before passing it to the wrapped function. It ensures that the function receives a numpy 
@@ -32,7 +35,7 @@ def image_preprocessing_decorator(func: Callable) -> Callable:
         
         except Exception as e:
             raise RuntimeError(f"Error in image processing: {e}") from e
-    
+    print("total time",time.time()-st)
     return wrapper
 
 
@@ -40,10 +43,13 @@ def _decode_base64_to_array(image_base64: str) -> np.ndarray:
     """Decodes a Base64-encoded image string into a NumPy array."""
     image_bytes = base64.b64decode(image_base64)
     image = Image.open(io.BytesIO(image_bytes))
+    if image.mode == 'RGBA':
+        image = image.convert('RGB')
+    
     return np.array(image)
 
 
 def _encode_array_to_base64(image: np.ndarray) -> str:
     """Encodes a NumPy image array into a Base64 string."""
-    _, buffer = cv2.imencode('.jpg', image)
+    _, buffer = cv2.imencode('.png', image)
     return base64.b64encode(buffer).decode("utf-8")

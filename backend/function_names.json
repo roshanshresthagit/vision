@@ -20,9 +20,19 @@
     "func": "load_image"
   },
   {
-    "id": "convert_to_grayscale",
-    "label": "Convert_to_grayscale",
-    "func": "convert_to_grayscale"
+    "id": "resize_image",
+    "label": "Resize_image",
+    "func": "resize_image"
+  },
+  {
+    "id": "convert_to_color_image",
+    "label": "Convert_to_color_image",
+    "func": "convert_to_color_image"
+  },
+  {
+    "id": "convert_to_grayscale_image",
+    "label": "Convert_to_grayscale_image",
+    "func": "convert_to_grayscale_image"
   },
   {
     "id": "threshold_image",

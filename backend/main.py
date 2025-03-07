@@ -10,7 +10,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from camera.data_structure.event_bus import EventBus
 from camera.data_structure.DataStore import DataStore
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Depends
-
 from camera.get_image import CAMERA
 
 
@@ -52,21 +51,20 @@ async def get_function_list_json():
         return {"error": str(e)}
 
 
+with open("function_references.json", "r") as file:
+    function_handlers = json.load(file)
 
-# More complex functions can be added here
-
-# Function to map the function name to the actual implementation
 function_handlers = {
     "add": function.add,
     "sub": function.sub,
     "multiply": function.multiply,
     "load_image":function.load_image,
-    "convert_to_grayscale":function.convert_to_grayscale,
+    "convert_to_grayscale_image":function.convert_to_grayscale_image,
     "find_contours":function.find_contours,
     "get_largest_contour":function.get_largest_contour,
     "threshold_image":function.threshold_image,
     "draw_contours":function.draw_contours,
-    # Add more functions as needed
+    "convert_to_color_image":function.convert_to_color_image
 }
 
 def get_function_code(func):
@@ -79,7 +77,7 @@ async def get_functions():
     function_dict = {
         "add": get_function_code(function.add),
         "sub": get_function_code(function.sub),
-        "convert_to_grayscale": get_function_code(function.convert_to_grayscale),
+        "convert_to_grayscale_image": get_function_code(function.convert_to_grayscale_image),
         "find_contours":get_function_code(function.find_contours),
         "get_largest_contour":get_function_code(function.get_largest_contour),
         "threshold_image": get_function_code(function.threshold_image),
@@ -165,7 +163,6 @@ async def websocket_endpoint(websocket: WebSocket, canvas_data: list = Depends(g
                 continue
             for funct in canvas_data:
                 event_bus.emit(funct['funcName'],)
-            # Encode the processed image as base64
             _, buffer = cv2.imencode('.jpg', processed_image)
             frame_base64 = base64.b64encode(buffer).decode("utf-8")
             

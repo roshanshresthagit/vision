@@ -5,7 +5,7 @@ import numpy as np
 from ctypes import *
 
 sys.path.append("./MvImport")
-from MvImport.MvCameraControl_class import *
+from .MvImport.MvCameraControl_class import *
 
 class CAMERA:
     g_bExit = False

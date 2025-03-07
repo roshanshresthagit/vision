@@ -6,10 +6,10 @@ import ctypes
 
 from ctypes import *
 
-from PixelType_header import *
-from CameraParams_const import *
-from CameraParams_header import *
-from MvErrorDefine_const import *
+from .PixelType_header import *
+from .CameraParams_const import *
+from .CameraParams_header import *
+from .MvErrorDefine_const import *
 
 # Python3.8 Modifies Dll loading strategy, The Path environment variable is no longer searched by default, Also add winmode parameter to be compatible with old versions
 dllname = "C:/Program Files (x86)/Common Files/MVS/Runtime/Win64_x64/MvCameraControl.dll"

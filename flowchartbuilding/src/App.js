@@ -7,9 +7,15 @@ import InputNode from "./Components/InputNode";
 import FunctionNode from "./Components/FunctionNode";
 import ResultNode from "./Components/ResultNode";
 import "./App.css";
-import GeneratePythonCode from "./Components/CodeGeneration";
+import TopBar from "./Components/TopBar";
 
 const defaultfunctionList = [];
+const DefaultInputList =[
+  { id: "string-input", label: "String Input" },
+  { id: "number-input", label: "Number Input" },
+  { id: "image-input", label: "Image Input" },
+  // Add more input types here
+];
 
 
 const nodeTypes = {
@@ -26,9 +32,16 @@ export default function App() {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [generatedCode, setGeneratedCode] = useState("");
   const [functionDefinitions, setFunctionDefinitions] = useState({});
-  const [inputNodeCount, setInputNodeCount] = useState(1);
+  const [inputNodeCount, setInputNodeCount] = useState(DefaultInputList);
   const [functionDict, setfunctionDict]=useState(null)
   const [functionList,setfunctionList]= useState(defaultfunctionList)
+  const [darkMode, setDarkMode] = useState(false);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true)
+
+
+  const toggleSidebar = () => {
+    setIsSidebarVisible((prev)=> !prev)
+  }
 
   useEffect(() => {
     const fetchFunctionDict = async () => {
@@ -76,7 +89,6 @@ export default function App() {
       event.preventDefault();
       const reactFlowBounds = event.target.getBoundingClientRect();
       const func = JSON.parse(event.dataTransfer.getData("application/reactflow"));
-      console.log("this is for input checks",func)
       const position = {
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
@@ -109,7 +121,6 @@ export default function App() {
               functionDict,
         },
       };
-      console.log(newNode)
 
       setNodes((nds) => [...nds, newNode]);
       setNodeId((id) => id + 1);
@@ -138,7 +149,6 @@ export default function App() {
 
 //execution flow after execute button press
   const executeFlow = async () => {
-    console.log("thi si node", nodes)
     const nodeValues = {};
     for (const node of nodes) {
       if (node.type === "inputNode") {
@@ -153,7 +163,6 @@ export default function App() {
         }
       }
     }
-    console.log("this is node value",nodeValues)
     const processedNodes = new Set();
     
     const processFunctionNode = async (nodeId) => {
@@ -165,14 +174,12 @@ export default function App() {
       if (node.type === "functionNode") {
         const inputEdges = edges.filter((e) => e.target === nodeId);
         if (inputEdges.length === 0 ) return;
-        console.log("data sent")
         
         const inputValues = inputEdges.map((e) => {
           return nodeValues[e.source]; 
         });
         
         if (inputValues.some((val) => val === undefined)) return;
-        console.log("input values",inputValues)
         try {
           const response = await axios.post("http://localhost:8000/execute", {
             type: "function",
@@ -190,7 +197,6 @@ export default function App() {
         processedNodes.add(nodeId);
       }
       else if (node.type === "resultNode") {
-        console.log("it here")
         const inputEdge = edges.find((e) => e.target === nodeId);
         if (inputEdge) {
           nodeValues[nodeId] = nodeValues[inputEdge.source];
@@ -215,32 +221,59 @@ export default function App() {
     );
   };
 
+  const toggleDarkMode = () => setDarkMode(!darkMode);
+
+
 
   return (
     <div className="container">
-      <Sidebar onDragStart={onDragStart} executeFlow={executeFlow} onDeleteNode={onDeleteNode} selectedNodeId={selectedNodeId} functionListCall={functionList}/>
-      <div className="canvas-container">
-      <GeneratePythonCode 
-  nodes={nodes} 
-  edges={edges} 
-  functionDefinitions={functionDefinitions} 
-  setGeneratedCode={setGeneratedCode}
-  
-/>
-      <pre style={{ background: "#eee", padding: "10px", marginTop: "10px" }}>{generatedCode}</pre>
-      {/* Existing FlowCanvas */}
-      <FlowCanvas
+      <TopBar
+        toggleSidebar={toggleSidebar}
+        executeFlow={executeFlow}
+        onDeleteNode={onDeleteNode}
+        selectedNodeId={selectedNodeId}
         nodes={nodes}
         edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        setSelectedNodeId={setSelectedNodeId}
-        onDrop={onDrop}
+        functionDefinitions={functionDefinitions}
+        setGeneratedCode={setGeneratedCode}
+        toggleDarkMode={toggleDarkMode}
+        darkMode={darkMode}
       />
       
+      <div className="main-content">
+        {/* Sidebar on the left */}
+        <Sidebar
+          onDragStart={onDragStart}
+          executeFlow={executeFlow}
+          onDeleteNode={onDeleteNode}
+          selectedNodeId={selectedNodeId}
+          functionListCall={functionList}
+          inputList={inputNodeCount}
+          isVisible={isSidebarVisible}
+        />
+        
+        {/* Canvas container for the flow */}
+        <div className="canvas-container">
+          {/* FlowCanvas component */}
+          <FlowCanvas
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            setSelectedNodeId={setSelectedNodeId}
+            onDrop={onDrop}
+          />
+          
+          {/* Display generated code */}
+          <pre style={{ background: "#eee", padding: "10px", marginTop: "10px" }}>
+            {generatedCode}
+          </pre>
+        </div>
       </div>
     </div>
   );
+  
+  
 }

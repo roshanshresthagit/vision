@@ -1,24 +1,3 @@
-// import React from "react";
-// import { Handle, Position } from "reactflow";
-
-// const InputNode = ({ data }) => (
-//   <div className="input-node">
-//     <div className="node-content">
-//       <div className="node-label">Input</div>
-//       <input
-//         type="string"
-//         className="node-input"
-//         value={data.value || ""}
-//         onChange={(e) => data.setValue(e.target.value)}
-//       />
-//     </div>
-//     <Handle type="source" position={Position.Right} />
-//   </div>
-// );
-
-// export default InputNode;
-
-
 import React from "react";
 import { Handle, Position } from "reactflow";
 

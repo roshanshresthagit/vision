@@ -1,44 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
+import './sidebar.css'
+const Sidebar = ({ onDragStart, functionListCall, isVisible }) => {
+  const [searchTerm, setSearchTerm] = useState("");
 
-const Sidebar = ({ onDragStart, executeFlow, onDeleteNode, selectedNodeId , functionListCall}) => {
-  const functionList = functionListCall
+  const filteredFunctions = functionListCall.filter((func) =>
+    func.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="sidebar">
-      <h2>Blocks</h2>
-      <button
-        className="function-button"
-        draggable
-        onDragStart={(event) => onDragStart(event, { id: "input", label: "Input", func: "input" })}
-      >
-        Input
-      </button>
-      {functionList.map((func) => (
-        <button
-          key={func.id}
-          className="function-button"
-          draggable
-          onDragStart={(event) => onDragStart(event, func)}
-        >
-          {func.label}
-        </button>
-      ))}
-      <button
-        className="function-button result-button"
-        draggable
-        onDragStart={(event) => onDragStart(event, { id: "result", label: "Result", func: "result" })}
-      >
-        Result
-      </button>
-      <button className="execute-button" onClick={executeFlow}>
-        Execute
-      </button>
-      <button
-        className="delete-button"
-        onClick={onDeleteNode}
-        disabled={!selectedNodeId}
-      >
-        Delete Node
-      </button>
+    <div className="sidebar-container">
+      {isVisible && (
+        <div className="sidebar">
+          <div className="search-bar-container">
+            <i className="fa fa-search search-icon"></i>
+            <input
+              type="text"
+              placeholder="Search functions..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-bar"
+            />
+          </div>
+          <button
+            className="function-button"
+            draggable
+            onDragStart={(event) =>
+              onDragStart(event, { id: "input", label: "Input", func: "input" })
+            }
+          >
+            Input
+          </button>
+          {filteredFunctions.map((func) => (
+            <button
+              key={func.id}
+              className="function-button"
+              draggable
+              onDragStart={(event) => onDragStart(event, func)}
+            >
+              {func.label}
+            </button>
+          ))}
+          <button
+            className="function-button result-button"
+            draggable
+            onDragStart={(event) =>
+              onDragStart(event, { id: "result", label: "Result", func: "result" })
+            }
+          >
+            Result
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -17,10 +17,10 @@ from camera.get_image import CAMERA
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins
+    allow_origins=["*",],  
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"], 
+    allow_headers=["*"],  
 )
 
 # Define a class for input data
@@ -40,6 +40,8 @@ async def get_function_json():
         return data
     except Exception as e:
         return {"error": str(e)}
+    
+
 
 @app.get("/function_list")
 async def get_function_list_json():
@@ -51,21 +53,23 @@ async def get_function_list_json():
         return {"error": str(e)}
 
 
-with open("function_references.json", "r") as file:
-    function_handlers = json.load(file)
-
 function_handlers = {
     "add": function.add,
     "sub": function.sub,
     "multiply": function.multiply,
-    "load_image":function.load_image,
-    "convert_to_grayscale_image":function.convert_to_grayscale_image,
-    "find_contours":function.find_contours,
-    "get_largest_contour":function.get_largest_contour,
-    "threshold_image":function.threshold_image,
-    "draw_contours":function.draw_contours,
-    "convert_to_color_image":function.convert_to_color_image
+    "load_image": function.load_image,
+    "convert_to_grayscale_image": function.convert_to_grayscale_image,
+    "find_contours": function.find_contours,
+    "get_largest_contour": function.get_largest_contour,
+    "threshold_image": function.threshold_image,
+    "draw_contours": function.draw_contours,
+    "convert_to_color_image": function.convert_to_color_image,
+    "get_average_area": function.get_average_area,
+    "get_max_area":function.get_max_area,
+    "process_contours":function.process_contours,
+
 }
+
 
 def get_function_code(func):
     return inspect.getsource(func)
@@ -87,12 +91,13 @@ async def get_functions():
 # Endpoint for executing the function based on type and inputs
 @app.post("/execute")
 async def execute_function(data: NodeData):
-
+    print("its here")
     if data.func not in function_handlers:
         raise HTTPException(status_code=400, detail="Invalid function name")
 
 
     func = function_handlers[data.func]
+    print(func)
     data111 = json.dumps(data.inputs, indent=2)
 
     # print("hhdhhdhdhdh",data)

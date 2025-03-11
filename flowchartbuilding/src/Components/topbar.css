@@ -27,6 +27,10 @@
   gap: 10px;
 }
 
+.codegeneration-button{
+  padding: 20px;
+}
+
 .top-bar-button {
   background: var(--button-bg, #2d2d3b);
   color: var(--button-text, #ffffff);

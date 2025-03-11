@@ -2,7 +2,7 @@ import React from "react";
 import { Menu } from "lucide-react";
 import './topbar.css'
 
-const TopBar = ({ executeFlow, onDeleteNode, selectedNodeId, nodes, edges, functionDefinitions, setGeneratedCode, toggleDarkMode, darkMode, toggleSidebar }) => {
+const TopBar = ({ executeFlow, onDeleteNode, selectedNodeId, nodes, edges, functionDefinitions, setGeneratedCode, toggleSidebar }) => {
   return (
     <div className="top-bar">
       <div className="top-bar-left">
@@ -23,10 +23,12 @@ const TopBar = ({ executeFlow, onDeleteNode, selectedNodeId, nodes, edges, funct
         >
           Delete Node
         </button>
-    
-        <button className="top-bar-button theme-toggle" onClick={toggleDarkMode}>
-          {darkMode ? "☀️ Light" : "🌙 Dark"}
+        <button className="top-bar-button codegeneration-button" onClick={setGeneratedCode}>
+          Generate code
         </button>
+       
+    
+        
       </div>
     </div>
   );

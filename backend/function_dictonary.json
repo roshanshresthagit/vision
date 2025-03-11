@@ -1,11 +1,10 @@
 {
   "add": {
-    "inputs": 3,
+    "inputs": 2,
     "outputs": 1,
     "inputNames": [
       "a",
-      "b",
-      "c"
+      "b"
     ],
     "outputNames": [
       "sum"
@@ -74,6 +73,16 @@
       "gray_image"
     ]
   },
+  "get_contour_centroid": {
+    "inputs": 1,
+    "outputs": 1,
+    "inputNames": [
+      "contour"
+    ],
+    "outputNames": [
+      "center"
+    ]
+  },
   "threshold_image": {
     "inputs": 3,
     "outputs": 1,
@@ -98,6 +107,34 @@
       "contours_serializable"
     ]
   },
+  "get_contour_area": {
+    "inputs": 1,
+    "outputs": 1,
+    "inputNames": [
+      "contour"
+    ],
+    "outputNames": [
+      "area"
+    ]
+  },
+  "get_max_area": {
+    "inputs": 1,
+    "outputs": 0,
+    "inputNames": [
+      "contours"
+    ],
+    "outputNames": []
+  },
+  "get_average_area": {
+    "inputs": 1,
+    "outputs": 1,
+    "inputNames": [
+      "contours"
+    ],
+    "outputNames": [
+      "average_area"
+    ]
+  },
   "get_largest_contour": {
     "inputs": 1,
     "outputs": 1,
@@ -107,6 +144,14 @@
     "outputNames": [
       "second_largest_contour"
     ]
+  },
+  "process_contours": {
+    "inputs": 1,
+    "outputs": 0,
+    "inputNames": [
+      "contours"
+    ],
+    "outputNames": []
   },
   "draw_contours": {
     "inputs": 3,

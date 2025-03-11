@@ -5,6 +5,7 @@ with open("functions.py", "r") as f:
     tree = ast.parse(f.read())
 
 data = {}
+function_callable={}
 
 for node in tree.body:
     if isinstance(node, ast.FunctionDef):
@@ -12,6 +13,7 @@ for node in tree.body:
         input_names = [arg.arg for arg in node.args.args]
         num_inputs = len(input_names)
         return_vars = []
+    
 
         for stmt in node.body:
             if isinstance(stmt, ast.Return):
@@ -27,6 +29,7 @@ for node in tree.body:
             "outputNames": return_vars
         }
 
+  
 
 def format_data(data):
     json_str = json.dumps(data, indent=2)
@@ -46,3 +49,11 @@ function_names_json = json.dumps(function_names, indent=2)
 
 with open("function_names.json", "w") as file:
     file.write(str(function_names_json))
+
+
+
+# function_handler = {func_name: f"function.{func_name}" for func_name in data.keys()}
+
+# # Write valid JSON (strings as values)
+# with open("function_handler.json", "w") as file:
+#     json.dump(function_handler, file, indent=2)

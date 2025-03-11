@@ -6,25 +6,21 @@ import numpy as np
 from PIL import Image
 from decrotors import image_preprocessing_decorator
 
-def add(a,b,c):
-    print("its here")
+def add(a,b):
     sum = a+b
     print(sum)
     return sum
 
 def sub(a,b):
-    print("its here")
-    subtract = a+b
+    subtract = a-b
     return subtract
 
 def multiply(a,b):
-    print("its here")
-    subtract = a*b
-    return subtract
+    multiplication = a*b
+    return multiplication
 
 
 def load_image(image_path):
-    print("image received")
     """Load an image from the given path and return it."""
     image = cv2.imread(image_path)
     if image is None:
@@ -49,9 +45,22 @@ def convert_to_color_image(image):
 
 @image_preprocessing_decorator
 def convert_to_grayscale_image(image):
+    # color_image = cv2.cvtColor(image,cv2.COLOR_GRAY2BGR)
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     return gray_image
 
+def get_contour_centroid(contour:np.ndarray):
+    """Return the centroid (x, y) of a contour."""
+    if not contour:
+        return None
+    contour = np.array(contour, dtype=np.int32)
+    moments = cv2.moments(contour)
+    if moments["m00"] == 0:
+        return None
+    cx = int(moments["m10"] / moments["m00"])
+    cy = int(moments["m01"] / moments["m00"])
+    center =(cx,cy)
+    return center
 
 @image_preprocessing_decorator
 def threshold_image(image, lower_th, upper_th):
@@ -81,6 +90,44 @@ def find_contours(image,retrival_mode=cv2.RETR_TREE, approximation_method=cv2.CH
     return contours_serializable
 
 
+
+
+def get_contour_area(contour):
+    """Return the area of a contour."""
+    if not contour:
+        return 0
+    contour = np.array(contour, dtype=np.int32)
+    area = cv2.contourArea(contour)
+    return area
+
+
+#for all contours
+def get_max_area(contours):
+    print("it hsere in max are")
+    """Return the maximum area among given contours."""
+    if not contours:
+        return 0
+    max_value = max(cv2.contourArea(np.array(c, dtype=np.int32)) for c in contours)
+    print("max value",type(max_value))
+    return int(max_value)
+
+
+
+#average area of all contours
+def get_average_area(contours):
+    print("its here for average area")
+    # contours = [np.array(c, dtype=np.int32) for c in contours]
+    """Return the average area of given contours."""
+    if not contours:
+        return 0
+    areas = [cv2.contourArea(np.array(c, dtype=np.int32)) for c in contours]
+    print("here the areas",areas)
+    average_area = sum(areas) / len(areas)
+    return average_area
+
+
+
+
 def get_largest_contour(contours):
     if not contours or len(contours) < 2:
         print("Not enough contours to find the second largest.")
@@ -103,16 +150,42 @@ def get_largest_contour(contours):
 
     return  second_largest_contour
 
+
+
+def process_contours(contours: np.ndarray):
+    contours=[np.array(c, dtype=np.int32) for c in contours]
+    result = []
+    
+    for contour in contours:
+        moments = cv2.moments(contour)
+        if moments["m00"] != 0:
+            center_x = int(moments["m10"] / moments["m00"])
+            center_y = int(moments["m01"] / moments["m00"])
+        else:
+            center_x, center_y = 0, 0
+        
+        distances = [np.linalg.norm(point - np.array([center_x, center_y])) for point in contour[:, 0]]
+        min_radius = min(distances) if distances else 0
+        max_radius = max(distances) if distances else 0
+        
+        result.append({
+            "center": [center_x, center_y],
+            "min_radius": min_radius,
+            "max_radius": max_radius,
+            "contour": contour.tolist()
+        })
+    
+    with open("all_contour_data.json", "w") as f:
+        json.dump(result, f, indent=4)
+
+
 @image_preprocessing_decorator
 def draw_contours(image, contour_data, color_to_draw=(0,255,0)):
 
-    # image = cv2.cvtColor(image,cv2.COLOR_GRAY2BGR)
     """Draw all contours on the given image and return the plotted image."""
-
     if not contour_data or len(contour_data) == 0:
         print("No contour provided.")
         return image
-    cv2.imwrite("this.jpg",image)
 
     # Convert list of contours to NumPy arrays if necessary
     contours = [np.array(c, dtype=np.int32) for c in contour_data]

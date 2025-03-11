@@ -35,6 +35,11 @@
     "func": "convert_to_grayscale_image"
   },
   {
+    "id": "get_contour_centroid",
+    "label": "Get_contour_centroid",
+    "func": "get_contour_centroid"
+  },
+  {
     "id": "threshold_image",
     "label": "Threshold_image",
     "func": "threshold_image"
@@ -45,9 +50,29 @@
     "func": "find_contours"
   },
   {
+    "id": "get_contour_area",
+    "label": "Get_contour_area",
+    "func": "get_contour_area"
+  },
+  {
+    "id": "get_max_area",
+    "label": "Get_max_area",
+    "func": "get_max_area"
+  },
+  {
+    "id": "get_average_area",
+    "label": "Get_average_area",
+    "func": "get_average_area"
+  },
+  {
     "id": "get_largest_contour",
     "label": "Get_largest_contour",
     "func": "get_largest_contour"
+  },
+  {
+    "id": "process_contours",
+    "label": "Process_contours",
+    "func": "process_contours"
   },
   {
     "id": "draw_contours",

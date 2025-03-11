@@ -35,7 +35,6 @@ export default function App() {
   const [inputNodeCount, setInputNodeCount] = useState(DefaultInputList);
   const [functionDict, setfunctionDict]=useState(null)
   const [functionList,setfunctionList]= useState(defaultfunctionList)
-  const [darkMode, setDarkMode] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true)
 
 
@@ -147,13 +146,16 @@ export default function App() {
     }
   };
 
+
+
+
 //execution flow after execute button press
   const executeFlow = async () => {
     const nodeValues = {};
     for (const node of nodes) {
       if (node.type === "inputNode") {
         const inputValue = inputs[node.id];
-    
+        
         // Check if the input is an image (Base64 format)
         if (typeof inputValue === "string" && inputValue.startsWith("data:image")) {
           nodeValues[node.id] = inputValue; // Store Base64 image as-is
@@ -170,7 +172,7 @@ export default function App() {
       
       const node = nodes.find((n) => n.id === nodeId);
       if (!node) return;
-     
+      
       if (node.type === "functionNode") {
         const inputEdges = edges.filter((e) => e.target === nodeId);
         if (inputEdges.length === 0 ) return;
@@ -221,8 +223,6 @@ export default function App() {
     );
   };
 
-  const toggleDarkMode = () => setDarkMode(!darkMode);
-
 
 
   return (
@@ -236,8 +236,6 @@ export default function App() {
         edges={edges}
         functionDefinitions={functionDefinitions}
         setGeneratedCode={setGeneratedCode}
-        toggleDarkMode={toggleDarkMode}
-        darkMode={darkMode}
       />
       
       <div className="main-content">

@@ -221,6 +221,24 @@ export default function App() {
         },
       }))
     );
+
+    try {
+      await axios.post("http://localhost:8000/test_function", {
+        nodes: nodes.map((node) => ({
+          id: node.id,
+          type: node.type,
+          data: node.data,
+          value: nodeValues[node.id] ?? null,
+        })),
+        edges: edges.map((edge) => ({
+          source: edge.source,
+          target: edge.target,
+        })),
+      });
+      console.log("Sent all node and edge values to /test_function");
+    } catch (error) {
+      console.error("Error sending data to /test_function:", error.response?.data || error.message);
+    }
   };
 
 

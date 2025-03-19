@@ -10,8 +10,6 @@ from PIL import Image
 
 
 def image_preprocessing_decorator(func: Callable) -> Callable:
-    st =time.time()
-    print("yeta aayo")
     """
     A decorator that preprocesses an image input (Base64 string, dictionary, or numpy array) 
     before passing it to the wrapped function. It ensures that the function receives a numpy 
@@ -29,13 +27,11 @@ def image_preprocessing_decorator(func: Callable) -> Callable:
             
             processed_image = func(image, *args, **kwargs)
             if isinstance(processed_image, list):
-                print("here list")
                 return processed_image
             return _encode_array_to_base64(processed_image)
         
         except Exception as e:
             raise RuntimeError(f"Error in image processing: {e}") from e
-    print("total time",time.time()-st)
     return wrapper
 
 

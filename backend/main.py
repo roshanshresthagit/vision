@@ -4,7 +4,7 @@ import json
 import cv2
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List, Any
+from typing import Dict, List, Any, Optional
 import functions as function
 from fastapi.middleware.cors import CORSMiddleware
 from camera.data_structure.event_bus import EventBus
@@ -27,9 +27,98 @@ app.add_middleware(
 class NodeData(BaseModel):
     type: str
     func: str
-    inputs: List[Any]  # Accept any type of input
+    inputs: List[Any]  
+
+class Node(BaseModel):
+    id: str
+    type: str
+    data: Optional[Dict[str, Any]] = None  
+    value: Optional[Any] = None  
+
+class Edge(BaseModel):
+    source: str
+    target: str
+
+class FlowRequest(BaseModel):
+    nodes: List[Node]
+    edges: List[Edge]
 
 
+@app.post("/test_function")
+async def test_function(flow_request: FlowRequest):
+    node_values: Dict[str, Any] = {}
+    processed_nodes = set()
+
+    # Store initial nodes
+    print("Initial Nodes:")
+    for node in flow_request.nodes:
+        print(f"Node ID: {node.id}, Type: {node.type}, Value: {node.value}")
+        if node.type == "inputNode":
+            node_values[node.id] = node.value
+
+    # Store edges
+    edge_map = {}
+    for edge in flow_request.edges:
+        edge_map.setdefault(edge.target, []).append(edge.source)
+
+    print("Edge Map:", edge_map)
+
+    # Recursive Function Node Processor
+    def process_function_node(node_id: str):
+        if node_id in processed_nodes:
+            return node_values.get(node_id)
+
+        node = next((n for n in flow_request.nodes if n.id == node_id), None)
+        if not node or node.type != "functionNode":
+            return None
+
+        # Get all input values for the function node
+        input_sources = edge_map.get(node_id, [])
+        input_values = []
+        for source_id in input_sources:
+            # Check if source node has been processed; process if needed
+            if source_id not in node_values:
+                source_node = next((n for n in flow_request.nodes if n.id == source_id), None)
+                if source_node:
+                    if source_node.type == "functionNode":
+                        process_function_node(source_id)
+                    elif source_node.type == "inputNode":
+                        node_values[source_id] = source_node.value
+            input_values.append(node_values.get(source_id))
+
+        # Skip processing if inputs are missing
+        if None in input_values:
+            print(f"Node {node_id} waiting for inputs.")
+            return None
+
+        # Process function
+        func_name = node.data.get("func")
+        if func_name in function_handlers:
+            try:
+                result = function_handlers[func_name](*input_values)
+                node_values[node_id] = result
+                print(f"Processed function node {node_id}: {result}")
+            except Exception as e:
+                print(f"Error in node {node_id}: {e}")
+                node_values[node_id] = None
+
+        processed_nodes.add(node_id)
+        return node_values[node_id]
+
+    # Process all function nodes
+    for node in flow_request.nodes:
+        if node.type == "functionNode":
+            process_function_node(node.id)
+
+    # Process result nodes
+    for node in flow_request.nodes:
+        if node.type == "resultNode":
+            source_ids = edge_map.get(node.id, [])
+            if source_ids:
+                node_values[node.id] = node_values.get(source_ids[0])  # Assuming single input
+                print(f"Result Node {node.id} = {node_values[node.id]}")
+
+    return {"processed_nodes": node_values}
 
 
 @app.get("/function_dict")
@@ -38,7 +127,7 @@ async def get_function_json():
         with open("function_dictonary.json", "r", encoding="utf-8") as file:
             data = json.load(file)
         return data
-    except Exception as e:
+    except Exception as e: 
         return {"error": str(e)}
     
 
@@ -68,6 +157,7 @@ function_handlers = {
     "get_max_area":function.get_max_area,
     "process_contours":function.process_contours,
 
+
 }
 
 
@@ -87,6 +177,7 @@ async def get_functions():
         "threshold_image": get_function_code(function.threshold_image),
     }
     return function_dict
+
 
 # Endpoint for executing the function based on type and inputs
 @app.post("/execute")

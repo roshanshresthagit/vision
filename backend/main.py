@@ -10,7 +10,6 @@ import numpy as np
 from pydantic import BaseModel
 from typing import Dict, List, Any, Optional
 
-from sse_starlette import EventSourceResponse
 import functions as function
 from fastapi.middleware.cors import CORSMiddleware
 from camera.data_structure.event_bus import EventBus

@@ -9,6 +9,7 @@
     "@xyflow/react": "^12.4.3",
     "ajv": "^8.17.1",
     "ajv-keywords": "^5.1.0",
+    "axios": "^1.8.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "convert-base64-to-image": "^0.0.16",

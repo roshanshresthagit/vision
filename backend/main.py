@@ -1,16 +1,23 @@
+import asyncio
 import base64
 import inspect
+from io import BytesIO
 import json
 import cv2
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import StreamingResponse
+import numpy as np
 from pydantic import BaseModel
 from typing import Dict, List, Any, Optional
+
+from sse_starlette import EventSourceResponse
 import functions as function
 from fastapi.middleware.cors import CORSMiddleware
 from camera.data_structure.event_bus import EventBus
 from camera.data_structure.DataStore import DataStore
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Depends
 from camera.get_image import CAMERA
+from PIL import Image
 
 
 
@@ -31,9 +38,9 @@ class NodeData(BaseModel):
 
 class Node(BaseModel):
     id: str
-    type: str
-    data: Optional[Dict[str, Any]] = None  
-    value: Optional[Any] = None  
+    type: str  # inputNode, functionNode, resultNode
+    value: Any = None
+    data: Dict[str, Any] = {}
 
 class Edge(BaseModel):
     source: str
@@ -42,6 +49,126 @@ class Edge(BaseModel):
 class FlowRequest(BaseModel):
     nodes: List[Node]
     edges: List[Edge]
+    inputValues: Dict[str, Any] = {}
+flow_data = {}
+
+def decode_base64_image(base64_string):
+    print("it decoded")
+    if base64_string.startswith("data:image"):
+        base64_string = base64_string.split(",")[1]
+    img_bytes = base64.b64decode(base64_string)
+    img = Image.open(BytesIO(img_bytes))
+    return np.array(img)
+
+def encode_to_base64(value):
+    if isinstance(value, np.ndarray):
+        # Convert image to base64
+        image = Image.fromarray(value)
+        buffered = BytesIO()
+        image.save(buffered, format="JPEG")
+        return "data:image/jpeg;base64," + base64.b64encode(buffered.getvalue()).decode()
+    elif isinstance(value, (int, float, str)):
+        return str(value)
+    return json.dumps(value)
+
+@app.post("/start_flow")
+async def start_flow(data: dict):
+    global flow_data
+    flow_data = {
+        "nodes": data.get("nodes", []),
+        "edges": data.get("edges", []),
+        "inputValues": data.get("inputValues", {})
+    }
+    return {"status": "Flow data received"}
+
+@app.get("/execute_flow")
+async def execute_flow():
+    nodes = flow_data.get("nodes", [])
+    edges = flow_data.get("edges", [])
+    inputValues = flow_data.get("inputValues", {})
+
+    node_values = dict(inputValues)
+    processed_nodes = set()
+
+    edge_map = {}
+    reverse_edge_map = {}
+    for edge in edges:
+        edge_map.setdefault(edge["target"], []).append(edge["source"])
+        reverse_edge_map.setdefault(edge["source"], []).append(edge["target"])
+
+    async def flow_processor():
+        pending_edges = list(edges)  # We'll pop edges as we send results
+
+        async def process_function_node(node_id):
+            if node_id in processed_nodes:
+                return
+
+            node = next((n for n in nodes if n["id"] == node_id), None)
+            if not node or node["type"] != "functionNode":
+                return
+
+            input_sources = edge_map.get(node_id, [])
+            input_values = []
+            for src_id in input_sources:
+                if src_id not in node_values:
+                    src_node = next((n for n in nodes if n["id"] == src_id), None)
+                    if src_node and src_node["type"] == "functionNode":
+                        await process_function_node(src_id)
+                    elif src_node and src_node["type"] == "inputNode":
+                        node_values[src_id] = inputValues.get(src_id)
+
+                val = node_values.get(src_id)
+                if isinstance(val, str) and val.startswith("data:image"):
+                    val = decode_base64_image(val)
+                input_values.append(val)
+
+            if any(val is None for val in input_values):
+                return
+
+            func_name = node["data"].get("func")
+            if func_name in function_handlers:
+                try:
+                    print(function_handlers[func_name])
+                    result = function_handlers[func_name](*input_values)
+                    print("result",result)
+                    node_values[node_id] = result
+                except Exception:
+                    node_values[node_id] = None
+            processed_nodes.add(node_id)
+
+        try:
+            while pending_edges:
+                to_remove = []
+                for edge in pending_edges:
+                    target_node = next((n for n in nodes if n["id"] == edge["target"]), None)
+                    if target_node and target_node["type"] == "resultNode":
+                        source_id = edge["source"]
+                        source_node = next((n for n in nodes if n["id"] == source_id), None)
+                        if source_node and source_node["type"] == "functionNode":
+                            await process_function_node(source_id)
+
+                        result_value = encode_to_base64(node_values.get(source_id, None))
+
+                        response_data = json.dumps({
+                            "resultNode": edge["target"],
+                            "value": result_value
+                        })
+                        yield response_data + "\n"
+                        to_remove.append(edge)
+
+                # Remove processed result edges
+                for edge in to_remove:
+                    pending_edges.remove(edge)
+
+                await asyncio.sleep(0.1)
+
+            yield json.dumps({"message": "All results processed"}) + "\n"
+
+        except Exception as e:
+            yield json.dumps({"error": str(e)}) + "\n"
+
+    return StreamingResponse(flow_processor(), media_type="application/json")
+
 
 
 @app.post("/test_function")

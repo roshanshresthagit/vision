@@ -27,7 +27,6 @@ def load_image(image_path):
     return image
 
 
-@image_preprocessing_decorator
 def resize_image(image: np.ndarray, dimension_of_image=(640,640)) -> np.ndarray:
     if image is None:
         print("Error: Provided image is None.")
@@ -36,16 +35,17 @@ def resize_image(image: np.ndarray, dimension_of_image=(640,640)) -> np.ndarray:
     return resized_image
 
 
-@image_preprocessing_decorator
 def convert_to_color_image(image):
     color_image = cv2.cvtColor(image,cv2.COLOR_GRAY2BGR)
     return color_image
 
 
-@image_preprocessing_decorator
 def convert_to_grayscale_image(image):
+    print("hello i am under the water", type(image))
+    image=np.array(image)
     # color_image = cv2.cvtColor(image,cv2.COLOR_GRAY2BGR)
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    print("converted")
     return gray_image
 
 def get_contour_centroid(contour:np.ndarray):
@@ -61,8 +61,8 @@ def get_contour_centroid(contour:np.ndarray):
     center =(cx,cy)
     return center
 
-@image_preprocessing_decorator
-def threshold_image(image, lower_th, upper_th):
+def threshold_image(image, lower_th=120, upper_th=255):
+    print("hello it s here")
     """Apply thresholding to the given image using lower and upper threshold values."""
     _, thresholded_image = cv2.threshold(image, lower_th, upper_th, cv2.THRESH_BINARY)
     # kernel_size=5
@@ -74,7 +74,6 @@ def threshold_image(image, lower_th, upper_th):
     # thresholded_image 
     return thresholded_image
 
-@image_preprocessing_decorator
 def find_contours(image,retrival_mode=cv2.RETR_TREE, approximation_method=cv2.CHAIN_APPROX_SIMPLE):
     """Find contours in the given thresholded image and return contours as a list."""
     

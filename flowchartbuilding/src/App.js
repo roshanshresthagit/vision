@@ -129,13 +129,12 @@ export default function App() {
     [setNodes, nodeId, inputNodeCount, functionDict]
   );
 
-  // Handle edge connections
+  // Handle edge connections here
   const onConnect = useCallback(
     (params) => setEdges((els) => addEdge(params, els)),
     []
   );
 
-  // **Edge Reconnection Logic - Correct!**
   const onEdgeUpdateStart = useCallback(() => {
     edgeReconnectSuccessful.current = false;
   }, []);

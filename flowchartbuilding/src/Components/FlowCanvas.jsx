@@ -7,6 +7,9 @@ const FlowCanvas = ({
   edges,
   onNodesChange,
   onEdgesChange,
+  onEdgeUpdate,
+  onEdgeUpdateStart,
+  onEdgeUpdateEnd,
   onConnect,
   nodeTypes,
   setSelectedNodeId,
@@ -19,10 +22,13 @@ const FlowCanvas = ({
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onEdgeUpdate={onEdgeUpdate}
+        onEdgeUpdateStart={onEdgeUpdateStart}
+        onEdgeUpdateEnd={onEdgeUpdateEnd}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         fitView
-        onNodeClick={(event, node) => setSelectedNodeId(node.id)} // Select node on click
+        onNodeClick={(event, node) => setSelectedNodeId(node.id)}
       >
         <MiniMap />
         <Controls />

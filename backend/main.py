@@ -49,10 +49,11 @@ class FlowRequest(BaseModel):
     nodes: List[Node]
     edges: List[Edge]
     inputValues: Dict[str, Any] = {}
+
+
 flow_data = {}
 
 def decode_base64_image(base64_string):
-    print("it decoded")
     if base64_string.startswith("data:image"):
         base64_string = base64_string.split(",")[1]
     img_bytes = base64.b64decode(base64_string)
@@ -210,11 +211,9 @@ function_handlers = {
 
 }
 
-
+#gets all used function code form function.py########
 def get_function_code(func):
     return inspect.getsource(func)
-
-
 
 @app.get("/get_functions")
 async def get_functions():
@@ -236,23 +235,20 @@ async def execute_function(data: NodeData):
     if data.func not in function_handlers:
         raise HTTPException(status_code=400, detail="Invalid function name")
 
-
     func = function_handlers[data.func]
-    print(func)
     data111 = json.dumps(data.inputs, indent=2)
 
     # print("hhdhhdhdhdh",data)
     with open("image.json", "w") as file:
         file.write(str(data111))
     try:
-        print("ttt")
         result = func(*data.inputs) 
         return {"result": result}
     except TypeError as e:
         raise HTTPException(status_code=400, detail=f"Invalid input arguments: {str(e)}")
     
 
-##################################################
+################################################## for live camera operations #####################################
 obj = CAMERA()
 event_bus = EventBus()
 datastore = DataStore()

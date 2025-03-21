@@ -353,8 +353,11 @@ export default function App() {
           
           {/* Display generated code */}
           <pre style={{ background: "#eee", padding: "10px", marginTop: "10px" }}>
-            {generatedCode}
-          </pre>
+  {typeof generatedCode === 'string' 
+    ? generatedCode 
+    : JSON.stringify(generatedCode, null, 2)}
+</pre>
+
         </div>
       </div>
     </div>

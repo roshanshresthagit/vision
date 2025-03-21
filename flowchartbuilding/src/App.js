@@ -131,7 +131,7 @@ export default function App() {
 
   // Handle edge connections here
   const onConnect = useCallback(
-    (params) => setEdges((els) => addEdge(params, els)),
+    (params) => setEdges((els) => addEdge({...params, animated:true, style:{stroke:'green'}}, els)),
     []
   );
 

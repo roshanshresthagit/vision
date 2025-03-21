@@ -254,21 +254,21 @@ export default function App() {
     }
   
     try {
-      // Step 1: Start the flow
-      await axios.post("http://localhost:8000/start_flow", {
-        nodes,
-        edges,
-        inputValues: nodeValues,
+      // POST the entire flow data & start streaming in one step
+      const response = await fetch("http://localhost:8000/execute_flow", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nodes,
+          edges,
+          inputValues: nodeValues,
+        }),
       });
-  
-      // Step 2: Fetch streamed results
-      const response = await fetch("http://localhost:8000/execute_flow");
   
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
   
-      // Reading chunks
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
@@ -281,7 +281,6 @@ export default function App() {
           buffer = buffer.slice(newlineIndex + 1);
   
           if (line) {
-            // ✅ Print full line received from backend
             console.log("Received line:", line);
   
             const data = JSON.parse(line);
@@ -306,12 +305,10 @@ export default function App() {
         }
       }
       console.log("Flow execution completed!");
-  
     } catch (error) {
       console.error("Error:", error);
     }
   };
-  
   
 
   return (

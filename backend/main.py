@@ -54,6 +54,7 @@ class FlowRequest(BaseModel):
 flow_data = {}
 
 def decode_base64_image(base64_string):
+    print("vondegsdg")
     if base64_string.startswith("data:image"):
         base64_string = base64_string.split(",")[1]
     img_bytes = base64.b64decode(base64_string)
@@ -71,33 +72,22 @@ def encode_to_base64(value):
         return str(value)
     return json.dumps(value)
 
-@app.post("/start_flow")
-async def start_flow(data: dict):
-    global flow_data
-    flow_data = {
-        "nodes": data.get("nodes", []),
-        "edges": data.get("edges", []),
-        "inputValues": data.get("inputValues", {})
-    }
-    return {"status": "Flow data received"}
-
-@app.get("/execute_flow")
-async def execute_flow():
-    nodes = flow_data.get("nodes", [])
-    edges = flow_data.get("edges", [])
-    inputValues = flow_data.get("inputValues", {})
+@app.post("/execute_flow")
+async def execute_flow(request: Request):
+    data = await request.json()
+    nodes = data.get("nodes", [])
+    edges = data.get("edges", [])
+    inputValues = data.get("inputValues", {})
 
     node_values = dict(inputValues)
     processed_nodes = set()
 
     edge_map = {}
-    reverse_edge_map = {}
     for edge in edges:
         edge_map.setdefault(edge["target"], []).append(edge["source"])
-        reverse_edge_map.setdefault(edge["source"], []).append(edge["target"])
 
     async def flow_processor():
-        pending_edges = list(edges)  # We'll pop edges as we send results
+        pending_edges = list(edges)
 
         async def process_function_node(node_id):
             if node_id in processed_nodes:
@@ -128,9 +118,7 @@ async def execute_flow():
             func_name = node["data"].get("func")
             if func_name in function_handlers:
                 try:
-                    print(function_handlers[func_name])
                     result = function_handlers[func_name](*input_values)
-                    print("result",result)
                     node_values[node_id] = result
                 except Exception:
                     node_values[node_id] = None
@@ -156,7 +144,7 @@ async def execute_flow():
                         yield response_data + "\n"
                         to_remove.append(edge)
 
-                # Remove processed result edges
+                # Remove processed edges
                 for edge in to_remove:
                     pending_edges.remove(edge)
 

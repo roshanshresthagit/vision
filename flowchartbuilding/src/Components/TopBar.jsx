@@ -27,7 +27,8 @@ const TopBar = ({
     // 2. Define input values
     let inputs = nodes.filter((node) => node.type === "inputNode");
     inputs.forEach((input) => {
-      code += `${input.data.label} = ${input.data.value}\n`;
+      console.log(inputs)
+      code += `${input.data.func+ input.id} = ${input.data.value}\n`;
     });
 
     // 3. Map function calls based on edges

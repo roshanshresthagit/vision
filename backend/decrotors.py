@@ -8,7 +8,6 @@ import cv2
 import numpy as np
 from PIL import Image
 
-
 def image_preprocessing_decorator(func: Callable) -> Callable:
     """
     A decorator that preprocesses an image input (Base64 string, dictionary, or numpy array) 

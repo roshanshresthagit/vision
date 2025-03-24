@@ -1,23 +1,23 @@
-import asyncio
-import base64
-import inspect
-from io import BytesIO
-import json
 import cv2
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import StreamingResponse
+import json
+import base64
+import asyncio
+import inspect
+import functions
 import numpy as np
+from io import BytesIO
 from pydantic import BaseModel
 from typing import Dict, List, Any, Optional
+from fastapi.responses import StreamingResponse
+from fastapi import FastAPI, HTTPException, Request
 
-import functions as function
+from PIL import Image
 from fastapi.middleware.cors import CORSMiddleware
 from camera.data_structure.event_bus import EventBus
 from camera.data_structure.DataStore import DataStore
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Depends
 from camera.get_image import CAMERA
-from PIL import Image
-
+from dic_gen import parse_function
 
 
 app = FastAPI()
@@ -51,10 +51,7 @@ class FlowRequest(BaseModel):
     inputValues: Dict[str, Any] = {}
 
 
-flow_data = {}
-
 def decode_base64_image(base64_string):
-    print("vondegsdg")
     if base64_string.startswith("data:image"):
         base64_string = base64_string.split(",")[1]
     img_bytes = base64.b64decode(base64_string)
@@ -116,6 +113,9 @@ async def execute_flow(request: Request):
                 return
 
             func_name = node["data"].get("func")
+            function_handlers = {name : obj 
+                     for name, obj in vars(functions).items() 
+                     if callable(obj)}
             if func_name in function_handlers:
                 try:
                     result = function_handlers[func_name](*input_values)
@@ -158,46 +158,47 @@ async def execute_flow(request: Request):
     return StreamingResponse(flow_processor(), media_type="application/json")
 
 
-
-
 @app.get("/function_dict")
 async def get_function_json():
     try:
-        with open("function_dictonary.json", "r", encoding="utf-8") as file:
-            data = json.load(file)
-        return data
+        function_dict = {
+            name: inspect.getsource(obj)
+            for name, obj in vars(functions).items()
+            if callable(obj)
+        }
+        parsed_functions = {
+            name: parse_function(source_code)
+            for name, source_code in function_dict.items()
+        }
+        print(parsed_functions)
+        return parsed_functions
+    
     except Exception as e: 
         return {"error": str(e)}
     
-
-
 @app.get("/function_list")
 async def get_function_list_json():
     try:
-        with open("function_names.json","r",encoding="utf-8") as file:
-            data=json.load(file)
+        function_dict = {
+            name: inspect.getsource(obj)
+            for name, obj in vars(functions).items()
+            if callable(obj)
+        }
+        parsed_functions = {
+            name: parse_function(source_code)
+            for name, source_code in function_dict.items()
+        }
+        data = [{'id':func_name, 'label':func_name.capitalize(), 'func':func_name} 
+                for func_name in parsed_functions.keys()]
         return data
+    
     except Exception as e:
         return {"error": str(e)}
 
+# function_handlers = {name : obj 
+#                      for name, obj in vars(functions).items() 
+#                      if callable(obj)}
 
-function_handlers = {
-    "add": function.add,
-    "sub": function.sub,
-    "multiply": function.multiply,
-    "load_image": function.load_image,
-    "convert_to_grayscale_image": function.convert_to_grayscale_image,
-    "find_contours": function.find_contours,
-    "get_largest_contour": function.get_largest_contour,
-    "threshold_image": function.threshold_image,
-    "draw_contours": function.draw_contours,
-    "convert_to_color_image": function.convert_to_color_image,
-    "get_average_area": function.get_average_area,
-    "get_max_area":function.get_max_area,
-    "process_contours":function.process_contours,
-
-
-}
 
 #gets all used function code form function.py########
 def get_function_code(func):
@@ -205,21 +206,20 @@ def get_function_code(func):
 
 @app.get("/get_functions")
 async def get_functions():
-    function_dict = {
-        "add": get_function_code(function.add),
-        "sub": get_function_code(function.sub),
-        "convert_to_grayscale_image": get_function_code(function.convert_to_grayscale_image),
-        "find_contours":get_function_code(function.find_contours),
-        "get_largest_contour":get_function_code(function.get_largest_contour),
-        "threshold_image": get_function_code(function.threshold_image),
-    }
+    function_dict = {name:inspect.getsource(obj)
+                     for name, obj in vars(functions).items()
+                     if callable(obj)}
+
     return function_dict
 
 
 # Endpoint for executing the function based on type and inputs
 @app.post("/execute")
 async def execute_function(data: NodeData):
-    print("its here")
+    function_handlers = {name : obj 
+                     for name, obj in vars(functions).items() 
+                     if callable(obj)}
+    
     if data.func not in function_handlers:
         raise HTTPException(status_code=400, detail="Invalid function name")
 
@@ -286,7 +286,6 @@ async def websocket_endpoint(websocket: WebSocket, canvas_data: list = Depends(g
     try:
         while True:
             processed_image = obj.get_capture_image()
-            # numArray = testing_function(processed_image, event_bus)
             print("Using canvas data:", canvas_data)
 
             if processed_image is None:

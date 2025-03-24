@@ -4,7 +4,6 @@ import json
 import cv2
 import numpy as np
 from PIL import Image
-from decrotors import image_preprocessing_decorator
 
 def add(a,b):
     sum = a+b
@@ -62,7 +61,6 @@ def get_contour_centroid(contour:np.ndarray):
     return center
 
 def threshold_image(image, lower_th=120, upper_th=255):
-    print("hello it s here")
     """Apply thresholding to the given image using lower and upper threshold values."""
     _, thresholded_image = cv2.threshold(image, lower_th, upper_th, cv2.THRESH_BINARY)
     # kernel_size=5
@@ -86,8 +84,6 @@ def find_contours(image,retrival_mode=cv2.RETR_TREE, approximation_method=cv2.CH
         return []
 
     return contours_serializable
-
-
 
 
 def get_contour_area(contour):
@@ -177,7 +173,6 @@ def process_contours(contours: np.ndarray):
         json.dump(result, f, indent=4)
 
 
-@image_preprocessing_decorator
 def draw_contours(image, contour_data, color_to_draw=(0,255,0)):
 
     """Draw all contours on the given image and return the plotted image."""

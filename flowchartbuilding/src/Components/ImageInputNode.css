@@ -1,0 +1,64 @@
+.image-input-node {
+    width: 220px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  
+  .node-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #333333;
+    margin-bottom: 10px;
+  }
+  
+  .node-icon {
+    font-size: 18px;
+  }
+  
+  .image-clickable {
+    cursor: pointer;
+  }
+  
+  .image-preview {
+    width: 160px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #cccccc;
+    margin-bottom: 12px;
+  }
+  
+  .image-placeholder {
+    width: 160px;
+    height: 120px;
+    background-color: #f3f3f3;
+    border: 1px dashed #cccccc;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999999;
+    font-size: 14px;
+    margin-bottom: 12px;
+    text-align: center;
+    padding: 10px;
+  }
+  
+  .custom-handle {
+    width: 10px;
+    height: 10px;
+    background-color: #4a90e2;
+    border-radius: 50%;
+    right: -5px;
+  }
+  

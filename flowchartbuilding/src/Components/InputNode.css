@@ -1,0 +1,50 @@
+.input-node {
+    width: 220px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  
+  .node-header {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333333;
+    margin-bottom: 12px;
+  }
+  
+  .node-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .text-input {
+    width: 180px;
+    padding: 8px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+  
+  .text-input:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 4px rgba(74, 144, 226, 0.5);
+  }
+  
+  .custom-handle {
+    width: 10px;
+    height: 10px;
+    background-color: #4a90e2;
+    border-radius: 50%;
+    right: -5px;
+  }
+  

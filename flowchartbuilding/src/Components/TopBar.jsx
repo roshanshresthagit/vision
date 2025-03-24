@@ -27,7 +27,6 @@ const TopBar = ({
     // 2. Define input values
     let inputs = nodes.filter((node) => node.type === "inputNode");
     inputs.forEach((input) => {
-      console.log(inputs)
       code += `${input.data.func+ input.id} = ${input.data.value}\n`;
     });
 
@@ -45,8 +44,9 @@ const TopBar = ({
       const targetNode = nodes.find((n) => n.id === target);
       if (targetNode && targetNode.type === "functionNode") {
         const sources = functionCalls[target]
-          .map((id) => nodes.find((n) => n.id === id).data.label)
+          .map((id) => nodes.find((n) => n.id === id).data.func+id)
           .join(", ");
+          console.log(sources)
         code += `${targetNode.data.label}_result = ${targetNode.data.func}(${sources})\n`;
       }
     });

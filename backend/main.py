@@ -54,7 +54,7 @@ class FlowRequest(BaseModel):
 flow_data = {}
 
 def decode_base64_image(base64_string):
-    print("vondegsdg")
+    print("image converted into nparray")
     if base64_string.startswith("data:image"):
         base64_string = base64_string.split(",")[1]
     img_bytes = base64.b64decode(base64_string)
@@ -104,7 +104,7 @@ async def execute_flow(request: Request):
                     src_node = next((n for n in nodes if n["id"] == src_id), None)
                     if src_node and src_node["type"] == "functionNode":
                         await process_function_node(src_id)
-                    elif src_node and src_node["type"] == "inputNode":
+                    elif src_node and src_node["type"] == "inputNode" or "imageInputNode":
                         node_values[src_id] = inputValues.get(src_id)
 
                 val = node_values.get(src_id)

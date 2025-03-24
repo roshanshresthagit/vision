@@ -3,6 +3,7 @@ import { addEdge, useNodesState, useEdgesState, reconnectEdge } from "reactflow"
 import Sidebar from "./Components/Sidebar";
 import FlowCanvas from "./Components/FlowCanvas";
 import InputNode from "./Components/InputNode";
+import ImageInputNode from "./Components/ImageInputNode";
 import FunctionNode from "./Components/FunctionNode";
 import ResultNode from "./Components/ResultNode";
 import "./App.css";
@@ -18,6 +19,7 @@ const DefaultInputList = [
 const nodeTypes = {
   functionNode: FunctionNode,
   inputNode: InputNode,
+  imageInputNode: ImageInputNode,
   resultNode: ResultNode,
 };
 
@@ -87,30 +89,40 @@ export default function App() {
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       };
-
+  
       const newNodeId = `${nodeId}`;
-
+  
+      const isInput = func.id === "input";
+      const isImageInput = func.id === "imageinput";
+  
       const newNode = {
         id: newNodeId,
-        type:
-          func.id === "input"
-            ? "inputNode"
-            : func.id === "result"
-            ? "resultNode"
-            : "functionNode",
+        type: isInput
+          ? "inputNode"
+          : isImageInput
+          ? "imageInputNode"
+          : func.id === "result"
+          ? "resultNode"
+          : "functionNode",
         position,
         data: {
-          label: func.id === "input" ? `${func.label}${inputNodeCount}` : func.label,
+          label: isInput
+            ? `${func.label}${inputNodeCount}`
+            : isImageInput
+            ? `${func.label}${inputNodeCount}`
+            : func.label,
           func: func.func,
-          value: func.id === "input" ? 0 : undefined,
+          value: isInput || isImageInput ? 0 : undefined, // Initially set to 0 for both input and imageinput
           setValue:
-            func.id === "input"
+            isInput || isImageInput
               ? (val) =>
                   setInputs((prev) => {
                     const updatedInputs = { ...prev, [newNodeId]: val };
                     setNodes((nds) =>
                       nds.map((node) =>
-                        node.id === newNodeId ? { ...node, data: { ...node.data, value: val } } : node
+                        node.id === newNodeId
+                          ? { ...node, data: { ...node.data, value: val } }
+                          : node
                       )
                     );
                     return updatedInputs;
@@ -119,15 +131,17 @@ export default function App() {
           functionDict,
         },
       };
-
+  
       setNodes((nds) => [...nds, newNode]);
       setNodeId((id) => id + 1);
-      if (func.id === "input") {
+  
+      if (isInput || isImageInput) {
         setInputNodeCount((count) => count + 1);
       }
     },
     [setNodes, nodeId, inputNodeCount, functionDict]
   );
+  
 
   // Handle edge connections here
   const onConnect = useCallback(
@@ -164,7 +178,7 @@ export default function App() {
     const nodeValues = {};
 
     for (const node of nodes) {
-      if (node.type === "inputNode") {
+      if (node.type === "inputNode"|| "imageInputNode") {
         const inputValue = inputs[node.id];
         if (typeof inputValue === "string" && inputValue.startsWith("data:image")) {
           nodeValues[node.id] = inputValue;

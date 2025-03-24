@@ -23,7 +23,7 @@ const ImageInputNode = ({ data }) => {
   return (
     <div className="image-input-node">
       <div className="node-header">
-        <span className="node-icon">🖼️</span>
+        {/* <span className="node-icon">🖼️</span> */}
         <span className="node-title">Image Input</span>
       </div>
 

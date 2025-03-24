@@ -1,30 +1,30 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { addEdge, useNodesState, useEdgesState } from "reactflow";
-import axios from "axios";
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import { addEdge, useNodesState, useEdgesState, reconnectEdge } from "reactflow";
 import Sidebar from "./Components/Sidebar";
 import FlowCanvas from "./Components/FlowCanvas";
 import InputNode from "./Components/InputNode";
+import ImageInputNode from "./Components/ImageInputNode";
 import FunctionNode from "./Components/FunctionNode";
 import ResultNode from "./Components/ResultNode";
 import "./App.css";
 import TopBar from "./Components/TopBar";
 
 const defaultfunctionList = [];
-const DefaultInputList =[
+const DefaultInputList = [
   { id: "string-input", label: "String Input" },
   { id: "number-input", label: "Number Input" },
   { id: "image-input", label: "Image Input" },
-  // Add more input types here
 ];
-
 
 const nodeTypes = {
   functionNode: FunctionNode,
   inputNode: InputNode,
+  imageInputNode: ImageInputNode,
   resultNode: ResultNode,
 };
 
 export default function App() {
+  const edgeReconnectSuccessful = useRef(true);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [nodeId, setNodeId] = useState(1);
@@ -33,21 +33,20 @@ export default function App() {
   const [generatedCode, setGeneratedCode] = useState("");
   const [functionDefinitions, setFunctionDefinitions] = useState({});
   const [inputNodeCount, setInputNodeCount] = useState(DefaultInputList);
-  const [functionDict, setfunctionDict]=useState(null)
-  const [functionList,setfunctionList]= useState(defaultfunctionList)
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true)
-
+  const [functionDict, setfunctionDict] = useState(null);
+  const [functionList, setfunctionList] = useState(defaultfunctionList);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   const toggleSidebar = () => {
-    setIsSidebarVisible((prev)=> !prev)
-  }
+    setIsSidebarVisible((prev) => !prev);
+  };
 
   useEffect(() => {
     const fetchFunctionDict = async () => {
       try {
         const response = await fetch("http://localhost:8000/function_dict");
         const json = await response.json();
-        setfunctionDict(json); 
+        setfunctionDict(json);
       } catch (error) {
         console.error("Error fetching JSON:", error);
       }
@@ -57,23 +56,22 @@ export default function App() {
       try {
         const response = await fetch("http://localhost:8000/function_list");
         const json = await response.json();
-        setfunctionList(json); 
+        setfunctionList(json);
       } catch (error) {
         console.error("Error fetching JSON:", error);
       }
     };
-    // Fetch function code from the FastAPI backend
+
     async function fetchFunctions() {
       const response1 = await fetch("http://localhost:8000/get_functions");
       const data = await response1.json();
       setFunctionDefinitions(data);
     }
+
     fetchFunctionDict();
     fetchFunctionList();
     fetchFunctions();
   }, []);
-
-  
 
   // Handle drag start
   const onDragStart = (event, func) => {
@@ -81,9 +79,8 @@ export default function App() {
     event.dataTransfer.effectAllowed = "move";
   };
 
-  // Handle drop event  
+  // Handle drop
   const onDrop = useCallback(
-
     (event) => {
       event.preventDefault();
       const reactFlowBounds = event.target.getBoundingClientRect();
@@ -92,52 +89,83 @@ export default function App() {
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       };
-
+  
       const newNodeId = `${nodeId}`;
-
+  
+      const isInput = func.id === "input";
+      const isImageInput = func.id === "imageinput";
+  
       const newNode = {
         id: newNodeId,
-        type:
-          func.id === "input"? "inputNode": 
-          func.id === "result"? "resultNode": "functionNode",
+        type: isInput
+          ? "inputNode"
+          : isImageInput
+          ? "imageInputNode"
+          : func.id === "result"
+          ? "resultNode"
+          : "functionNode",
         position,
         data: {
-          label: func.id === "input" ? `${func.label}${inputNodeCount}` : func.label,
+          label: isInput
+            ? `${func.label}${inputNodeCount}`
+            : isImageInput
+            ? `${func.label}${inputNodeCount}`
+            : func.label,
           func: func.func,
-          value: func.id === "input" ? 0 : undefined,
+          value: isInput || isImageInput ? 0 : undefined, // Initially set to 0 for both input and imageinput
           setValue:
-            func.id === "input"
-              ? (val) => setInputs((prev) => {
-                  const updatedInputs = { ...prev, [newNodeId]: val };
-                  setNodes((nds) =>
-                    nds.map((node) =>
-                      node.id === newNodeId ? { ...node, data: { ...node.data, value: val } } : node
-                    )
-                  );
-                  return updatedInputs;
-                })
+            isInput || isImageInput
+              ? (val) =>
+                  setInputs((prev) => {
+                    const updatedInputs = { ...prev, [newNodeId]: val };
+                    setNodes((nds) =>
+                      nds.map((node) =>
+                        node.id === newNodeId
+                          ? { ...node, data: { ...node.data, value: val } }
+                          : node
+                      )
+                    );
+                    return updatedInputs;
+                  })
               : undefined,
-              functionDict,
+          functionDict,
         },
       };
-
+  
       setNodes((nds) => [...nds, newNode]);
       setNodeId((id) => id + 1);
-      if (func.id === "input") {
-        setInputNodeCount((count) => count + 1); 
+  
+      if (isInput || isImageInput) {
+        setInputNodeCount((count) => count + 1);
       }
     },
-    [setNodes, nodeId,inputNodeCount,functionDict]
+    [setNodes, nodeId, inputNodeCount, functionDict]
+  );
+  
+
+  // Handle edge connections here
+  const onConnect = useCallback(
+    (params) => setEdges((els) => addEdge({...params, animated:true, style:{stroke:'green'}}, els)),
+    []
   );
 
+  const onEdgeUpdateStart = useCallback(() => {
+    edgeReconnectSuccessful.current = false;
+  }, []);
 
-  // Handle node connections from here
-  const onConnect = (params) => setEdges((eds) => addEdge({...params,animated:true,style: { stroke: 'green' }}, eds));
+  const onEdgeUpdate = useCallback((oldEdge, newConnection) => {
+    edgeReconnectSuccessful.current = true;
+    setEdges((els) => reconnectEdge(oldEdge, newConnection, els));
+  }, []);
 
+  const onEdgeUpdateEnd = useCallback((_, edge) => {
+    if (!edgeReconnectSuccessful.current) {
+      setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+    }
+    edgeReconnectSuccessful.current = true;
+  }, []);
 
-
-
-  // Delete node by ID
+  // Delete node
   const onDeleteNode = () => {
     if (selectedNodeId) {
       setNodes((nds) => nds.filter((node) => node.id !== selectedNodeId));
@@ -146,104 +174,11 @@ export default function App() {
     }
   };
 
-//execution flow after execute button press
-  // const executeFlow = async () => {
-  //   const nodeValues = {};
-  //   for (const node of nodes) {
-  //     if (node.type === "inputNode") {
-  //       const inputValue = inputs[node.id];
-        
-  //       // Check if the input is an image (Base64 format)
-  //       if (typeof inputValue === "string" && inputValue.startsWith("data:image")) {
-  //         nodeValues[node.id] = inputValue; // Store Base64 image as-is
-  //       } else {
-  //         // Parse as float if not an image, fallback to 0 if not a valid number
-  //         nodeValues[node.id] = parseFloat(inputValue) || 0;
-  //       }
-  //     }
-  //   }
-  //   const processedNodes = new Set();
-    
-  //   const processFunctionNode = async (nodeId) => {
-  //     if (processedNodes.has(nodeId)) return;
-      
-  //     const node = nodes.find((n) => n.id === nodeId);
-  //     if (!node) return;
-      
-  //     if (node.type === "functionNode") {
-  //       const inputEdges = edges.filter((e) => e.target === nodeId);
-  //       if (inputEdges.length === 0 ) return;
-        
-  //       const inputValues = inputEdges.map((e) => {
-  //         return nodeValues[e.source]; 
-  //       });
-        
-  //       if (inputValues.some((val) => val === undefined)) return;
-  //       try {
-  //         const response = await axios.post("http://localhost:8000/execute", {
-  //           type: "function",
-  //           func: node.data.func,
-  //           inputs: inputValues.map((val) => 
-  //             typeof val === "string" && val.startsWith("data:image") ? { type: "image", data: val } : val
-  //           ),
-
-  //         });
-  //         nodeValues[nodeId] = response.data.result;
-  //       } catch (error) {
-  //         console.error("Error calling backend:", error.response?.data || error.message);
-  //       }
-
-  //       processedNodes.add(nodeId);
-  //     }
-  //     else if (node.type === "resultNode") {
-  //       const inputEdge = edges.find((e) => e.target === nodeId);
-  //       if (inputEdge) {
-  //         nodeValues[nodeId] = nodeValues[inputEdge.source];
-  //       }
-  //     }
-  //   };
-
-  //   for (const node of nodes) {
-  //     if (node.type === "functionNode" || node.type === "resultNode") {
-  //       await processFunctionNode(node.id);
-  //     }
-  //   }
-  //   setNodes((nds) =>
-  //     nds.map((node) => ({
-  //       ...node,
-  //       data: {
-  //         ...node.data,
-  //         value: node.type === "inputNode" ? inputs[node.id] : nodeValues[node.id],
-  //         output: nodeValues[node.id], 
-  //       },
-  //     }))
-  //   );
-
-  //   try {
-  //     await axios.post("http://localhost:8000/test_function", {
-  //       nodes: nodes.map((node) => ({
-  //         id: node.id,
-  //         type: node.type,
-  //         data: node.data,
-  //         value: nodeValues[node.id] ?? null,
-  //       })),
-  //       edges: edges.map((edge) => ({
-  //         source: edge.source,
-  //         target: edge.target,
-  //       })),
-  //     });
-  //     console.log("Sent all node and edge values to /test_function");
-  //   } catch (error) {
-  //     console.error("Error sending data to /test_function:", error.response?.data || error.message);
-  //   }
-  // };
-
   const executeFlow = async () => {
     const nodeValues = {};
-  
-    // Prepare input node values
+
     for (const node of nodes) {
-      if (node.type === "inputNode") {
+      if (node.type === "inputNode"|| "imageInputNode") {
         const inputValue = inputs[node.id];
         if (typeof inputValue === "string" && inputValue.startsWith("data:image")) {
           nodeValues[node.id] = inputValue;
@@ -252,9 +187,8 @@ export default function App() {
         }
       }
     }
-  
+
     try {
-      // POST the entire flow data & start streaming in one step
       const response = await fetch("http://localhost:8000/execute_flow", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -264,30 +198,30 @@ export default function App() {
           inputValues: nodeValues,
         }),
       });
-  
+
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
-  
+
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
-  
+
         buffer += decoder.decode(value, { stream: true });
-  
+
         let newlineIndex;
         while ((newlineIndex = buffer.indexOf("\n")) >= 0) {
           const line = buffer.slice(0, newlineIndex).trim();
           buffer = buffer.slice(newlineIndex + 1);
-  
+
           if (line) {
             console.log("Received line:", line);
-  
+
             const data = JSON.parse(line);
-  
+
             if (data.resultNode) {
               console.log(`ResultNode ${data.resultNode}:`, data.value);
-  
+
               nodeValues[data.resultNode] = data.value;
               setNodes((nds) =>
                 nds.map((node) =>
@@ -309,7 +243,6 @@ export default function App() {
       console.error("Error:", error);
     }
   };
-  
 
   return (
     <div className="container">
@@ -323,9 +256,8 @@ export default function App() {
         functionDefinitions={functionDefinitions}
         setGeneratedCode={setGeneratedCode}
       />
-      
+
       <div className="main-content">
-        {/* Sidebar on the left */}
         <Sidebar
           onDragStart={onDragStart}
           executeFlow={executeFlow}
@@ -335,30 +267,29 @@ export default function App() {
           inputList={inputNodeCount}
           isVisible={isSidebarVisible}
         />
-        
-        {/* Canvas container for the flow */}
+
         <div className="canvas-container">
-          {/* FlowCanvas component */}
           <FlowCanvas
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
+            onEdgeUpdate={onEdgeUpdate} // ✅ Correct handler
+            onEdgeUpdateStart={onEdgeUpdateStart}
+            onEdgeUpdateEnd={onEdgeUpdateEnd}
             onConnect={onConnect}
-            connectionMode = "loose"
             nodeTypes={nodeTypes}
             setSelectedNodeId={setSelectedNodeId}
             onDrop={onDrop}
           />
-          
-          {/* Display generated code */}
+
           <pre style={{ background: "#eee", padding: "10px", marginTop: "10px" }}>
-            {generatedCode}
+            {typeof generatedCode === "string"
+              ? generatedCode
+              : JSON.stringify(generatedCode, null, 2)}
           </pre>
         </div>
       </div>
     </div>
   );
-  
-  
 }

@@ -30,6 +30,15 @@ const Sidebar = ({ onDragStart, functionListCall, isVisible }) => {
           >
             Input
           </button>
+          <button 
+          className="function-button"
+          draggable
+          onDragStart={(event)=>
+            onDragStart(event,{id:"imageinput", label:"ImageInput", func:"imageinput"})
+          }
+          >
+            Image Input
+          </button>
           {filteredFunctions.map((func) => (
             <button
               key={func.id}

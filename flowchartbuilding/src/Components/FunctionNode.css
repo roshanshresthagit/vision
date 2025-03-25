@@ -1,0 +1,99 @@
+.node-container {
+    padding: 10px;
+    border: 1px solid #777;
+    border-radius: 5px;
+    background: #fff;
+    min-width: 200px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .input-wrapper {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  
+  .output-wrapper {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  
+  .input-wrapper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translateY(50%);
+    display: flex;
+    align-items: center;
+  }
+  
+  .output-wrapper {
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translateY(50%);
+    display: flex;
+    align-items: center;
+  }
+  
+  .custom-handle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  
+  .input-handle {
+    position: absolute;
+    left: 0px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transform: translateX(-50%);
+
+  }
+  
+  .output-handle {
+    position: absolute;
+    background-color: green;
+    left: 0px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transform: translateX(-50%);
+
+  }
+  
+  .node-content {
+    text-align: center;
+  }
+  
+  .node-title {
+    font-weight: bold;
+    color: black;
+  }
+  
+  .handle-label {
+    font-size: 10px;
+    color: #333;
+    white-space: nowrap;
+  }
+  
+  .input-handle-label {
+    position:absolute;
+    left:10px;
+  }
+  
+  .output-handle-label {
+    position:absolute;
+    right:10px;
+  }
+  
+  .red-star {
+    color: red;
+    margin-left: 4px;
+  }
+  

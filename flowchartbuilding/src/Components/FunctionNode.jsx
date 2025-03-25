@@ -1,145 +1,88 @@
-
 import React, { useState, useEffect } from "react";
 import { Handle, useUpdateNodeInternals } from "reactflow";
-
+import "./FunctionNode.css";
 
 export default function FunctionNode({ id, data }) {
   const [activeInput, setActiveInput] = useState(null);
   const updateNodeInternals = useUpdateNodeInternals();
   const functionDict = data.functionDict;
 
-  // Get config based on data.function, default to a basic config
-  const config = functionDict[data.func] || {
+  const config = functionDict?.[data.func] || {
     inputs: 1,
     outputs: 1,
-    inputNames: ["input"],
+    inputNames: { input: null },
     outputNames: ["output"],
   };
 
-  // Update node internals when data.function changes
+  const inputKeys = Object.keys(config.inputNames || {});
+  const totalInputs = inputKeys.length;
+
   useEffect(() => {
-    updateNodeInternals(id); // Recalculate handle positions
+    updateNodeInternals(id);
   }, [data.func, id, updateNodeInternals]);
 
   const handleConnect = (handleId) => {
     setActiveInput(handleId);
   };
 
-  // Calculate node height based on max handles
-  const maxHandles = Math.max(config.inputs, config.outputs);
-  const baseHeight = 60; // Minimum height for content
-  const handleSpace = 20; // Extra space per handle
+  const maxHandles = Math.max(totalInputs, config.outputs || 0);
+  const baseHeight = 60;
+  const handleSpace = 25;
   const nodeHeight = baseHeight + maxHandles * handleSpace;
 
-  // Calculate equal distance between handles based on node height
   const getHandlePosition = (index, total) => {
-    if (total === 1) return nodeHeight / 2; // Center single handle
-    const handleArea = nodeHeight - 20; // 10px padding top/bottom
-    const step = handleArea / (total - 1 || 1); // Equal steps
-    return 10 + index * step; // Start 10px from top
+    if (total === 1) return nodeHeight / 2;
+    const handleArea = nodeHeight - 20;
+    const step = handleArea / (total - 1 || 1);
+    return 10 + index * step;
   };
 
   return (
-    <div
-      style={{
-        padding: "10px",
-        border: "1px solid #777",
-        borderRadius: "5px",
-        background: "#fff",
-        minWidth: "200px", // Increased width for handle names
-        height: `${nodeHeight}px`, // Dynamic height
-        position: "relative",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      {/* Dynamically created input handles with names */}
-      <div style={{ position: "absolute", left: 0, top: 0 }}>
-        {Array.from({ length: config.inputs }).map((_, index) => (
-          <div
-            key={`input-wrapper-${index}`}
+    <div className="node-container" style={{ height: `${nodeHeight}px` }}>
+      {/* Input Handles */}
+      {inputKeys.map((key, index) => (
+        <div
+          key={`input-wrapper-${index}`}
+          className="input-wrapper"
+          style={{ top: `${getHandlePosition(index, totalInputs)}px` }}
+        >
+          <Handle
+            type="target"
+            id={key}
+            onConnect={() => handleConnect(key)}
+            className="custom-handle input-handle"
             style={{
-              position: "absolute",
-              top: `${getHandlePosition(index, config.inputs)}px`,
-              transform: "translateY(50%)", 
-              display: "flex",
-              alignItems: "center",
+              backgroundColor: activeInput === key ? "blue" : "gray",
             }}
-          >
-            <Handle
-              type="target"
-              id={config.inputNames[index]}
-              onConnect={() => handleConnect(config.inputNames[index])}
-              style={{
-                position: "absolute",
-                left: "0px",   
-                backgroundColor: activeInput === config.inputNames[index] ? "blue" : "gray",
-                width: "10px",
-                height: "10px",
-                borderRadius: "50%",
-                transform: "translateX(-50%)", 
-              }}
-            />
-            <span
-              style={{
-                position:"absolute",
-                fontSize: "10px",
-                color: "#333",
-                left:"10px"
-              }}
-            >
-              {config.inputNames[index]}
-            </span>
-          </div>
-        ))}
+          />
+          <span className="handle-label input-handle-label">
+            {key}
+            {config.inputNames[key] == null && (
+              <span className="red-star">*</span>
+            )}
+          </span>
+        </div>
+      ))}
+      {/* Node Content */}
+      <div className="node-content">
+        <div className="node-title">{data.label || "Function Node"}</div>
       </div>
 
-      {/* Node content */}
-      <div style={{ textAlign: "center" }}>
-        <div style={{ fontWeight: "bold" }}>{data.label || "Function Node"}</div>
-        
-      </div>
-
-      {/* Dynamically created output handles with names */}
-      <div style={{ position: "absolute", right:0, top: 0 }}>
-        {Array.from({ length: config.outputs }).map((_, index) => (
-          <div
-            key={`output-wrapper-${index}`}
-            style={{
-              position: "absolute",
-              top: `${getHandlePosition(index, config.outputs)}px`,
-              transform: "translateY(50%)", // Center vertically
-              display: "flex",
-              alignItems: "left",
-            }}
-          >
-            <span
-              style={{
-                position:"absolute",
-                fontSize: "10px",
-                color: "#333",
-                right:"10px"
-              }}
-            >
-              {config.outputNames[index]}
-            </span>
-            <Handle
-              type="source"
-              id={config.outputNames[index]}
-              style={{
-                position: "absolute",
-                left:"0px",
-                backgroundColor: "green",
-                width: "10px",
-                height: "10px",
-                borderRadius: "-50%",
-                transform: "translateX(-50%)", 
-              }}
-            />
-          </div>
-        ))}
-      </div>
+      {/* Output Handles */}
+      {(config.outputNames || []).map((name, index) => (
+        <div
+          key={`output-wrapper-${index}`}
+          className="output-wrapper"
+          style={{ top: `${getHandlePosition(index, config.outputs)}px` }}
+        >
+          <span className="handle-label output-handle-label">{name}</span>
+          <Handle
+            type="source"
+            id={name}
+            className="custom-handle output-handle"
+          />
+        </div>
+      ))}
     </div>
   );
 }

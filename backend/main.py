@@ -171,7 +171,6 @@ async def get_function_json():
             name: parse_function(source_code)
             for name, source_code in function_dict.items()
         }
-        print(parsed_functions)
         return parsed_functions
     
     except Exception as e: 
@@ -227,7 +226,6 @@ async def execute_function(data: NodeData):
     func = function_handlers[data.func]
     data111 = json.dumps(data.inputs, indent=2)
 
-    # print("hhdhhdhdhdh",data)
     with open("image.json", "w") as file:
         file.write(str(data111))
     try:

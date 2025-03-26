@@ -60,16 +60,21 @@ def get_contour_centroid(contour:np.ndarray):
     center =(cx,cy)
     return center
 
+def roshan_blur(image,number):
+    #blurs a grayscale image with a kernal of nunber
+    Gaussian = cv2.GaussianBlur(image, (number, number), 0)
+    return Gaussian
+
 def threshold_image(image, lower_th=120, upper_th=255):
+    print("its herere")
     """Apply thresholding to the given image using lower and upper threshold values."""
     _, thresholded_image = cv2.threshold(image, lower_th, upper_th, cv2.THRESH_BINARY)
-    # kernel_size=5
-    # kernel = np.ones((kernel_size, kernel_size), np.uint8)
-    
-    # Apply Dilation
-    # dilation = cv2.dilate(thresholded_image, kernel, iterations=1)
-    # _, binary_image = cv2.threshold(dilation, 127, 255, cv2.THRESH_BINARY)
-    # thresholded_image 
+    return thresholded_image
+
+def threshold_image_tozero(image, lower_th=120, upper_th=255):
+    print("its herere")
+    """Apply thresholding to the given image using lower and upper threshold values."""
+    _, thresholded_image = cv2.threshold(image, lower_th, upper_th, cv2.THRESH_TOZERO)
     return thresholded_image
 
 def find_contours(image,retrival_mode=cv2.RETR_TREE, approximation_method=cv2.CHAIN_APPROX_SIMPLE):

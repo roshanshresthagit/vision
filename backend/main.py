@@ -148,6 +148,8 @@ async def execute_flow(request: Request):
                 # Remove processed edges
                 for edge in to_remove:
                     pending_edges.remove(edge)
+                
+                await asyncio.sleep(0.1)
                     
             yield json.dumps({"message": "All results processed"}) + "\n"
 

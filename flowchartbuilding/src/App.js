@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { addEdge, useNodesState, useEdgesState, reconnectEdge } from "reactflow";
+import { addEdge, useNodesState, useEdgesState, reconnectEdge, SmoothStepEdge, MarkerType } from "reactflow";
 import Sidebar from "./Components/Sidebar";
 import FlowCanvas from "./Components/FlowCanvas";
 import InputNode from "./Components/InputNode";
@@ -145,7 +145,19 @@ export default function App() {
 
   // Handle edge connections here
   const onConnect = useCallback(
-    (params) => setEdges((els) => addEdge({...params, animated:true, style:{stroke:'green'}}, els)),
+    (params) => setEdges((els) => addEdge(
+      {
+        ...params, 
+        animated:true, 
+        style:{stroke:'green'}, 
+        type:"straight", 
+        markerEnd:{
+            type: MarkerType.ArrowClosed,
+            width: 20,
+            height: 20,
+            color: 'green',
+            }
+      }, els)),
     []
   );
 

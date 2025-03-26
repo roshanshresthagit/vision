@@ -14,10 +14,6 @@ const Sidebar = ({ onDragStart, functionListCall, isVisible }) => {
     func.label.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Debugging to see filtered results
-  useEffect(() => {
-    console.log("Filtered Functions:", filteredFunctions);
-  }, [filteredFunctions]);
 
   return (
     <div className="sidebar-container">

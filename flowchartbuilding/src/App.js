@@ -153,8 +153,6 @@ export default function App() {
         type:"straight", 
         markerEnd:{
             type: MarkerType.ArrowClosed,
-            width: 20,
-            height: 20,
             color: 'green',
             }
       }, els)),

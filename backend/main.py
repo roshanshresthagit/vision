@@ -1,3 +1,4 @@
+import cv2
 import json
 import base64
 import asyncio
@@ -8,7 +9,7 @@ from io import BytesIO
 from pydantic import BaseModel
 from typing import Dict, List, Any
 from fastapi.responses import StreamingResponse
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from PIL import Image
 from fastapi.middleware.cors import CORSMiddleware
 from dic_gen import parse_function

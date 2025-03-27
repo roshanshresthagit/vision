@@ -9,7 +9,7 @@ from io import BytesIO
 from pydantic import BaseModel
 from typing import Dict, List, Any
 from fastapi.responses import StreamingResponse
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from PIL import Image
 from fastapi.middleware.cors import CORSMiddleware
 from dic_gen import parse_function

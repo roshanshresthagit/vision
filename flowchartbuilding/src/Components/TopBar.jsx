@@ -70,7 +70,7 @@ const TopBar = ({
         <button className="top-bar-button menu-toggle" onClick={toggleSidebar}>
           <Menu size={24} />
         </button>
-        <h1 className="app-title">Flow Editor</h1>
+        <h1 className="app-title">Flow Based System</h1>
       </div>
 
       <div className="top-bar-actions">

@@ -1,16 +1,25 @@
-import React, { useState } from "react";
-import './sidebar.css'
+import React, { useState, useEffect } from "react";
+import "./sidebar.css";
+
 const Sidebar = ({ onDragStart, functionListCall, isVisible }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Debugging to check if functionListCall has data
+  useEffect(() => {
+    console.log("Function List Call:", functionListCall);
+  }, [functionListCall]);
 
   const filteredFunctions = functionListCall.filter((func) =>
     func.label.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+
   return (
     <div className="sidebar-container">
       {isVisible && (
         <div className="sidebar">
+          {/* Search Bar */}
           <div className="search-bar-container">
             <i className="fa fa-search search-icon"></i>
             <input
@@ -21,6 +30,8 @@ const Sidebar = ({ onDragStart, functionListCall, isVisible }) => {
               className="search-bar"
             />
           </div>
+
+          {/* Static Buttons */}
           <button
             className="function-button"
             draggable
@@ -30,25 +41,15 @@ const Sidebar = ({ onDragStart, functionListCall, isVisible }) => {
           >
             Input
           </button>
-          <button 
-          className="function-button"
-          draggable
-          onDragStart={(event)=>
-            onDragStart(event,{id:"imageinput", label:"ImageInput", func:"imageinput"})
-          }
+          <button
+            className="function-button"
+            draggable
+            onDragStart={(event) =>
+              onDragStart(event, { id: "imageinput", label: "Image Input", func: "imageinput" })
+            }
           >
             Image Input
           </button>
-          {filteredFunctions.map((func) => (
-            <button
-              key={func.id}
-              className="function-button"
-              draggable
-              onDragStart={(event) => onDragStart(event, func)}
-            >
-              {func.label}
-            </button>
-          ))}
           <button
             className="function-button result-button"
             draggable
@@ -58,6 +59,30 @@ const Sidebar = ({ onDragStart, functionListCall, isVisible }) => {
           >
             Result
           </button>
+
+          {/* Collapsible Functions Section */}
+          <button className="collapse-button function-button" onClick={() => setIsCollapsed(!isCollapsed)}>
+            {isCollapsed ? "Show Functions ▼" : "Hide Functions ▲"}
+          </button>
+
+          {!isCollapsed && (
+            <div className="function-list">
+              {filteredFunctions.length > 0 ? (
+                filteredFunctions.map((func) => (
+                  <button
+                    key={func.id}
+                    className="function-button"
+                    draggable
+                    onDragStart={(event) => onDragStart(event, func)}
+                  >
+                    {func.label}
+                  </button>
+                ))
+              ) : (
+                <p className="no-functions">No functions found</p>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

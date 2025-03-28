@@ -1,9 +1,6 @@
-import base64
-import io
 import json
 import cv2
 import numpy as np
-from PIL import Image
 
 def add(a,b):
     sum = a+b

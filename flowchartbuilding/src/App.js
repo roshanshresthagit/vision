@@ -178,7 +178,7 @@ export default function App() {
     const nodeValues = {};
 
     for (const node of nodes) {
-      if (node.type === "inputNode"|| "imageInputNode") {
+      if (node.type === "inputNode"|| node.type === "imageInputNode") {
         const inputValue = inputs[node.id];
         if (typeof inputValue === "string" && inputValue.startsWith("data:image")) {
           nodeValues[node.id] = inputValue;
@@ -208,7 +208,6 @@ export default function App() {
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-
         let newlineIndex;
         while ((newlineIndex = buffer.indexOf("\n")) >= 0) {
           const line = buffer.slice(0, newlineIndex).trim();

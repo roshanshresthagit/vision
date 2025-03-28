@@ -15,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dic_gen import parse_function
 
 
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -173,6 +174,7 @@ async def get_function_list_json():
             for name, obj in vars(functions).items()
             if callable(obj)
         }
+        print(function_dict)
         parsed_functions = {
             name: parse_function(source_code)
             for name, source_code in function_dict.items()

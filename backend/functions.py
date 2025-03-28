@@ -5,16 +5,16 @@ import cv2
 import numpy as np
 from PIL import Image
 
-def add(a,b):
-    sum = a+b
+def add(number_1,number_2):
+    sum = number_1+number_2
     return sum
 
-def sub(a,b):
-    subtract = a-b
+def sub(number_1,number_2):
+    subtract = number_1-number_2
     return subtract
 
-def multiply(a,b):
-    multiplication = a*b
+def multiply(number_1,number_2):
+    multiplication = number_1*number_2
     return multiplication
 
 
@@ -190,10 +190,6 @@ def draw_contours(image, contour_data, color_to_draw=(0,255,0)):
 
     # Copy image before drawing
     contour_image = image.copy()
-    # if len(contour_image.shape) == 2:  # Grayscale image (1 channel)
-    #     contour_image = cv2.cvtColor(contour_image, cv2.COLOR_GRAY2BGR)
-
-    # Draw all contours on the image
     cv2.drawContours(contour_image, contours, -1, color_to_draw, 1)  
     cv2.imwrite("image.jpg",contour_image)
 

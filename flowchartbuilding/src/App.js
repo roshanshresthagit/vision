@@ -1,15 +1,15 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import { addEdge, useNodesState, useEdgesState, reconnectEdge, SmoothStepEdge, MarkerType } from "reactflow";
+import React, { useState, useCallback, useRef } from "react";
+import { addEdge, useNodesState, useEdgesState, reconnectEdge, MarkerType } from "reactflow";
 import Sidebar from "./Components/Sidebar";
 import FlowCanvas from "./Components/FlowCanvas";
-import InputNode from "./Components/InputNode";
-import ImageInputNode from "./Components/ImageInputNode";
-import FunctionNode from "./Components/FunctionNode";
-import ResultNode from "./Components/ResultNode";
+import InputNode from "./Nodes/InputNode";
+import ImageInputNode from "./Nodes/ImageInputNode";
+import FunctionNode from "./Nodes/FunctionNode";
+import ResultNode from "./Nodes/ResultNode";
 import "./App.css";
 import TopBar from "./Components/TopBar";
+import { useFlowData } from "./hooks/useFlowData";
 
-const defaultfunctionList = [];
 const DefaultInputList = [
   { id: "string-input", label: "String Input" },
   { id: "number-input", label: "Number Input" },
@@ -31,49 +31,14 @@ export default function App() {
   const [inputs, setInputs] = useState({});
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [generatedCode, setGeneratedCode] = useState("");
-  const [functionDefinitions, setFunctionDefinitions] = useState({});
   const [inputNodeCount, setInputNodeCount] = useState(DefaultInputList);
-  const [functionDict, setfunctionDict] = useState(null);
-  const [functionList, setfunctionList] = useState(defaultfunctionList);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const { functionDict, functionList, functionDefinitions } = useFlowData();
 
   const toggleSidebar = () => {
     setIsSidebarVisible((prev) => !prev);
   };
 
-  useEffect(() => {
-    const fetchFunctionDict = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/function_dict");
-        const json = await response.json();
-        setfunctionDict(json);
-      } catch (error) {
-        console.error("Error fetching JSON:", error);
-      }
-    };
-
-    const fetchFunctionList = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/function_list");
-        const json = await response.json();
-        setfunctionList(json);
-      } catch (error) {
-        console.error("Error fetching JSON:", error);
-      }
-    };
-
-    async function fetchFunctions() {
-      const response1 = await fetch("http://localhost:8000/get_functions");
-      const data = await response1.json();
-      setFunctionDefinitions(data);
-    }
-
-    fetchFunctionDict();
-    fetchFunctionList();
-    fetchFunctions();
-  }, []);
-
-  // Handle drag start
   const onDragStart = (event, func) => {
     event.dataTransfer.setData("application/reactflow", JSON.stringify(func));
     event.dataTransfer.effectAllowed = "move";
@@ -156,7 +121,7 @@ export default function App() {
             color: 'green',
             }
       }, els)),
-    []
+    [setEdges]
   );
 
   const onEdgeUpdateStart = useCallback(() => {
@@ -166,14 +131,14 @@ export default function App() {
   const onEdgeUpdate = useCallback((oldEdge, newConnection) => {
     edgeReconnectSuccessful.current = true;
     setEdges((els) => reconnectEdge(oldEdge, newConnection, els));
-  }, []);
+  }, [setEdges]);
 
   const onEdgeUpdateEnd = useCallback((_, edge) => {
     if (!edgeReconnectSuccessful.current) {
       setEdges((eds) => eds.filter((e) => e.id !== edge.id));
     }
     edgeReconnectSuccessful.current = true;
-  }, []);
+  }, [setEdges]);
 
   // Delete node
   const onDeleteNode = () => {

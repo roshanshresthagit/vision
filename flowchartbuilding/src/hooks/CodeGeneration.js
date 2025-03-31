@@ -1,3 +1,4 @@
+
 export const useCodeGeneration = (nodes, edges, functionDefinitions) => {
   const generatePythonCode = () => {
     let code = "# Auto-generated Python script\n\n";
@@ -32,8 +33,7 @@ export const useCodeGeneration = (nodes, edges, functionDefinitions) => {
         const sources = functionCalls[target]
           .map((id) => nodes.find((n) => n.id === id).data.func + id)
           .join(", ");
-        console.log(sources);
-        code += `${targetNode.data.label}_result = ${targetNode.data.func}(${sources})\n`;
+        code += `${targetNode.data.label + targetNode.id} = ${targetNode.data.func}(${sources})\n`;
       }
     });
 
@@ -43,7 +43,7 @@ export const useCodeGeneration = (nodes, edges, functionDefinitions) => {
       let lastEdge = edges.find((edge) => edge.target === resultNode.id);
       let lastFunction = nodes.find((node) => node.id === lastEdge.source);
       if (lastFunction) {
-        code += `print("Final Result:", ${lastFunction.data.label}_result)\n`;
+        code += `print("Final Result:", ${lastFunction.data.label + lastFunction.id})\n`;
       }
     }
 

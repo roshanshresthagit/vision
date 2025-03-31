@@ -8,6 +8,8 @@ import { useEdgeManagement } from "./hooks/useEdgeManagement";
 import { nodeTypes, DefaultInputList } from "./constants/nodes";
 import { useNodesState, useEdgesState } from "reactflow";
 import { useFlowExecution } from "./hooks/useFlowExecution";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -133,11 +135,11 @@ export default function App() {
             setSelectedNodeId={setSelectedNodeId}
             onDrop={onDrop}
           />
-          <pre style={{ background: "#eee", padding: "10px", marginTop: "10px" }}>
+          <SyntaxHighlighter language="python" style={coy}>
             {typeof generatedCode === "string"
               ? generatedCode
               : JSON.stringify(generatedCode, null, 2)}
-          </pre>
+          </SyntaxHighlighter>
         </div>
       </div>
     </div>

@@ -1,30 +1,14 @@
-import React, { useState, useCallback, useRef } from "react";
-import { addEdge, useNodesState, useEdgesState, reconnectEdge, MarkerType } from "reactflow";
-import Sidebar from "./Components/Sidebar";
-import FlowCanvas from "./Components/FlowCanvas";
-import InputNode from "./Nodes/InputNode";
-import ImageInputNode from "./Nodes/ImageInputNode";
-import FunctionNode from "./Nodes/FunctionNode";
-import ResultNode from "./Nodes/ResultNode";
 import "./App.css";
 import TopBar from "./Components/TopBar";
+import Sidebar from "./Components/Sidebar";
+import FlowCanvas from "./Components/FlowCanvas";
 import { useFlowData } from "./hooks/useFlowData";
-
-const DefaultInputList = [
-  { id: "string-input", label: "String Input" },
-  { id: "number-input", label: "Number Input" },
-  { id: "image-input", label: "Image Input" },
-];
-
-const nodeTypes = {
-  functionNode: FunctionNode,
-  inputNode: InputNode,
-  imageInputNode: ImageInputNode,
-  resultNode: ResultNode,
-};
+import React, { useState, useCallback } from "react";
+import { useEdgeManagement } from "./hooks/useEdgeManagement";
+import { nodeTypes, DefaultInputList } from "./constants/nodes";
+import { useNodesState, useEdgesState } from "reactflow";
 
 export default function App() {
-  const edgeReconnectSuccessful = useRef(true);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [nodeId, setNodeId] = useState(1);
@@ -34,6 +18,8 @@ export default function App() {
   const [inputNodeCount, setInputNodeCount] = useState(DefaultInputList);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const { functionDict, functionList, functionDefinitions } = useFlowData();
+  const { onConnect,onEdgeUpdateStart,onEdgeUpdate,onEdgeUpdateEnd } = useEdgeManagement(setEdges);
+
 
   const toggleSidebar = () => {
     setIsSidebarVisible((prev) => !prev);
@@ -107,39 +93,6 @@ export default function App() {
     [setNodes, nodeId, inputNodeCount, functionDict]
   );
   
-
-  // Handle edge connections here
-  const onConnect = useCallback(
-    (params) => setEdges((els) => addEdge(
-      {
-        ...params, 
-        animated:true, 
-        style:{stroke:'green'}, 
-        type:"straight", 
-        markerEnd:{
-            type: MarkerType.ArrowClosed,
-            color: 'green',
-            }
-      }, els)),
-    [setEdges]
-  );
-
-  const onEdgeUpdateStart = useCallback(() => {
-    edgeReconnectSuccessful.current = false;
-  }, []);
-
-  const onEdgeUpdate = useCallback((oldEdge, newConnection) => {
-    edgeReconnectSuccessful.current = true;
-    setEdges((els) => reconnectEdge(oldEdge, newConnection, els));
-  }, [setEdges]);
-
-  const onEdgeUpdateEnd = useCallback((_, edge) => {
-    if (!edgeReconnectSuccessful.current) {
-      setEdges((eds) => eds.filter((e) => e.id !== edge.id));
-    }
-    edgeReconnectSuccessful.current = true;
-  }, [setEdges]);
-
   // Delete node
   const onDeleteNode = () => {
     if (selectedNodeId) {
@@ -231,25 +184,19 @@ export default function App() {
         functionDefinitions={functionDefinitions}
         setGeneratedCode={setGeneratedCode}
       />
-
       <div className="main-content">
         <Sidebar
           onDragStart={onDragStart}
-          executeFlow={executeFlow}
-          onDeleteNode={onDeleteNode}
-          selectedNodeId={selectedNodeId}
           functionListCall={functionList}
-          inputList={inputNodeCount}
           isVisible={isSidebarVisible}
         />
-
         <div className="canvas-container">
           <FlowCanvas
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
-            onEdgeUpdate={onEdgeUpdate} // ✅ Correct handler
+            onEdgeUpdate={onEdgeUpdate} 
             onEdgeUpdateStart={onEdgeUpdateStart}
             onEdgeUpdateEnd={onEdgeUpdateEnd}
             onConnect={onConnect}
@@ -257,7 +204,6 @@ export default function App() {
             setSelectedNodeId={setSelectedNodeId}
             onDrop={onDrop}
           />
-
           <pre style={{ background: "#eee", padding: "10px", marginTop: "10px" }}>
             {typeof generatedCode === "string"
               ? generatedCode

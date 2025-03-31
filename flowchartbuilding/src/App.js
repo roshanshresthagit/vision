@@ -7,6 +7,7 @@ import React, { useState, useCallback } from "react";
 import { useEdgeManagement } from "./hooks/useEdgeManagement";
 import { nodeTypes, DefaultInputList } from "./constants/nodes";
 import { useNodesState, useEdgesState } from "reactflow";
+import { useFlowExecution } from "./hooks/useFlowExecution";
 
 export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -14,11 +15,11 @@ export default function App() {
   const [nodeId, setNodeId] = useState(1);
   const [inputs, setInputs] = useState({});
   const [selectedNodeId, setSelectedNodeId] = useState(null);
-  const [generatedCode, setGeneratedCode] = useState("");
   const [inputNodeCount, setInputNodeCount] = useState(DefaultInputList);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const { functionDict, functionList, functionDefinitions } = useFlowData();
   const { onConnect,onEdgeUpdateStart,onEdgeUpdate,onEdgeUpdateEnd } = useEdgeManagement(setEdges);
+  const {executeFlow, generatedCode, setGeneratedCode} = useFlowExecution(nodes, edges, inputs, setNodes);
 
 
   const toggleSidebar = () => {
@@ -30,7 +31,6 @@ export default function App() {
     event.dataTransfer.effectAllowed = "move";
   };
 
-  // Handle drop
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
@@ -63,7 +63,7 @@ export default function App() {
             ? `${func.label}${inputNodeCount}`
             : func.label,
           func: func.func,
-          value: isInput || isImageInput ? 0 : undefined, // Initially set to 0 for both input and imageinput
+          value: isInput || isImageInput ? 0 : undefined, 
           setValue:
             isInput || isImageInput
               ? (val) =>
@@ -93,82 +93,11 @@ export default function App() {
     [setNodes, nodeId, inputNodeCount, functionDict]
   );
   
-  // Delete node
   const onDeleteNode = () => {
     if (selectedNodeId) {
       setNodes((nds) => nds.filter((node) => node.id !== selectedNodeId));
       setEdges((eds) => eds.filter((edge) => edge.source !== selectedNodeId && edge.target !== selectedNodeId));
       setSelectedNodeId(null);
-    }
-  };
-
-  const executeFlow = async () => {
-    const nodeValues = {};
-
-    for (const node of nodes) {
-      if (node.type === "inputNode"|| "imageInputNode") {
-        const inputValue = inputs[node.id];
-        if (typeof inputValue === "string" && inputValue.startsWith("data:image")) {
-          nodeValues[node.id] = inputValue;
-        } else {
-          nodeValues[node.id] = parseFloat(inputValue) || 0;
-        }
-      }
-    }
-
-    try {
-      const response = await fetch("http://localhost:8000/execute_flow", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nodes,
-          edges,
-          inputValues: nodeValues,
-        }),
-      });
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-
-        let newlineIndex;
-        while ((newlineIndex = buffer.indexOf("\n")) >= 0) {
-          const line = buffer.slice(0, newlineIndex).trim();
-          buffer = buffer.slice(newlineIndex + 1);
-
-          if (line) {
-            console.log("Received line:", line);
-
-            const data = JSON.parse(line);
-
-            if (data.resultNode) {
-              console.log(`ResultNode ${data.resultNode}:`, data.value);
-
-              nodeValues[data.resultNode] = data.value;
-              setNodes((nds) =>
-                nds.map((node) =>
-                  node.id === data.resultNode
-                    ? { ...node, data: { ...node.data, value: data.value } }
-                    : node
-                )
-              );
-            } else if (data.message) {
-              console.log("Message:", data.message);
-            } else if (data.error) {
-              console.error("Error:", data.error);
-            }
-          }
-        }
-      }
-      console.log("Flow execution completed!");
-    } catch (error) {
-      console.error("Error:", error);
     }
   };
 

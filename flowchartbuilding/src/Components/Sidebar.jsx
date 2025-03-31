@@ -8,7 +8,7 @@ const Sidebar = ({ onDragStart, functionListCall, isVisible }) => {
   // Debugging to check if functionListCall has data
   useEffect(() => {
     console.log("Function List Call:", functionListCall);
-  }, [functionListCall]);
+  }, [functionListCall]); 
 
   const filteredFunctions = functionListCall.filter((func) =>
     func.label.toLowerCase().includes(searchTerm.toLowerCase())

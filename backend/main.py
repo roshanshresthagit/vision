@@ -12,7 +12,7 @@ from fastapi.responses import StreamingResponse
 from fastapi import FastAPI, Request
 from PIL import Image
 from fastapi.middleware.cors import CORSMiddleware
-from dic_gen import parse_function
+from dic_gen import get_class_info
 
 
 app = FastAPI()
@@ -103,9 +103,14 @@ async def execute_flow(request: Request):
                 return
 
             func_name = node["data"].get("func")
-            function_handlers = {name : obj 
-                     for name, obj in vars(functions).items() 
-                     if callable(obj)}
+            function_handlers = {name : {func_name:func_obj
+                                        for func_name, func_obj in vars(obj).items()
+                                        if callable(func_obj) and func_name not in
+                                        ('__dict__', '__doc__', '__init__', '__module__', '__weakref__')} or None
+                    for name, obj in vars(functions).items() 
+                    if inspect.isclass(obj) and obj.__module__ == functions.__name__
+                    }
+            
             if func_name in function_handlers:
                 try:
                     result = function_handlers[func_name](*input_values)
@@ -151,16 +156,8 @@ async def execute_flow(request: Request):
 @app.get("/function_dict")
 async def get_function_json():
     try:
-        function_dict = {
-            name: inspect.getsource(obj)
-            for name, obj in vars(functions).items()
-            if callable(obj)
-        }
-        parsed_functions = {
-            name: parse_function(source_code)
-            for name, source_code in function_dict.items()
-        }
-        return parsed_functions
+        function_dict = get_class_info(functions, islist=False)
+        return function_dict
     
     except Exception as e: 
         return {"error": str(e)}
@@ -168,18 +165,8 @@ async def get_function_json():
 @app.get("/function_list")
 async def get_function_list_json():
     try:
-        function_dict = {
-            name: inspect.getsource(obj)
-            for name, obj in vars(functions).items()
-            if callable(obj)
-        }
-        parsed_functions = {
-            name: parse_function(source_code)
-            for name, source_code in function_dict.items()
-        }
-        data = [{'id':func_name, 'label':func_name.capitalize(), 'func':func_name} 
-                for func_name in parsed_functions.keys()]
-        return data
+        function_list = get_class_info(functions, islist=True)
+        return function_list
     
     except Exception as e:
         return {"error": str(e)}

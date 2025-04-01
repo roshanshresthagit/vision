@@ -113,8 +113,24 @@ async def execute_flow(request: Request):
                     }
             for category, functions_dict in function_handlers.items():
                 if isinstance(functions_dict, dict) and func_name in functions_dict:
+                    func = functions_dict[func_name]
+
                     try:
-                        result = functions_dict[func_name](*input_values)
+                        class_obj = getattr(functions, category, None)
+
+                        if inspect.isclass(class_obj):  
+                            instance = class_obj()
+
+                            if isinstance(func, staticmethod):
+                                result = func.__func__(*input_values)
+                            elif isinstance(func, classmethod):
+                                result = func.__func__(class_obj, *input_values)
+                            else:
+                                result = func(instance, *input_values)
+
+                        else:
+                            result = func(*input_values)
+
                         node_values[node_id] = result
                     except Exception as e:
                         print(f"Error executing {func_name}: {e}")
@@ -122,6 +138,10 @@ async def execute_flow(request: Request):
                     break
             else:
                 print(f"Function '{func_name}' not found")
+
+
+
+
 
             processed_nodes.add(node_id)
 

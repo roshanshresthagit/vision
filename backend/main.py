@@ -103,17 +103,20 @@ async def execute_flow(request: Request):
                 return
 
             func_name = node["data"].get("func")
-            function_handlers = {name : {func_name:func_obj
-                                        for func_name, func_obj in vars(obj).items()
-                                        if callable(func_obj) and func_name not in
-                                        ('__dict__', '__doc__', '__init__', '__module__', '__weakref__')} or None
-                    for name, obj in vars(functions).items() 
-                    if inspect.isclass(obj) and obj.__module__ == functions.__name__
+            
+            function_handlers = {func_name:func_obj
+                                    for name, obj in vars(functions).items() 
+                                    if inspect.isclass(obj) and obj.__module__ == functions.__name__
+                                for func_name, func_obj in vars(obj).items()
+                                if callable(func_obj) and func_name not in
+                                ('__dict__', '__doc__', '__init__', '__module__', '__weakref__') or None
                     }
             
             if func_name in function_handlers:
                 try:
-                    result = function_handlers[func_name](*input_values)
+                    instance = next(obj for name, obj in vars(functions).items() 
+                       if inspect.isclass(obj) and func_name in dir(obj))
+                    result = function_handlers[func_name](instance, *input_values)
                     node_values[node_id] = result
                 except Exception:
                     node_values[node_id] = None
@@ -157,7 +160,6 @@ async def execute_flow(request: Request):
 async def get_function_json():
     try:
         function_dict = get_class_info(functions, islist=False)
-        print(function_dict)
         return function_dict
     
     except Exception as e: 

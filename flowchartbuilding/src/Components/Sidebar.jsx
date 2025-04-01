@@ -10,7 +10,7 @@ const SidebarItem = ({ item, onDragStart }) => {
         className="function-button"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
-        {item.children ? (isCollapsed ? "▶" : "▼") : null} {item.label}
+        {item.children || item.methods ? (isCollapsed ? "▶" : "▼") : null} {item.label}
       </button>
       
       {!isCollapsed && item.children && (

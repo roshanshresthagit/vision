@@ -26,7 +26,7 @@ app.add_middleware(
 
 class Node(BaseModel):
     id: str
-    type: str  # inputNode, functionNode, resultNode
+    type: str  
     value: Any = None
     data: Dict[str, Any] = {}
 
@@ -91,7 +91,7 @@ async def execute_flow(request: Request):
                     src_node = next((n for n in nodes if n["id"] == src_id), None)
                     if src_node and src_node["type"] == "functionNode":
                         await process_function_node(src_id)
-                    elif src_node and src_node["type"] == "inputNode" or "imageInputNode":
+                    elif src_node and src_node["type"] in["inputNode","imageInputNode"]:
                         node_values[src_id] = inputValues.get(src_id)
 
                 val = node_values.get(src_id)
@@ -103,6 +103,7 @@ async def execute_flow(request: Request):
                 return
 
             func_name = node["data"].get("func")
+            print(func_name)
             function_handlers = {name : {func_name:func_obj
                                         for func_name, func_obj in vars(obj).items()
                                         if callable(func_obj) and func_name not in
@@ -110,13 +111,18 @@ async def execute_flow(request: Request):
                     for name, obj in vars(functions).items() 
                     if inspect.isclass(obj) and obj.__module__ == functions.__name__
                     }
-            
-            if func_name in function_handlers:
-                try:
-                    result = function_handlers[func_name](*input_values)
-                    node_values[node_id] = result
-                except Exception:
-                    node_values[node_id] = None
+            for category, functions_dict in function_handlers.items():
+                if isinstance(functions_dict, dict) and func_name in functions_dict:
+                    try:
+                        result = functions_dict[func_name](*input_values)
+                        node_values[node_id] = result
+                    except Exception as e:
+                        print(f"Error executing {func_name}: {e}")
+                        node_values[node_id] = None
+                    break
+            else:
+                print(f"Function '{func_name}' not found")
+
             processed_nodes.add(node_id)
 
         try:
@@ -157,7 +163,6 @@ async def execute_flow(request: Request):
 async def get_function_json():
     try:
         function_dict = get_class_info(functions, islist=False)
-        print(function_dict)
         return function_dict
     
     except Exception as e: 

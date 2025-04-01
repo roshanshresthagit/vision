@@ -58,7 +58,7 @@ class Arithmetic(ComputerVision):
     def __init__(self):
         super.__init__()
         
-    def add(self, a,b):
+    def add(a,b):
         sum = a+b
         return sum
 

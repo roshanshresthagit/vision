@@ -3,18 +3,32 @@ import { Handle, useUpdateNodeInternals } from "reactflow";
 import "./FunctionNode.css";
 
 export default function FunctionNode({ id, data }) {
+  console.log(data.functionDict);
   const [activeInput, setActiveInput] = useState(null);
   const updateNodeInternals = useUpdateNodeInternals();
   const functionDict = data.functionDict;
 
-  const config = functionDict?.[data.func] || {
+  const getFunctionConfig = (func, dict) => {
+    for (const category in dict) {
+      if (dict[category].methods && typeof dict[category].methods === 'object') {
+        if (dict[category].methods[func]) return dict[category].methods[func];
+      }
+      if (dict[category].children && typeof dict[category].children === 'object') {
+        const result = getFunctionConfig(func, dict[category].children);
+        if (result) return result;
+      }
+    }
+    return null;
+  };
+
+  const methodConfig = getFunctionConfig(data.func, functionDict) || {
     inputs: 1,
     outputs: 1,
     inputNames: { input: null },
     outputNames: ["output"],
   };
 
-  const inputKeys = Object.keys(config.inputNames || {});
+  const inputKeys = Object.keys(methodConfig.inputNames || {});
   const totalInputs = inputKeys.length;
 
   useEffect(() => {
@@ -25,7 +39,7 @@ export default function FunctionNode({ id, data }) {
     setActiveInput(handleId);
   };
 
-  const maxHandles = Math.max(totalInputs, config.outputs || 0);
+  const maxHandles = Math.max(totalInputs, methodConfig.outputs || 0);
   const baseHeight = 60;
   const handleSpace = 25;
   const nodeHeight = baseHeight + maxHandles * handleSpace;
@@ -57,7 +71,7 @@ export default function FunctionNode({ id, data }) {
           />
           <span className="handle-label input-handle-label">
             {key}
-            {config.inputNames[key] == null && (
+            {methodConfig.inputNames[key] == null && (
               <span className="red-star">*</span>
             )}
           </span>
@@ -69,11 +83,11 @@ export default function FunctionNode({ id, data }) {
       </div>
 
       {/* Output Handles */}
-      {(config.outputNames || []).map((name, index) => (
+      {(methodConfig.outputNames || []).map((name, index) => (
         <div
           key={`output-wrapper-${index}`}
           className="output-wrapper"
-          style={{ top: `${getHandlePosition(index, config.outputs)}px` }}
+          style={{ top: `${getHandlePosition(index, methodConfig.outputs)}px` }}
         >
           <span className="handle-label output-handle-label">{name}</span>
           <Handle

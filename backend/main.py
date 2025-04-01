@@ -157,6 +157,7 @@ async def execute_flow(request: Request):
 async def get_function_json():
     try:
         function_dict = get_class_info(functions, islist=False)
+        print(function_dict)
         return function_dict
     
     except Exception as e: 

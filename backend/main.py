@@ -26,7 +26,7 @@ app.add_middleware(
 
 class Node(BaseModel):
     id: str
-    type: str  # inputNode, functionNode, resultNode
+    type: str  
     value: Any = None
     data: Dict[str, Any] = {}
 
@@ -91,7 +91,7 @@ async def execute_flow(request: Request):
                     src_node = next((n for n in nodes if n["id"] == src_id), None)
                     if src_node and src_node["type"] == "functionNode":
                         await process_function_node(src_id)
-                    elif src_node and src_node["type"] == "inputNode" or "imageInputNode":
+                    elif src_node and src_node["type"] in["inputNode","imageInputNode"]:
                         node_values[src_id] = inputValues.get(src_id)
 
                 val = node_values.get(src_id)

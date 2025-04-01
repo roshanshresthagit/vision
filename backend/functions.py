@@ -53,20 +53,42 @@ class Threshold(ImageProcessing):
         _, thresholded_image = cv2.threshold(image, lower_th, upper_th, cv2.THRESH_BINARY_INV)
 
         return thresholded_image
-    
-class Arithmetic(ComputerVision):
+
+
+class Arithmetic():
     def __init__(self):
         super().__init__()
-        
-    def add(self,a,b):
-        sum = a+b
+    
+    def add(self,number_1, number_2):
+        sum = number_1+number_2
         return sum
 
-    def sub( a,b):
-        subtract = a-b
+    def sub( number_1, number_2):
+        subtract = number_1-number_2
         return subtract
 
-    def multiply( a,b):
-        multiplication = a*b
+    def multiply( number_1, number_2):
+        multiplication = number_1*number_2
         return multiplication
 
+class Calculas(Arithmetic):
+    def __init__(self):
+        super().__init__()
+    
+    def divide(self,number_1, number_2):
+        if number_2 == 0:
+            raise ValueError("Cannot divide by zero")
+        division = number_1/number_2
+        return division
+
+    def modulus( number_1, number_2):
+        modulus = number_1%number_2
+        return modulus
+
+    def power( number_1, number_2):
+        power = number_1**number_2
+        return power
+
+    def floor_division( number_1, number_2):
+        floor_division = number_1//number_2
+        return floor_division

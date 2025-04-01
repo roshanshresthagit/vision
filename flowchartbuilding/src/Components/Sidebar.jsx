@@ -6,13 +6,16 @@ const SidebarItem = ({ item, onDragStart }) => {
 
   return (
     <div className="sidebar-item">
+      {/* Button to toggle collapse */}
       <button
         className="function-button"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
-        {item.children ? (isCollapsed ? "▶" : "▼") : null} {item.label}
+        {/* Show collapsible arrow for children or methods */}
+        {item.children || item.methods ? (isCollapsed ? "▶" : "▼") : null} {item.label}
       </button>
       
+      {/* Render children if collapsed and has children */}
       {!isCollapsed && item.children && (
         <div className="sidebar-children">
           {Object.entries(item.children).map(([key, child]) => (
@@ -21,11 +24,12 @@ const SidebarItem = ({ item, onDragStart }) => {
         </div>
       )}
       
+      {/* Render methods if collapsed and has methods */}
       {!isCollapsed && item.methods && (
         <div className="sidebar-methods">
-          {item.methods.map((method) => (
+          {Object.entries(item.methods).map(([key, method]) => (
             <button
-              key={method.id}
+              key={key}
               className="function-button"
               draggable
               onDragStart={(event) => onDragStart(event, method)}

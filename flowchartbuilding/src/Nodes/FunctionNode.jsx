@@ -40,7 +40,7 @@ export default function FunctionNode({ id, data }) {
   };
 
   const maxHandles = Math.max(totalInputs, methodConfig.outputs || 0);
-  const baseHeight = 60;
+  const baseHeight = 10;
   const handleSpace = 25;
   const nodeHeight = baseHeight + maxHandles * handleSpace;
 
@@ -53,7 +53,6 @@ export default function FunctionNode({ id, data }) {
 
   return (
     <div className="node-container" style={{ height: `${nodeHeight}px` }}>
-      {/* Input Handles */}
       {inputKeys.map((key, index) => (
         <div
           key={`input-wrapper-${index}`}

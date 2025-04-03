@@ -8,7 +8,7 @@ class ImageProcessing(ComputerVision):
     def __init__(self):
         super().__init__()
     
-    def load_image( image_path):
+    def load_image( self,image_path):
         """Load an image from the given path and return it."""
         image = cv2.imread(image_path)
         if image is None:
@@ -16,23 +16,21 @@ class ImageProcessing(ComputerVision):
         return image
 
 
-    def resize_image( image: np.ndarray, dimension_of_image=(640,640)) -> np.ndarray:
+    def resize_image(self, image: np.ndarray, dimension_of_image=(640,640)) -> np.ndarray:
         if image is None:
             print("Error: Provided image is None.")
             return None
         resized_image = cv2.resize(image, dimension_of_image)
         return resized_image
 
- 
-    def convert_to_color_image( image):
+    def convert_to_color_image(self, image):
         color_image = cv2.cvtColor(image,cv2.COLOR_GRAY2BGR)
         return color_image
 
 
-    def convert_to_grayscale_image( image):
+    def convert_to_grayscale_image( self,image):
         print("hello i am under the water", type(image))
         image=np.array(image)
-        # color_image = cv2.cvtColor(image,cv2.COLOR_GRAY2BGR)
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         print("converted")
         
@@ -42,13 +40,13 @@ class Threshold(ImageProcessing):
     def __init__(self):
         super().__init__()
     
-    def binary_threshold_image( image, lower_th=120, upper_th=255):
+    def binary_threshold_image(self,image, lower_th=120, upper_th=255):
         """Apply thresholding to the given image using lower and upper threshold values."""
         _, thresholded_image = cv2.threshold(image, lower_th, upper_th, cv2.THRESH_BINARY)
 
         return thresholded_image
     
-    def inv_threshold_image( image, lower_th=120, upper_th=255):
+    def inv_threshold_image(self,image, lower_th=120, upper_th=255):
         """Apply thresholding to the given image using lower and upper threshold values."""
         _, thresholded_image = cv2.threshold(image, lower_th, upper_th, cv2.THRESH_BINARY_INV)
 
@@ -63,11 +61,11 @@ class Arithmetic():
         sum = number_1+number_2
         return sum
 
-    def sub( number_1, number_2):
+    def sub( self,number_1, number_2):
         subtract = number_1-number_2
         return subtract
 
-    def multiply( number_1, number_2):
+    def multiply(self, number_1, number_2):
         multiplication = number_1*number_2
         return multiplication
 
@@ -81,14 +79,14 @@ class Calculas(Arithmetic):
         division = number_1/number_2
         return division
 
-    def modulus( number_1, number_2):
+    def modulus(self, number_1, number_2):
         modulus = number_1%number_2
         return modulus
 
-    def power( number_1, number_2):
+    def power(self, number_1, number_2):
         power = number_1**number_2
         return power
 
-    def floor_division( number_1, number_2):
+    def floor_division(self, number_1, number_2):
         floor_division = number_1//number_2
         return floor_division

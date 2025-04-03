@@ -103,46 +103,23 @@ async def execute_flow(request: Request):
                 return
 
             func_name = node["data"].get("func")
-            print(func_name)
-            function_handlers = {name : {func_name:func_obj
-                                        for func_name, func_obj in vars(obj).items()
-                                        if callable(func_obj) and func_name not in
-                                        ('__dict__', '__doc__', '__init__', '__module__', '__weakref__')} or None
-                    for name, obj in vars(functions).items() 
-                    if inspect.isclass(obj) and obj.__module__ == functions.__name__
+            
+            function_handlers = {func_name:func_obj
+                                    for name, obj in vars(functions).items() 
+                                    if inspect.isclass(obj) and obj.__module__ == functions.__name__
+                                for func_name, func_obj in vars(obj).items()
+                                if callable(func_obj) and func_name not in
+                                ('__dict__', '__doc__', '__init__', '__module__', '__weakref__') or None
                     }
-            for category, functions_dict in function_handlers.items():
-                if isinstance(functions_dict, dict) and func_name in functions_dict:
-                    func = functions_dict[func_name]
-
-                    try:
-                        class_obj = getattr(functions, category, None)
-
-                        if inspect.isclass(class_obj):  
-                            instance = class_obj()
-
-                            if isinstance(func, staticmethod):
-                                result = func.__func__(*input_values)
-                            elif isinstance(func, classmethod):
-                                result = func.__func__(class_obj, *input_values)
-                            else:
-                                result = func(instance, *input_values)
-
-                        else:
-                            result = func(*input_values)
-
-                        node_values[node_id] = result
-                    except Exception as e:
-                        print(f"Error executing {func_name}: {e}")
-                        node_values[node_id] = None
-                    break
-            else:
-                print(f"Function '{func_name}' not found")
-
-
-
-
-
+            
+            if func_name in function_handlers:
+                try:
+                    instance = next(obj for name, obj in vars(functions).items() 
+                       if inspect.isclass(obj) and func_name in dir(obj))
+                    result = function_handlers[func_name](instance, *input_values)
+                    node_values[node_id] = result
+                except Exception:
+                    node_values[node_id] = None
             processed_nodes.add(node_id)
 
         try:

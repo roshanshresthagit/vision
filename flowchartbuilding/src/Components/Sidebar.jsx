@@ -11,7 +11,6 @@ const SidebarItem = ({ item, onDragStart }) => {
         className="function-button"
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
-        {/* Show collapsible arrow for children or methods */}
         {item.children || item.methods ? (isCollapsed ? "▶" : "▼") : null} {item.label}
       </button>
       

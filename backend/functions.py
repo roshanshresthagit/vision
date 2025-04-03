@@ -28,11 +28,9 @@ class ImageProcessing(ComputerVision):
         return color_image
 
 
-    def convert_to_grayscale_image( self,image):
-        print("hello i am under the water", type(image))
+    def convert_to_grayscale_image(self, image):
         image=np.array(image)
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        print("converted")
         
         return gray_image
     

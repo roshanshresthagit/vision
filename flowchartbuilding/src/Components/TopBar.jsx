@@ -11,7 +11,9 @@ const TopBar = ({
   edges, 
   functionDefinitions, 
   setGeneratedCode, 
-  toggleSidebar 
+  toggleSidebar,
+  onSave,
+  onRestore,
 }) => {
   const { generatePythonCode } = useCodeGeneration(nodes, edges, functionDefinitions);
 
@@ -49,6 +51,16 @@ const TopBar = ({
         >
           Generate Code
         </button>
+        {onSave && (
+          <button className="top-bar-button save-button" onClick={onSave}>
+            Save
+          </button>
+        )}
+        {onRestore && (
+          <button className="top-bar-button restore-button" onClick={onRestore}>
+            Restore
+          </button>
+        )}
       </div>
     </div>
   );

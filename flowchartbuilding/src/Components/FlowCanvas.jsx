@@ -13,7 +13,8 @@ const FlowCanvas = ({
   onConnect,
   nodeTypes,
   setSelectedNodeId,
-  onDrop
+  onDrop,
+  onInit,
 }) => {
   return (
     <div className="drop-area" onDragOver={(event) => event.preventDefault()} onDrop={onDrop}>
@@ -29,6 +30,7 @@ const FlowCanvas = ({
         nodeTypes={nodeTypes}
         fitView
         onNodeClick={(event, node) => setSelectedNodeId(node.id)}
+        onInit={onInit}
       >
         <MiniMap />
         <Controls />

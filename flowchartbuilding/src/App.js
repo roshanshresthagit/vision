@@ -6,10 +6,11 @@ import { useFlowData } from "./hooks/useFlowData";
 import React, { useState, useCallback } from "react";
 import { useEdgeManagement } from "./hooks/useEdgeManagement";
 import { nodeTypes, DefaultInputList } from "./constants/nodes";
-import { useNodesState, useEdgesState } from "reactflow";
+import { useNodesState, useEdgesState, useReactFlow } from "reactflow";
 import { useFlowExecution } from "./hooks/useFlowExecution";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { useFlowStorage } from "./hooks/useFlowStorage";
 
 export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -22,6 +23,9 @@ export default function App() {
   const { functionDict, functionList, functionDefinitions } = useFlowData();
   const { onConnect,onEdgeUpdateStart,onEdgeUpdate,onEdgeUpdateEnd } = useEdgeManagement(setEdges);
   const {executeFlow, generatedCode, setGeneratedCode} = useFlowExecution(nodes, edges, inputs, setNodes);
+  const [rfInstance, setRfInstance] = useState(null);
+  const {setViewport} = useReactFlow();
+  const { onSave, onRestore } = useFlowStorage({ rfInstance, setNodes, setEdges, setViewport });
 
 
   const toggleSidebar = () => {
@@ -114,6 +118,8 @@ export default function App() {
         edges={edges}
         functionDefinitions={functionDefinitions}
         setGeneratedCode={setGeneratedCode}
+        onSave={onSave}
+        onRestore={onRestore}
       />
       <div className="main-content">
         <Sidebar
@@ -134,6 +140,7 @@ export default function App() {
             nodeTypes={nodeTypes}
             setSelectedNodeId={setSelectedNodeId}
             onDrop={onDrop}
+            onInit={setRfInstance}
           />
           <SyntaxHighlighter language="python" style={coy}>
             {typeof generatedCode === "string"

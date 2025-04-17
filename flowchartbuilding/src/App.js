@@ -13,19 +13,19 @@ import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useFlowStorage } from "./hooks/useFlowStorage";
 
 export default function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const {setViewport} = useReactFlow();
   const [nodeId, setNodeId] = useState(1);
   const [inputs, setInputs] = useState({});
-  const [selectedNodeId, setSelectedNodeId] = useState(null);
-  const [inputNodeCount, setInputNodeCount] = useState(DefaultInputList);
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  const { functionDict, functionList, functionDefinitions } = useFlowData();
-  const { onConnect,onEdgeUpdateStart,onEdgeUpdate,onEdgeUpdateEnd } = useEdgeManagement(setEdges);
-  const {executeFlow, generatedCode, setGeneratedCode} = useFlowExecution(nodes, edges, inputs, setNodes);
   const [rfInstance, setRfInstance] = useState(null);
-  const {setViewport} = useReactFlow();
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [inputNodeCount, setInputNodeCount] = useState(DefaultInputList);
+  const { functionDict, functionList, functionDefinitions } = useFlowData();
   const { onSave, onRestore } = useFlowStorage({ rfInstance, setNodes, setEdges, setViewport });
+  const { onConnect,onEdgeUpdateStart,onEdgeUpdate,onEdgeUpdateEnd } = useEdgeManagement(setEdges);
+  const { executeFlow, generatedCode, setGeneratedCode} = useFlowExecution(nodes, edges, inputs, setNodes);
 
 
   const toggleSidebar = () => {
@@ -51,6 +51,7 @@ export default function App() {
   
       const isInput = func.id === "input";
       const isImageInput = func.id === "imageinput";
+      const isModelInput = func.id === "modelinput";
   
       const newNode = {
         id: newNodeId,
@@ -58,6 +59,8 @@ export default function App() {
           ? "inputNode"
           : isImageInput
           ? "imageInputNode"
+          : isModelInput
+          ? "modelInputNode"
           : func.id === "result"
           ? "resultNode"
           : "functionNode",
@@ -69,9 +72,9 @@ export default function App() {
             ? `${func.label}${inputNodeCount}`
             : func.label,
           func: func.func,
-          value: isInput || isImageInput ? 0 : undefined, 
+          value: isInput || isImageInput || isModelInput ? 0 : undefined, 
           setValue:
-            isInput || isImageInput
+            isInput || isImageInput || isModelInput
               ? (val) =>
                   setInputs((prev) => {
                     const updatedInputs = { ...prev, [newNodeId]: val };

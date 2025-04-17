@@ -1,4 +1,3 @@
-import cv2
 import json
 import base64
 import asyncio
@@ -13,6 +12,7 @@ from fastapi import FastAPI, Request
 from PIL import Image
 from fastapi.middleware.cors import CORSMiddleware
 from dic_gen import get_class_info
+
 
 
 app = FastAPI()

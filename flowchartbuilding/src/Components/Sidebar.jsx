@@ -67,6 +67,15 @@ const Sidebar = ({ onDragStart, functionListCall, isVisible }) => {
             Image Input
           </button>
           <button
+            className="function-button"
+            draggable
+            onDragStart={(event) =>
+              onDragStart(event, { id: "modelinput", label: "Model Input", func: "modelinput" })
+            }
+          >
+            Model Input
+          </button>
+          <button
             className="function-button result-button"
             draggable
             onDragStart={(event) =>
@@ -76,7 +85,6 @@ const Sidebar = ({ onDragStart, functionListCall, isVisible }) => {
             Result
           </button>
           
-          {/* Recursive Sidebar Items */}
           <div className="function-list">
             {Object.entries(functionListCall).map(([key, item]) => (
               <SidebarItem key={key} item={{ label: key, ...item }} onDragStart={onDragStart} />

@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 export const useFlowExecution = (nodes, edges, inputs, setNodes) => {
-  console.log("Executing flow with nodes:", nodes, "and edges:", edges);
   const [generatedCode, setGeneratedCode] = useState("");
 
   const executeFlow = async () => {

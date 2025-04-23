@@ -3,7 +3,6 @@ import { Handle, useUpdateNodeInternals } from "reactflow";
 import "./FunctionNode.css";
 
 export default function FunctionNode({ id, data }) {
-  console.log(data.functionDict);
   const [activeInput, setActiveInput] = useState(null);
   const updateNodeInternals = useUpdateNodeInternals();
   const functionDict = data.functionDict;

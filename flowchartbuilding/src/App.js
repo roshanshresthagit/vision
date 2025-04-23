@@ -70,6 +70,8 @@ export default function App() {
             ? `${func.label}${inputNodeCount}`
             : isImageInput
             ? `${func.label}${inputNodeCount}`
+            : isModelInput
+            ? `${func.label}${inputNodeCount}`
             : func.label,
           func: func.func,
           value: isInput || isImageInput || isModelInput ? 0 : undefined, 

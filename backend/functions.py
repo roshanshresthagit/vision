@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+from ultralytics import YOLO
+
 
 class ComputerVision:
     pass
@@ -56,6 +58,7 @@ class Arithmetic():
         super().__init__()
     
     def add(self,number_1, number_2):
+        print("its here",number_1, number_2)
         sum = number_1+number_2
         return sum
 
@@ -88,3 +91,19 @@ class Calculas(Arithmetic):
     def floor_division(self, number_1, number_2):
         floor_division = number_1//number_2
         return floor_division
+
+class YoloDetection():
+    def __init__(self):
+        super().__init__()
+
+    def detect_objects(self,model_name, image):
+        model = YOLO(model_name)
+        if isinstance(image, str):
+            image = cv2.imread(image)
+            if image is None:
+                raise ValueError(f"Could not load image from path: {image}")
+
+        results = model(image)
+
+        annotated_image = results[0].plot()
+        return annotated_image

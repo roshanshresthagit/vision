@@ -4,16 +4,29 @@ export const useFlowExecution = (nodes, edges, inputs, setNodes) => {
   const [generatedCode, setGeneratedCode] = useState("");
 
   const executeFlow = async () => {
+    console.log("Executing nodes:", nodes);
     const nodeValues = {};
 
-    nodes.forEach((node) => {
-      if (node.type === "inputNode" || node.type === "imageInputNode") {
-        nodeValues[node.id] =
-          typeof inputs[node.id] === "string" && inputs[node.id].startsWith("data:image")
-            ? inputs[node.id]
-            : parseFloat(inputs[node.id]) || 0;
+    nodes.forEach(({ id, type }) => {
+      const value = inputs[id];
+    
+      if (type === "imageInputNode" && typeof value === "string" && value.startsWith("data:image")) {
+        nodeValues[id] = value;
+        return;
+      }
+    
+      if (type === "modelInputNode" && typeof value === "string") {
+        nodeValues[id] = value;
+        return;
+      }
+    
+      if (type === "inputNode") {
+        const parsed = parseFloat(value);
+        nodeValues[id] = isNaN(parsed) ? 0 : parsed;
       }
     });
+    
+    
 
     try {
       const response = await fetch("http://localhost:8000/execute_flow", {

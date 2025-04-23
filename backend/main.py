@@ -41,7 +41,6 @@ class FlowRequest(BaseModel):
 
 
 def decode_base64_image(base64_string):
-    print("image converted into nparray")
     if base64_string.startswith("data:image"):
         base64_string = base64_string.split(",")[1]
     img_bytes = base64.b64decode(base64_string)
@@ -50,7 +49,6 @@ def decode_base64_image(base64_string):
 
 def encode_to_base64(value):
     if isinstance(value, np.ndarray):
-        # Convert image to base64
         image = Image.fromarray(value)
         buffered = BytesIO()
         image.save(buffered, format="JPEG")

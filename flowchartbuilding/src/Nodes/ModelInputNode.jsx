@@ -18,7 +18,7 @@ const ModelInputNode = ({ data }) => {
           onChange={handleModelChange}
         >
           <option value="">Select a model</option>
-          <option value="yolov8">YOLOv8</option>
+          <option value="yolov8l.pt">yolov8l.pt</option>
           <option value="paddledet">PaddleDet</option>
           <option value="mobilenet">MobileNet</option>
           <option value="resnet">ResNet</option>

@@ -1,18 +1,35 @@
-
 export const useCodeGeneration = (nodes, edges, functionDefinitions) => {
   const generatePythonCode = () => {
     let code = "# Auto-generated Python script\n\n";
 
-    // 1. Include function definitions
-    let functionNodes = nodes.filter((node) => node.type === "functionNode");
+    // 1. Extract and include only the methods used
+    const functionNodes = nodes.filter((node) => node.type === "functionNode");
+    const extractedMethods = new Set();
+
     functionNodes.forEach((node) => {
-      if (functionDefinitions[node.data.func]) {
-        code += functionDefinitions[node.data.func] + "\n\n";
+      const methodName = node.data.func;
+
+      for (const classCode of Object.values(functionDefinitions)) {
+        const regex = new RegExp(
+          `\\s*def ${methodName}\\([^\\)]*\\):[\\s\\S]*?(?=\\n\\s*def |\\n\\s*class |$)`,
+          "g"
+        );
+        const matches = classCode.match(regex);
+        if (matches && matches.length > 0 && !extractedMethods.has(methodName)) {
+          let functionCode = matches[0].trimStart();
+
+          functionCode = functionCode.replace(/\((\s*self\s*,?|\s*self\s*)\)/, "()");
+
+          functionCode = functionCode.replace(/\(\s*self\s*,\s*/, "(");
+
+          code += functionCode + "\n\n";
+          extractedMethods.add(methodName);
+        }
       }
     });
 
     // 2. Define input values
-    let inputs = nodes.filter((node) => node.type === "inputNode");
+    const inputs = nodes.filter((node) => node.type === "inputNode");
     inputs.forEach((input) => {
       code += `${input.data.func + input.id} = ${input.data.value}\n`;
     });
@@ -38,10 +55,10 @@ export const useCodeGeneration = (nodes, edges, functionDefinitions) => {
     });
 
     // 5. Capture final result
-    let resultNode = nodes.find((node) => node.type === "resultNode");
+    const resultNode = nodes.find((node) => node.type === "resultNode");
     if (resultNode) {
-      let lastEdge = edges.find((edge) => edge.target === resultNode.id);
-      let lastFunction = nodes.find((node) => node.id === lastEdge.source);
+      const lastEdge = edges.find((edge) => edge.target === resultNode.id);
+      const lastFunction = nodes.find((node) => node.id === lastEdge?.source);
       if (lastFunction) {
         code += `print("Final Result:", ${lastFunction.data.label + lastFunction.id})\n`;
       }

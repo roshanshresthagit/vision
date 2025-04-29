@@ -6,9 +6,9 @@ const InputNode = ({ data }) => {
   const handleChange = (e) => {
     const { value } = e.target;
     if (!isNaN(value) && value.trim() !== "") {
-      data.setValue(Number(value)); // If it's a number
+      data.setValue(Number(value)); 
     } else {
-      data.setValue(value); // Otherwise, treat as string
+      data.setValue(value); 
     }
   };
 

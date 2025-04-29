@@ -17,25 +17,19 @@ class ImageProcessing(ComputerVision):
         if image is None:
             raise ValueError("Image not found at the specified path.")
         return image
-        
-
 
     def resize_image(self, image: np.ndarray, dimension_of_image=(640,640)) -> np.ndarray:
-    
         if image is None:
             print("Error: Provided image is None.")
             return None
         resized_image = cv2.resize(image, dimension_of_image)
         return resized_image
-        
 
     def convert_to_color_image(self, image):
         
         color_image = cv2.cvtColor(image,cv2.COLOR_GRAY2BGR)
         return color_image
     
-
-
     def convert_to_grayscale_image(self, image):
         
         image=np.array(image)
@@ -77,7 +71,6 @@ class Arithmetic():
         
 
     def multiply(self, number_1, number_2):
-        
         multiplication = number_1*number_2
         return multiplication
         
@@ -95,19 +88,16 @@ class Calculas(Arithmetic):
    
 
     def modulus(self, number_1, number_2):
-        
         modulus = number_1%number_2
         return modulus
         
 
     def power(self, number_1, number_2):
-        
         power = number_1**number_2
         return power
     
 
     def floor_division(self, number_1, number_2):
-        
         floor_division = number_1//number_2
         return floor_division
         
@@ -126,5 +116,5 @@ class YoloDetection():
             
         results = model(image)
         annotated_image = results[0].plot()
-        return annotated_image
+        return [annotated_image,image]
         

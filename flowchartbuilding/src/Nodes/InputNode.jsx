@@ -13,9 +13,7 @@ const InputNode = ({ data }) => {
   };
 
   return (
-    <div className="input-node">
-      <div className="node-header">Input Node</div>
-
+    <div className="input-node">     
       <div className="node-content">
         <input
           type="text"

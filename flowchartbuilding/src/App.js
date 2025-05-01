@@ -11,6 +11,8 @@ import { useFlowExecution } from "./hooks/useFlowExecution";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useFlowStorage } from "./hooks/useFlowStorage";
+import { useNodeDrop } from "./hooks/useNodeDrop";
+import { useNodeDeletion } from "./hooks/useNodeDeletion";
 
 export default function App() {
   const {setViewport} = useReactFlow();
@@ -26,7 +28,8 @@ export default function App() {
   const { onSave, onRestore } = useFlowStorage({ rfInstance, setNodes, setEdges, setViewport });
   const { onConnect,onEdgeUpdateStart,onEdgeUpdate,onEdgeUpdateEnd } = useEdgeManagement(setEdges);
   const { executeFlow, generatedCode, setGeneratedCode} = useFlowExecution(nodes, edges, inputs, setNodes);
-
+  const { onDrop } = useNodeDrop({ nodeId, inputNodeCount, functionDict, setInputs, setNodes, setEdges,setNodeId, setInputNodeCount,});
+  const { onDeleteNode } = useNodeDeletion({ selectedNodeId, setSelectedNodeId, setNodes, setEdges, });
 
   const toggleSidebar = () => {
     setIsSidebarVisible((prev) => !prev);
@@ -36,82 +39,7 @@ export default function App() {
     event.dataTransfer.setData("application/reactflow", JSON.stringify(func));
     event.dataTransfer.effectAllowed = "move";
   };
-
-  const onDrop = useCallback(
-    (event) => {
-      event.preventDefault();
-      const reactFlowBounds = event.target.getBoundingClientRect();
-      const func = JSON.parse(event.dataTransfer.getData("application/reactflow"));
-      const position = {
-        x: event.clientX - reactFlowBounds.left,
-        y: event.clientY - reactFlowBounds.top,
-      };
   
-      const newNodeId = `${nodeId}`;
-  
-      const isInput = func.id === "input";
-      const isImageInput = func.id === "imageinput";
-      const isModelInput = func.id === "modelinput";
-  
-      const newNode = {
-        id: newNodeId,
-        type: isInput
-          ? "inputNode"
-          : isImageInput
-          ? "imageInputNode"
-          : isModelInput
-          ? "modelInputNode"
-          : func.id === "result"
-          ? "resultNode"
-          : "functionNode",
-        position,
-        data: {
-          label: isInput
-            ? `${func.label}${inputNodeCount}`
-            : isImageInput
-            ? `${func.label}${inputNodeCount}`
-            : isModelInput
-            ? `${func.label}${inputNodeCount}`
-            : func.label,
-          func: func.func,
-          value: isInput || isImageInput || isModelInput ? 0 : undefined, 
-          setValue:
-            isInput || isImageInput || isModelInput
-              ? (val) =>
-                  setInputs((prev) => {
-                    const updatedInputs = { ...prev, [newNodeId]: val };
-                    setNodes((nds) =>
-                      nds.map((node) =>
-                        node.id === newNodeId
-                          ? { ...node, data: { ...node.data, value: val } }
-                          : node
-                      )
-                    );
-                    return updatedInputs;
-                  })
-              : undefined,
-          functionDict,
-        },
-      };
-  
-      setNodes((nds) => [...nds, newNode]);
-      setNodeId((id) => id + 1);
-  
-      if (isInput || isImageInput) {
-        setInputNodeCount((count) => count + 1);
-      }
-    },
-    [setNodes, nodeId, inputNodeCount, functionDict]
-  );
-  
-  const onDeleteNode = () => {
-    if (selectedNodeId) {
-      setNodes((nds) => nds.filter((node) => node.id !== selectedNodeId));
-      setEdges((eds) => eds.filter((edge) => edge.source !== selectedNodeId && edge.target !== selectedNodeId));
-      setSelectedNodeId(null);
-    }
-  };
-
   return (
     <div className="container">
       <TopBar

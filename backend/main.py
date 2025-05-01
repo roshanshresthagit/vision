@@ -63,7 +63,6 @@ async def execute_flow(request: Request):
     nodes = data.get("nodes", [])
     edges = data.get("edges", [])
     inputValues = data.get("inputValues", {})
-
     node_values = dict(inputValues)
     processed_nodes = set()
 
@@ -82,43 +81,71 @@ async def execute_flow(request: Request):
             if not node or node["type"] != "functionNode":
                 return
 
-            input_sources = edge_map.get(node_id, [])
-            input_values = []
-            for src_id in input_sources:
+            incoming_edges = [e for e in edges if e["target"] == node_id]
+            
+            input_dict = {}
+            
+            for edge in incoming_edges:
+                src_id = edge["source"]
+                target_handle = edge.get("targetHandle")
+                
                 if src_id not in node_values:
                     src_node = next((n for n in nodes if n["id"] == src_id), None)
                     if src_node and src_node["type"] == "functionNode":
                         await process_function_node(src_id)
-                    elif src_node and src_node["type"] in["inputNode","imageInputNode"]:
+                    elif src_node and src_node["type"] in ["inputNode", "imageInputNode"]:
                         node_values[src_id] = inputValues.get(src_id)
 
                 val = node_values.get(src_id)
                 if isinstance(val, str) and val.startswith("data:image"):
                     val = decode_base64_image(val)
-                input_values.append(val)
+                
+                if target_handle:
+                    input_dict[target_handle] = val
+                else:
+                    input_dict[src_id] = val
 
-            if any(val is None for val in input_values):
+            if not input_dict:
                 return
 
             func_name = node["data"].get("func")
             
             function_handlers = {func_name:func_obj
-                                    for name, obj in vars(functions).items() 
-                                    if inspect.isclass(obj) and obj.__module__ == functions.__name__
+                                for name, obj in vars(functions).items() 
+                                if inspect.isclass(obj) and obj.__module__ == functions.__name__
                                 for func_name, func_obj in vars(obj).items()
                                 if callable(func_obj) and func_name not in
                                 ('__dict__', '__doc__', '__init__', '__module__', '__weakref__') or None
-                    }
+                                }
             
             if func_name in function_handlers:
                 try:
                     instance = next(obj for name, obj in vars(functions).items() 
-                       if inspect.isclass(obj) and func_name in dir(obj))
-                    result = function_handlers[func_name](instance, *input_values)
+                                if inspect.isclass(obj) and func_name in dir(obj))
+                    
+                    # Get the function's parameter names in order
+                    sig = inspect.signature(function_handlers[func_name])
+                    params = list(sig.parameters.keys())
+                    
+                    # Prepare arguments in correct order
+                    args = []
+                    for param in params:
+                        if param in input_dict:
+                            args.append(input_dict[param])
+                        elif param == 'self':
+                            continue
+                        else:
+                            # Handle missing required parameters
+                            args.append(None)
+                    
+                    result = function_handlers[func_name](instance, *args)
                     node_values[node_id] = result
-                except Exception:
+                except Exception as e:
+                    print(f"Error processing {func_name}: {str(e)}")
                     node_values[node_id] = None
             processed_nodes.add(node_id)
+
+                
 
         try:
             while pending_edges:

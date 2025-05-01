@@ -127,7 +127,7 @@ export const useNodeDrop = ({
         }
       }
     },
-    [setNodes, setEdges, nodeId, inputNodeCount, functionDict, setInputs]
+    [setNodes, setEdges, nodeId, inputNodeCount, functionDict, setInputs,setInputNodeCount, setNodeId]
   );
 
   return { onDrop };

@@ -3,7 +3,7 @@ import TopBar from "./Components/TopBar";
 import Sidebar from "./Components/Sidebar";
 import FlowCanvas from "./Components/FlowCanvas";
 import { useFlowData } from "./hooks/useFlowData";
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { useEdgeManagement } from "./hooks/useEdgeManagement";
 import { nodeTypes, DefaultInputList } from "./constants/nodes";
 import { useNodesState, useEdgesState, useReactFlow } from "reactflow";

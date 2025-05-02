@@ -2,7 +2,7 @@ import json
 import base64
 import asyncio
 import inspect
-import functions, imageFiltering, colorSpaceOperations
+import functions, imageFiltering, colorSpaceOperations,geometric
 import numpy as np
 from io import BytesIO
 from pydantic import BaseModel
@@ -13,8 +13,9 @@ from PIL import Image
 from fastapi.middleware.cors import CORSMiddleware
 from dic_gen import get_class_info
 
+
 # List of modules containing functions to be exposed
-MODULES = [functions, imageFiltering, colorSpaceOperations]
+MODULES = [functions, imageFiltering, colorSpaceOperations, geometric]
 
 app = FastAPI()
 app.add_middleware(

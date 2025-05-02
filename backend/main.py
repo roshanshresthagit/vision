@@ -2,7 +2,7 @@ import json
 import base64
 import asyncio
 import inspect
-import functions
+import functions, colorSpaceOperations, imageFiltering
 import numpy as np
 from io import BytesIO
 from pydantic import BaseModel
@@ -14,6 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dic_gen import get_class_info
 
 
+MODULES = [functions, colorSpaceOperations, imageFiltering]
 
 app = FastAPI()
 app.add_middleware(
@@ -57,12 +58,28 @@ def encode_to_base64(value):
         return str(value)
     return json.dumps(value)
 
+
+def find_function_handler(func_name: str) -> tuple[callable, bool]:
+    """Search for a function across all modules and return its handler and whether it's a class method"""
+    for module in MODULES:
+        for name, obj in vars(module).items():
+            if inspect.isclass(obj):
+                # Search for the method in the class
+                if func_name in vars(obj):
+                    method = getattr(obj, func_name)
+                    if callable(method):
+                        return method, True  # It's a class method
+            elif callable(obj) and name == func_name:
+                return obj, False  # It's a standalone function
+    return None, False
+    
 @app.post("/execute_flow")
 async def execute_flow(request: Request):
     data = await request.json()
     nodes = data.get("nodes", [])
     edges = data.get("edges", [])
     inputValues = data.get("inputValues", {})
+
     node_values = dict(inputValues)
     processed_nodes = set()
 
@@ -82,13 +99,12 @@ async def execute_flow(request: Request):
                 return
 
             incoming_edges = [e for e in edges if e["target"] == node_id]
-            
+
             input_dict = {}
-            
             for edge in incoming_edges:
                 src_id = edge["source"]
                 target_handle = edge.get("targetHandle")
-                
+
                 if src_id not in node_values:
                     src_node = next((n for n in nodes if n["id"] == src_id), None)
                     if src_node and src_node["type"] == "functionNode":
@@ -99,7 +115,7 @@ async def execute_flow(request: Request):
                 val = node_values.get(src_id)
                 if isinstance(val, str) and val.startswith("data:image"):
                     val = decode_base64_image(val)
-                
+
                 if target_handle:
                     input_dict[target_handle] = val
                 else:
@@ -109,43 +125,45 @@ async def execute_flow(request: Request):
                 return
 
             func_name = node["data"].get("func")
-            
-            function_handlers = {func_name:func_obj
-                                for name, obj in vars(functions).items() 
-                                if inspect.isclass(obj) and obj.__module__ == functions.__name__
-                                for func_name, func_obj in vars(obj).items()
-                                if callable(func_obj) and func_name not in
-                                ('__dict__', '__doc__', '__init__', '__module__', '__weakref__') or None
-                                }
-            
-            if func_name in function_handlers:
-                try:
-                    instance = next(obj for name, obj in vars(functions).items() 
-                                if inspect.isclass(obj) and func_name in dir(obj))
-                    
-                    # Get the function's parameter names in order
-                    sig = inspect.signature(function_handlers[func_name])
-                    params = list(sig.parameters.keys())
-                    
-                    # Prepare arguments in correct order
-                    args = []
-                    for param in params:
-                        if param in input_dict:
-                            args.append(input_dict[param])
-                        elif param == 'self':
-                            continue
-                        else:
-                            # Handle missing required parameters
-                            args.append(None)
-                    
-                    result = function_handlers[func_name](instance, *args)
-                    node_values[node_id] = result
-                except Exception as e:
-                    print(f"Error processing {func_name}: {str(e)}")
-                    node_values[node_id] = None
-            processed_nodes.add(node_id)
+            found = False
 
-                
+            for module in MODULES:
+                for name, obj in vars(module).items():
+                    if inspect.isclass(obj) and func_name in vars(obj):
+                        try:
+                            method = getattr(obj, func_name)
+                            if callable(method):
+                                sig = inspect.signature(method)
+                                params = list(sig.parameters.keys())
+                                args = [input_dict.get(p) for p in params if p != "self"]
+                                instance = obj()
+                                result = method(instance, *args)
+                                node_values[node_id] = result
+                                found = True
+                                break
+                        except Exception as e:
+                            print(f"Error processing {func_name}: {e}")
+                            node_values[node_id] = None
+                            found = True
+                            break
+                    elif callable(obj) and name == func_name:
+                        try:
+                            sig = inspect.signature(obj)
+                            params = list(sig.parameters.keys())
+                            args = [input_dict.get(p) for p in params]
+                            result = obj(*args)
+                            node_values[node_id] = result
+                            found = True
+                            break
+                        except Exception as e:
+                            print(f"Error processing {func_name}: {e}")
+                            node_values[node_id] = None
+                            found = True
+                            break
+                if found:
+                    break
+
+            processed_nodes.add(node_id)
 
         try:
             while pending_edges:
@@ -167,12 +185,11 @@ async def execute_flow(request: Request):
                         yield response_data + "\n"
                         to_remove.append(edge)
 
-                # Remove processed edges
                 for edge in to_remove:
                     pending_edges.remove(edge)
-                
+
                 await asyncio.sleep(0.1)
-                    
+
             yield json.dumps({"message": "All results processed"}) + "\n"
 
         except Exception as e:
@@ -180,35 +197,33 @@ async def execute_flow(request: Request):
 
     return StreamingResponse(flow_processor(), media_type="application/json")
 
-
 @app.get("/function_dict")
 async def get_function_json():
+    """Get detailed function dictionary from all modules"""
     try:
-        function_dict = get_class_info(functions, islist=False)
+        function_dict = get_class_info(MODULES, islist=False)
         return function_dict
-    
     except Exception as e: 
         return {"error": str(e)}
     
 @app.get("/function_list")
 async def get_function_list_json():
+    """Get simplified function list from all modules"""
     try:
-        function_list = get_class_info(functions, islist=True)
+        function_list = get_class_info(MODULES, islist=True)
         return function_list
-    
     except Exception as e:
         return {"error": str(e)}
 
-
-
-#gets all used function code form function.py########
-def get_function_code(func):
-    return inspect.getsource(func)
-
 @app.get("/get_functions")
 async def get_functions():
-    function_dict = {name:inspect.getsource(obj)
-                     for name, obj in vars(functions).items()
-                     if callable(obj)}
-
+    """Get source code of all functions from all modules"""
+    function_dict = {}
+    for module in MODULES:
+        module_name = module.__name__
+        function_dict[module_name] = {
+            name: inspect.getsource(obj)
+            for name, obj in vars(module).items()
+            if callable(obj) and not name.startswith('_')
+        }
     return function_dict

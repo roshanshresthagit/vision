@@ -1,7 +1,6 @@
 import ast
 import inspect
 
-#### function to extract the source code's name, args, inputs and outputs.
 def parse_function(source_code):
     """Parse a function's source code and extract its name, arguments, inputs and outputs"""
     tree = ast.parse(source_code.lstrip())
@@ -41,7 +40,7 @@ def parse_function(source_code):
     return None
 
 def get_class_list(modules):
-
+    """Handle multiple modules by combining their classes"""
     if not isinstance(modules, (list, tuple)):
         modules = [modules]
         
@@ -63,7 +62,8 @@ def get_class_list(modules):
     
     return classes
 
-def get_class_dict(module):
+def get_class_dict(modules):
+    """Handle multiple modules by combining their classes"""
     if not isinstance(modules, (list, tuple)):
         modules = [modules]
         
@@ -89,28 +89,45 @@ def get_class_dict(module):
     
     return classes
 
-def get_class_info(module, islist = False):
+def get_class_info(modules, islist=False):
+    """Handle multiple modules by combining their class hierarchies"""
     if not isinstance(modules, (list, tuple)):
         modules = [modules]
         
-    classes = {}
-    for module in modules:
-        module_classes = {
-            name: {
-                'parents': [parent.__name__ for parent in obj.__bases__ 
-                          if parent.__name__ != 'object'] or None,
-                'methods': [{
-                    'id': func_name,
-                    'label': func_name.capitalize(),
-                    'func': func_name
-                }
-                for func_name, func_obj in vars(obj).items()
-                if callable(func_obj) and func_name not in
-                ('__dict__', '__doc__', '__init__', '__module__', '__weakref__')] or None
-            }
-            for name, obj in vars(module).items()
-            if inspect.isclass(obj) and obj.__module__ == module.__name__
-        }
-        classes.update(module_classes)
+    classes = get_class_dict(modules) if islist else get_class_list(modules)
     
-    return classes
+    # Recursive function to build hierarchical structure
+    def build_tree(node):
+        children = {}
+        for name, value in classes.items():
+            if value['parents'] is not None and node in value['parents']:
+                children[name] = {
+                    'children': build_tree(name),
+                    'methods': value['methods']
+                }
+        return children or None  # Return None for leaf nodes
+    
+    # Find all root classes (classes that aren't children of any other class in the modules)
+    root_classes = []
+    for module in modules:
+        for name, obj in vars(module).items():
+            if inspect.isclass(obj) and obj.__module__ == module.__name__:
+                # Check if any of its parents are in our collected classes
+                is_root = True
+                for base in obj.__bases__:
+                    if base.__name__ in classes:
+                        is_root = False
+                        break
+                if is_root:
+                    root_classes.append(name)
+    
+    handler = {
+        name: {
+            'children': build_tree(name),
+            'methods': classes[name]['methods']
+        }
+        for name in root_classes
+        if name in classes  # Ensure the name exists in our classes dict
+    }
+    
+    return handler

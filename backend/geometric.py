@@ -224,11 +224,11 @@ class MomentsAndCentroids(Geometric):
             tuple: A tuple containing the ellipse parameters (center, axes, angle) as a tuple of tuples.
             If the contour has less than 5 points, None is returned.
         """
+        ellipse = "None"
         if len(contour) >= 5:
             ellipse = cv2.fitEllipse(contour)
-            return ellipse
-        else:
-            return None
+        return ellipse
+
 
     def bounding_box_center(self, contour):
         """

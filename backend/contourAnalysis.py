@@ -96,20 +96,7 @@ class ShapeAnalysis(ContourAnalysis):
         box = cv2.boxPoints(rect)
         box = box.astype(int)
         return box, rect 
-
-    def fit_ellipse(self, contour):
-        """
-            Function: Fit Ellipse
-            Description: Fit an ellipse to a contour with at least 5 points.
-            Input: 
-                contour: The contour points as a NumPy array.
-            Output 
-                ellipse: The fitted ellipse parameters ((cx, cy), (MA, ma), angle), or None if fitting is not possible.
-        """
-        if len(contour) >= 5:
-            ellipse = cv2.fitEllipse(contour)
-            return ellipse
-        return None
+    
     
 
 class SegmentationClassical(ContourAnalysis):
@@ -140,7 +127,7 @@ class SegmentationClassical(ContourAnalysis):
 
         return segmented_image
 
-    def watershed(self, image, filter_size=(3, 3), iterations=2):
+    def watershed(self, image: np.ndarray, filter_size=(3, 3), iterations=2) -> np.ndarray:
         """
         Function: watershed
         Description: Segment distinct objects in the image using the Watershed algorithm.
@@ -150,6 +137,8 @@ class SegmentationClassical(ContourAnalysis):
         Output: 
             image: The input image with object contours drawn in color.
         """
+        print("Filter Size: ", filter_size)
+        print("Iterations: ", iterations)
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         _, binary_image = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
@@ -236,7 +225,6 @@ class SegmentationClassical(ContourAnalysis):
         # Apply pyrMeanShiftFiltering to segment the image
         # This smooths the image while preserving edges based on spatial and color proximity
         segmented_image = cv2.pyrMeanShiftFiltering(image, sp=spatial_radius, sr=color_radius)
-
         return segmented_image
 
     def region_growing(self, image, seed=None, threshold=5):

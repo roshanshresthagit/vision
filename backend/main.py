@@ -2,7 +2,7 @@ import json
 import base64
 import asyncio
 import inspect
-import functions, imageFiltering, colorSpaceOperations,geometric,calculation
+import functions, imageFiltering, colorSpaceOperations,geometric,calculation, contourAnalysis
 import numpy as np
 from io import BytesIO
 from pydantic import BaseModel
@@ -15,7 +15,7 @@ from dic_gen import get_class_info
 
 
 # List of modules containing functions to be exposed
-MODULES = [functions, imageFiltering, colorSpaceOperations, geometric,calculation]
+MODULES = [functions, imageFiltering, colorSpaceOperations, geometric,calculation, contourAnalysis]
 
 app = FastAPI()
 app.add_middleware(

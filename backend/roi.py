@@ -110,24 +110,21 @@ class ROIS:
             ndarray: ROI image if markers found.
             ndarray: Binary mask used for ROI.
         """
-        try:
-            aruco_dict = cv2.aruco.getPredefinedDictionary(dictionary)
-            parameters = cv2.aruco.DetectorParameters()
-            detector = cv2.aruco.ArucoDetector(aruco_dict, parameters)
-            corners, ids, _ = detector.detectMarkers(image)
+        
+        aruco_dict = cv2.aruco.getPredefinedDictionary(dictionary)
+        parameters = cv2.aruco.DetectorParameters()
+        detector = cv2.aruco.ArucoDetector(aruco_dict, parameters)
+        corners, ids, _ = detector.detectMarkers(image)
 
-            if ids is None or len(corners) == 0:
-                return None, None
-
-            pts = np.concatenate(corners, axis=1)[0].astype(int)
-            mask = np.zeros(image.shape[:2], dtype=np.uint8)
-            cv2.fillPoly(mask, [pts], 255)
-            roi = cv2.bitwise_and(image, image, mask=mask)
-            return roi, mask
-        except Exception as e:
-            print(f"Error in fiducial_marker_roi: {e}")
+        if ids is None or len(corners) == 0:
             return None, None
 
+        pts = np.concatenate(corners, axis=1)[0].astype(int)
+        mask = np.zeros(image.shape[:2], dtype=np.uint8)
+        cv2.fillPoly(mask, [pts], 255)
+        roi = cv2.bitwise_and(image, image, mask=mask)
+        return roi, mask
+      
     def mask_based_roi(self, image, mask):
         """
         Function: Mask-Based ROI
@@ -146,4 +143,5 @@ class ROIS:
             # Resize mask to match image dimensions
             mask = cv2.resize(mask, (image.shape[1], image.shape[0]))
             
-        return cv2.bitwise_and(image, image, mask=mask)
+        image = cv2.bitwise_and(image, image, mask=mask)
+        return image

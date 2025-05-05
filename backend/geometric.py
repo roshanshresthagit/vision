@@ -23,7 +23,8 @@ class Transformations(Geometric):
             ndarray: The transformed image.
         """
         M = cv2.getAffineTransform(np.float32(src_points), np.float32(dst_points))
-        return cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
+        transformed_image = cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
+        return transformed_image
     def perspective_transform(self, image, src_points, dst_points):
         """
         Function: perspective_transform
@@ -37,7 +38,8 @@ class Transformations(Geometric):
         """
 
         M = cv2.getPerspectiveTransform(np.float32(src_points), np.float32(dst_points))
-        return cv2.warpPerspective(image, M, (image.shape[1], image.shape[0]))
+        transformed_image = cv2.warpPerspective(image, M, (image.shape[1], image.shape[0]))
+        return transformed_image
     def warp_affine(self, image, src_pts,dst_pts):
         """
         Function: warp_affine
@@ -50,7 +52,9 @@ class Transformations(Geometric):
             ndarray: The transformed image with applied affine transformation.
         """
         M = cv2.getAffineTransform(np.float32(src_pts), np.float32(dst_pts))
-        return cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
+
+        transformed_image =  cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
+        return transformed_image
     def warp_perspective(self, image, src_pts,dst_pts):
         """
         Function: warp_perspective
@@ -63,7 +67,8 @@ class Transformations(Geometric):
             ndarray: The transformed image with applied perspective transformation.
         """
         M = cv2.getPerspectiveTransform(np.float32(src_pts), np.float32(dst_pts))
-        return cv2.warpPerspective(image, M, (image.shape[1], image.shape[0]))
+        transformed_image = cv2.warpPerspective(image, M, (image.shape[1], image.shape[0]))
+        return transformed_image
     def rotate(self, image, angle, center=None, scale=1.0):
         """
         Function: Rotate
@@ -81,7 +86,8 @@ class Transformations(Geometric):
         if center is None:
             center = (w // 2, h // 2)
         M = cv2.getRotationMatrix2D(center, angle, scale)
-        return cv2.warpAffine(image, M, (w, h))
+        transformed_image= cv2.warpAffine(image, M, (w, h))
+        return transformed_image
     def translate(self, image, tx=10, ty=10):
         """
         Function: translate
@@ -94,7 +100,8 @@ class Transformations(Geometric):
             ndarray: The translated image.
         """
         M = np.float32([[1, 0, tx], [0, 1, ty]])
-        return cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
+        transformed_image =  cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
+        return transformed_image
     def flip(self, image, flip_type):
         """
         Function: Flip
@@ -107,9 +114,10 @@ class Transformations(Geometric):
         """
 
         if flip_type == "vertical":
-            return cv2.flip(image, 0)
+            flipped_image =  cv2.flip(image, 0)
         elif flip_type == "horizontal":
-            return cv2.flip(image, 1)
+            flipped_image =  cv2.flip(image, 1)
+        return flipped_image
 
     def scale(self, image, fx, fy):
         """
@@ -122,7 +130,8 @@ class Transformations(Geometric):
         Output:
             ndarray: The scaled image.
         """
-        return cv2.resize(image, None, fx=fx, fy=fy, interpolation=cv2.INTER_LINEAR)
+        scaled_image = cv2.resize(image, None, fx=fx, fy=fy, interpolation=cv2.INTER_LINEAR)
+        return scaled_image
 
 class MomentsAndCentroids(Geometric):
     def __init__(self):
@@ -139,7 +148,8 @@ class MomentsAndCentroids(Geometric):
             dict: A dictionary containing the computed raw moments of the image.
         """
 
-        return cv2.moments(image)
+        moments =  cv2.moments(image)
+        return moments
 
     def central_moments(self, image):
         """
@@ -151,10 +161,11 @@ class MomentsAndCentroids(Geometric):
             dict: A dictionary containing the computed central moments of the image.
         """
         m = cv2.moments(image)
-        return {
+        moments = {
             'mu20': m['mu20'], 'mu11': m['mu11'], 'mu02': m['mu02'],
             'mu30': m['mu30'], 'mu21': m['mu21'], 'mu12': m['mu12'], 'mu03': m['mu03']
         }
+        return moments
 
     def hu_moments(self, image):
         """
@@ -166,8 +177,8 @@ class MomentsAndCentroids(Geometric):
             ndarray: A 1D array containing the computed Hu moments of the image.
         """
         m = cv2.moments(image)
-        hu = cv2.HuMoments(m).flatten()
-        return hu
+        moments = cv2.HuMoments(m).flatten()
+        return moments
 
     def centroid(self, image):
         """
@@ -198,8 +209,10 @@ class MomentsAndCentroids(Geometric):
         m = cv2.moments(image)
         if m['mu20'] - m['mu02'] != 0:
             angle = 0.5 * np.arctan2(2 * m['mu11'], m['mu20'] - m['mu02'])
-            return np.degrees(angle)
-        return 0
+            orient =  np.degrees(angle)
+            return orient
+        orient = 0
+        return orient
 
     def fit_ellipse(self, contour):
         """
@@ -228,4 +241,5 @@ class MomentsAndCentroids(Geometric):
         """
 
         x, y, w, h = cv2.boundingRect(contour)
-        return (x + w // 2, y + h // 2)
+        center = (x + w // 2, y + h // 2)
+        return center

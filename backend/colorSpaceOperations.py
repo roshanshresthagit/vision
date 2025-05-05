@@ -2,7 +2,7 @@ import cv2
 
 class ColorSpace:
     def __init__(self):
-        super().__init__()
+        pass
     
     def BGR2GRAY(self,bgr_image):
         """
@@ -38,6 +38,18 @@ class ColorSpace:
         hsv_image = cv2.cvtColor(bgr_image,cv2.COLOR_BGR2HSV)
         # hsv_image = cv2.cvtColor(bgr_image,cv2.COLOR_BGR2HSV_FULL)
         return hsv_image
+    def BGR2HSL(self,bgr_image):
+        """
+        Function: BGR To HSL Images
+        Description: Convert BGR color space to HSL color space.        
+        Input :
+            bgr_image: The image in BGR color space.
+        Output :
+            hsl_image: The HSL color space image.
+        """
+        hsl_image = cv2.cvtColor(bgr_image,cv2.COLOR_BGR2HLS)
+        # hsl_image = cv2.cvtColor(bgr_image,cv2.COLOR_BGR2HLS_FULL)
+        return hsl_image
     def BGR2YCrCb(self,bgr_image):
         """
         Function: BGR To YCrCb Images

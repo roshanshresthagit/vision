@@ -5,7 +5,7 @@ from skimage.segmentation import slic, mark_boundaries, random_walker
 
 class ContourAnalysis:
     def __init__(self):
-        super.__init__()
+        pass
     
 
 class ShapeAnalysis(ContourAnalysis):
@@ -33,7 +33,10 @@ class ShapeAnalysis(ContourAnalysis):
             Output 
                 hull: The convex hull as a NumPy array.
         """
-        return cv2.convexHull(contour)
+        hull = cv2.convexHull(contour)
+        return hull
+
+
 
     def contour_approximation(self, contour, epsilon_ratio=0.01):
         """
@@ -139,13 +142,13 @@ class SegmentationClassical(ContourAnalysis):
 
     def watershed(self, image, filter_size=(3, 3), iterations=2):
         """
-            Function: watershed
-            Description: Segment distinct objects in the image using the Watershed algorithm.
-            Input: 
-                image: The input BGR image to segment.
-                filter_size: A tuple defining the kernel size for morphological operations.
-            Output: 
-                image: The input image with object contours drawn in color.
+        Function: watershed
+        Description: Segment distinct objects in the image using the Watershed algorithm.
+        Input: 
+            image: The input BGR image to segment.
+            filter_size: A tuple defining the kernel size for morphological operations.
+        Output: 
+            image: The input image with object contours drawn in color.
         """
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         _, binary_image = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -392,7 +395,8 @@ class EdgeDetection(ContourAnalysis):
         """
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         sobel_x = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
-        return cv2.convertScaleAbs(sobel_x)
+        image =  cv2.convertScaleAbs(sobel_x)
+        return image
 
     def sobel_y(self, image):
         """
@@ -405,7 +409,8 @@ class EdgeDetection(ContourAnalysis):
         """
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         sobel_y = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
-        return cv2.convertScaleAbs(sobel_y)
+        image =  cv2.convertScaleAbs(sobel_y)
+        return image
 
     def laplacian(self, image):
         """
@@ -418,7 +423,8 @@ class EdgeDetection(ContourAnalysis):
         """
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         laplacian = cv2.Laplacian(gray, cv2.CV_64F)
-        return cv2.convertScaleAbs(laplacian)
+        image =  cv2.convertScaleAbs(laplacian)
+        return image
 
     def canny_edge_detector(self, image, threshold1=100, threshold2=100):
         """
@@ -446,7 +452,8 @@ class EdgeDetection(ContourAnalysis):
         grad_x = cv2.Scharr(gray, cv2.CV_64F, 1, 0)
         grad_y = cv2.Scharr(gray, cv2.CV_64F, 0, 1)
         scharr = cv2.magnitude(grad_x, grad_y)
-        return cv2.convertScaleAbs(scharr)
+        image =  cv2.convertScaleAbs(scharr)
+        return image
 
     def prewitt(self, image):
         """
@@ -462,7 +469,8 @@ class EdgeDetection(ContourAnalysis):
         kernely = np.array([[1, 1, 1], [0, 0, 0], [-1, -1, -1]])
         img_prewittx = cv2.filter2D(gray, -1, kernelx)
         img_prewitty = cv2.filter2D(gray, -1, kernely)
-        return cv2.convertScaleAbs(img_prewittx + img_prewitty)
+        image =  cv2.convertScaleAbs(img_prewittx + img_prewitty)
+        return image
 
     def roberts_cross(self, image):
         """
@@ -479,4 +487,5 @@ class EdgeDetection(ContourAnalysis):
         x = cv2.filter2D(gray, cv2.CV_64F, kernelx)
         y = cv2.filter2D(gray, cv2.CV_64F, kernely)
         roberts = cv2.magnitude(x, y)
-        return cv2.convertScaleAbs(roberts)
+        image =  cv2.convertScaleAbs(roberts)
+        return image

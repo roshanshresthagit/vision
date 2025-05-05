@@ -284,7 +284,8 @@ class BlurringAndNoiseReduction(ImageFiltering):
         Output:
             numpy.ndarray: Denoised image.
         """
-        return cv2.fastNlMeansDenoisingColored(image, None, h, hColor, templateWindowSize, searchWindowSize)
+        image = cv2.fastNlMeansDenoisingColored(image, None, h, hColor, templateWindowSize, searchWindowSize)
+        return image
     
 class MorphologicalOperations(ImageFiltering):
     def __init__(self):
@@ -312,7 +313,8 @@ class MorphologicalOperations(ImageFiltering):
             image = self._binarize_image(image)
         if kernel is None:
             kernel = np.ones(filter_size, np.uint8)
-        return cv2.erode(image, kernel=kernel, iterations=iterations)
+        eroded_image =  cv2.erode(image, kernel=kernel, iterations=iterations)
+        return eroded_image
     def dilate(self, image, iterations=1, kernel=None, filter_size=(3, 3)):
         """
         Function: Dilate
@@ -332,7 +334,8 @@ class MorphologicalOperations(ImageFiltering):
             image = self._binarize_image(image)
         if kernel is None:
             kernel = np.ones(filter_size, np.uint8)
-        return cv2.dilate(image, kernel=kernel, iterations=iterations)
+        dialated_image = cv2.dilate(image, kernel=kernel, iterations=iterations)
+        return dialated_image
     def opening(self, image, kernel=None, filter_size=(3, 3)):
         """
         Function: Opening
@@ -350,7 +353,8 @@ class MorphologicalOperations(ImageFiltering):
             image = self._binarize_image(image)
         if kernel is None:
             kernel = np.ones(filter_size, np.uint8)
-        return cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+        opened_image =  cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+        return opened_image
     def closing(self, image, kernel=None, filter_size=(3, 3)):
         """
         Function: Closing
@@ -368,7 +372,8 @@ class MorphologicalOperations(ImageFiltering):
             image = self._binarize_image(image)
         if kernel is None:
             kernel = np.ones(filter_size, np.uint8)
-        return cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
+        closed_image =  cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
+        return closed_image
     def morphological_gradient(self, image, kernel=None, filter_size=(3, 3)):
         """
         Function: Morphological Gradient
@@ -386,7 +391,8 @@ class MorphologicalOperations(ImageFiltering):
             image = self._binarize_image(image)
         if kernel is None:
             kernel = np.ones(filter_size, np.uint8)
-        return cv2.morphologyEx(image, cv2.MORPH_GRADIENT, kernel)
+        gradient_image = cv2.morphologyEx(image, cv2.MORPH_GRADIENT, kernel)
+        return gradient_image
 
     def white_hat(self, image, filter_size=(3, 3)):
         """
@@ -403,7 +409,8 @@ class MorphologicalOperations(ImageFiltering):
             image = self._binarize_image()
         gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, filter_size)
-        return cv2.morphologyEx(gray_image, cv2.MORPH_TOPHAT, kernel)
+        white_hat_image= cv2.morphologyEx(gray_image, cv2.MORPH_TOPHAT, kernel)
+        return white_hat_image
     def black_hat(self, image, filter_size=(3, 3)):
         """
         Function: Black Hat
@@ -421,7 +428,8 @@ class MorphologicalOperations(ImageFiltering):
             image = self._binarize_image(image)
         gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, filter_size)
-        return cv2.morphologyEx(gray_image, cv2.MORPH_BLACKHAT, kernel)
+        black_hat_image = cv2.morphologyEx(gray_image, cv2.MORPH_BLACKHAT, kernel)
+        return black_hat_image
     
 class ExposureOperations(ImageFiltering):
     def __init__(self):

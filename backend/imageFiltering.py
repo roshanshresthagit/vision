@@ -1,13 +1,16 @@
 import cv2
 import numpy as np
+
+
 class ImageFiltering:
     pass
+
 
 class Threshold(ImageFiltering):
     def __init__(self):
         super().__init__()
-    
-    def threshold_binary_image(self,image, lower_th=120, upper_th=255):
+
+    def threshold_binary_image(self, image, lower_th=120, upper_th=255):
         """
         Function: Binary Threshold Image
         Description: Apply thresholding to the given image using lower and upper threshold values.
@@ -20,13 +23,12 @@ class Threshold(ImageFiltering):
         Output:
             ndarray: The thresholded image.
         """
-        _, thresholded_image = cv2.threshold(image, lower_th, upper_th, cv2.THRESH_BINARY)
+        _, thresholded_image = cv2.threshold(
+            image, lower_th, upper_th, cv2.THRESH_BINARY
+        )
         return thresholded_image
-        
-    
-    def inv_threshold_binary_image(self,image, lower_th=120, upper_th=255):
-        
-        
+
+    def inv_threshold_binary_image(self, image, lower_th=120, upper_th=255):
         """
         Function: Inverse Binary Threshold Image
         Description: Apply inverse binary thresholding to the given image using lower and upper threshold values.
@@ -39,9 +41,12 @@ class Threshold(ImageFiltering):
         Output:
             ndarray: The inverse binary thresholded image.
         """
-        _, thresholded_image = cv2.threshold(image, lower_th, upper_th, cv2.THRESH_BINARY_INV)
+        _, thresholded_image = cv2.threshold(
+            image, lower_th, upper_th, cv2.THRESH_BINARY_INV
+        )
         return thresholded_image
-    def threshold_truncate_image(self,image,lower_th = 120, upper_th = 255):
+
+    def threshold_truncate_image(self, image, lower_th=120, upper_th=255):
         """
         Function: Truncate Threshold Image
         Description: Apply truncate thresholding to the given image using lower and upper threshold values.
@@ -54,9 +59,12 @@ class Threshold(ImageFiltering):
         Output:
             ndarray: The truncate thresholded image.
         """
-        _,thresholded_image = cv2.threshold(image,lower_th,upper_th,cv2.THRESH_TRUNC)
+        _, thresholded_image = cv2.threshold(
+            image, lower_th, upper_th, cv2.THRESH_TRUNC
+        )
         return thresholded_image
-    def threshold_to_zero_image(self,image,lower_th = 120, upper_th = 255):
+
+    def threshold_to_zero_image(self, image, lower_th=120, upper_th=255):
         """
         Function: Threshold to Zero Image
         Description: Apply threshold to zero to the given image using lower and upper threshold values.
@@ -70,10 +78,12 @@ class Threshold(ImageFiltering):
             ndarray: The thresholded image.
         """
 
-        _,thresholded_image = cv2.threshold(image,lower_th,upper_th,cv2.THRESH_TOZERO)
+        _, thresholded_image = cv2.threshold(
+            image, lower_th, upper_th, cv2.THRESH_TOZERO
+        )
         return thresholded_image
 
-    def threshold_to_zero_inv_image(self,image,lower_th = 120, upper_th = 255):
+    def threshold_to_zero_inv_image(self, image, lower_th=120, upper_th=255):
         """
         Function: Threshold to Zero Inverse Image
         Description: Apply threshold to zero inverse to the given image using lower and upper threshold values.
@@ -87,10 +97,12 @@ class Threshold(ImageFiltering):
             ndarray: The thresholded image.
         """
 
-        _,thresholded_image = cv2.threshold(image,lower_th,upper_th,cv2.THRESH_TOZERO_INV)
+        _, thresholded_image = cv2.threshold(
+            image, lower_th, upper_th, cv2.THRESH_TOZERO_INV
+        )
         return thresholded_image
-    
-    def threshold_binary_image_OTSU(self,image):
+
+    def threshold_binary_image_OTSU(self, image):
         """
         Function: Binary Threshold Image with OTSU
         Description: Apply thresholding to the given image with OTSU, where the threshold value is automatically determined.
@@ -100,10 +112,12 @@ class Threshold(ImageFiltering):
         Output:
             ndarray: The thresholded image.
         """
-        _, thresholded_image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        _, thresholded_image = cv2.threshold(
+            image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
+        )
         return thresholded_image
-    
-    def inv_threshold_binary_image_OTSU(self,image):
+
+    def inv_threshold_binary_image_OTSU(self, image):
         """
         Function: Inverse Binary Threshold Image with OTSU
         Description: Apply inverse thresholding to the given image with OTSU, where the threshold value is automatically determined.
@@ -113,10 +127,12 @@ class Threshold(ImageFiltering):
         Output:
             ndarray: The thresholded image.
         """
-        _, thresholded_image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+        _, thresholded_image = cv2.threshold(
+            image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU
+        )
         return thresholded_image
-        
-    def threshold_truncate_image_OTSU(self,image):
+
+    def threshold_truncate_image_OTSU(self, image):
         """
         Function: Truncate Threshold Image with OTSU
         Description: Apply truncate thresholding to the given image with OTSU, where the threshold value is automatically determined.
@@ -126,10 +142,12 @@ class Threshold(ImageFiltering):
         Output:
             ndarray: The thresholded image.
         """
-        _, thresholded_image = cv2.threshold(image, 0, 255, cv2.THRESH_TRUNC + cv2.THRESH_OTSU)
+        _, thresholded_image = cv2.threshold(
+            image, 0, 255, cv2.THRESH_TRUNC + cv2.THRESH_OTSU
+        )
         return thresholded_image
-        
-    def threshold_to_zero_image_OTSU(self,image):
+
+    def threshold_to_zero_image_OTSU(self, image):
         """
         Function: Threshold to Zero Image with OTSU
         Description: Apply threshold to zero to the given image with OTSU, where the threshold value is automatically determined.
@@ -139,10 +157,12 @@ class Threshold(ImageFiltering):
         Output:
             ndarray: The thresholded image.
         """
-        _, thresholded_image = cv2.threshold(image, 0, 255, cv2.THRESH_TOZERO + cv2.THRESH_OTSU)
+        _, thresholded_image = cv2.threshold(
+            image, 0, 255, cv2.THRESH_TOZERO + cv2.THRESH_OTSU
+        )
         return thresholded_image
-        
-    def threshold_to_zero_inv_image_OTSU(self,image):
+
+    def threshold_to_zero_inv_image_OTSU(self, image):
         """
         Function: Threshold to Zero Inverse Image with OTSU
         Description: Apply threshold to zero inverse to the given image with OTSU, where the threshold value is automatically determined.
@@ -152,10 +172,12 @@ class Threshold(ImageFiltering):
         Output:
             ndarray: The thresholded image.
         """
-        _, thresholded_image = cv2.threshold(image, 0, 255, cv2.THRESH_TOZERO_INV + cv2.THRESH_OTSU)
+        _, thresholded_image = cv2.threshold(
+            image, 0, 255, cv2.THRESH_TOZERO_INV + cv2.THRESH_OTSU
+        )
         return thresholded_image
 
-    def threshold_triangle_image(self,image):
+    def threshold_triangle_image(self, image):
         """
         Function: Triangle Threshold Image
         Description: Apply triangle thresholding to the given image.
@@ -165,14 +187,17 @@ class Threshold(ImageFiltering):
         Output:
             ndarray: The thresholded image.
         """
-        _, thresholded_image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_TRIANGLE)
+        _, thresholded_image = cv2.threshold(
+            image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_TRIANGLE
+        )
         return thresholded_image
+
 
 class AdaptiveThreshold(ImageFiltering):
     def __init__(self):
         super().__init__()
-    
-    def adaptive_threshold_mean_C(self,image,block_size=21,C=10):
+
+    def adaptive_threshold_mean_C(self, image, block_size=21, C=10):
         """
         Function: Adaptive Threshold with Mean
         Description: Apply adaptive thresholding to the given image with mean calculation.
@@ -185,10 +210,12 @@ class AdaptiveThreshold(ImageFiltering):
         Output:
             ndarray: The thresholded image.
         """
-        threshold_image = cv2.adaptiveThreshold(image,255,cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY_INV,block_size,C)
+        threshold_image = cv2.adaptiveThreshold(
+            image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, block_size, C
+        )
         return threshold_image
-    
-    def adaptive_threshold_gaussian_C(self,image,block_size=21,C=10):
+
+    def adaptive_threshold_gaussian_C(self, image, block_size=21, C=10):
         """
         Function: Adaptive Threshold with Gaussian
         Description: Apply adaptive thresholding to the given image with Gaussian calculation.
@@ -201,14 +228,22 @@ class AdaptiveThreshold(ImageFiltering):
         Output:
             ndarray: The thresholded image.
         """
-        threshold_image = cv2.adaptiveThreshold(image,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,block_size,C)
+        threshold_image = cv2.adaptiveThreshold(
+            image,
+            255,
+            cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            cv2.THRESH_BINARY_INV,
+            block_size,
+            C,
+        )
         return threshold_image
+
 
 class BlurringAndNoiseReduction(ImageFiltering):
     def __init__(self):
         super().__init__()
-    
-    def median_blur(self,image,ksize=3):
+
+    def median_blur(self, image, ksize=3):
         """
         Function: Median Blur
         Description: Apply median blurring to the given image.
@@ -220,10 +255,10 @@ class BlurringAndNoiseReduction(ImageFiltering):
         Output:
             ndarray: The blurred image.
         """
-        blurred_image = cv2.medianBlur(image,ksize)
+        blurred_image = cv2.medianBlur(image, ksize)
         return blurred_image
-    
-    def gaussian_blur(self,image,ksize=3,sigmaX=0,sigmaY=0):
+
+    def gaussian_blur(self, image, ksize=3, sigmaX=0, sigmaY=0):
         """
         Function: Gaussian Blur
         Description: Apply Gaussian blurring to the given image.
@@ -236,10 +271,10 @@ class BlurringAndNoiseReduction(ImageFiltering):
         Output:
             ndarray: The blurred image.
         """
-        blurred_image = cv2.GaussianBlur(image,(ksize,ksize),sigmaX,sigmaY)
+        blurred_image = cv2.GaussianBlur(image, (ksize, ksize), sigmaX, sigmaY)
         return blurred_image
-    
-    def bilateral_filter(self,image,d=9,sigmaColor=75,sigmaSpace=75):
+
+    def bilateral_filter(self, image, d=9, sigmaColor=75, sigmaSpace=75):
         """
         Function: Bilateral Filter
         Description: Apply bilateral filtering to the given image.
@@ -253,10 +288,10 @@ class BlurringAndNoiseReduction(ImageFiltering):
         Output:
             ndarray: The filtered image.
         """
-        filtered_image = cv2.bilateralFilter(image,d,sigmaColor,sigmaSpace)
+        filtered_image = cv2.bilateralFilter(image, d, sigmaColor, sigmaSpace)
         return filtered_image
-        
-    def box_filter(self,image,ddepth=-1,ksize=3):
+
+    def box_filter(self, image, ddepth=-1, ksize=3):
         """
         Function: Box Filter
         Description: Apply box filtering to the given image.
@@ -269,9 +304,12 @@ class BlurringAndNoiseReduction(ImageFiltering):
         Output:
             ndarray: The filtered image.
         """
-        filtered_image = cv2.boxFilter(image,ddepth,(ksize,ksize))
+        filtered_image = cv2.boxFilter(image, ddepth, (ksize, ksize))
         return filtered_image
-    def non_local_means_denoising(self, image, h=10, hColor=10, templateWindowSize=7, searchWindowSize=15):
+
+    def non_local_means_denoising(
+        self, image, h=10, hColor=10, templateWindowSize=7, searchWindowSize=15
+    ):
         """
         Function: Non-Local Means Denoising
         Description: Apply Non-Local Means Denoising to a color image using OpenCV's fastNlMeansDenoisingColored.
@@ -284,17 +322,23 @@ class BlurringAndNoiseReduction(ImageFiltering):
         Output:
             numpy.ndarray: Denoised image.
         """
-        image = cv2.fastNlMeansDenoisingColored(image, None, h, hColor, templateWindowSize, searchWindowSize)
+        image = cv2.fastNlMeansDenoisingColored(
+            image, None, h, hColor, templateWindowSize, searchWindowSize
+        )
         return image
-    
+
+
 class MorphologicalOperations(ImageFiltering):
     def __init__(self):
         super().__init__()
+
     def _is_binarized(self, image):
         unique_values = np.unique(image)
         return len(unique_values) == 2 and set(unique_values) == {0, 255}
+
     def _binarize_image(self, image):
-        return cv2.threshold(image, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
+        return cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+
     def erode(self, image, iterations=1, kernel=None, filter_size=(3, 3)):
         """
         Function: Erode
@@ -313,8 +357,9 @@ class MorphologicalOperations(ImageFiltering):
             image = self._binarize_image(image)
         if kernel is None:
             kernel = np.ones(filter_size, np.uint8)
-        eroded_image =  cv2.erode(image, kernel=kernel, iterations=iterations)
+        eroded_image = cv2.erode(image, kernel=kernel, iterations=iterations)
         return eroded_image
+
     def dilate(self, image, iterations=1, kernel=None, filter_size=(3, 3)):
         """
         Function: Dilate
@@ -336,6 +381,7 @@ class MorphologicalOperations(ImageFiltering):
             kernel = np.ones(filter_size, np.uint8)
         dialated_image = cv2.dilate(image, kernel=kernel, iterations=iterations)
         return dialated_image
+
     def opening(self, image, kernel=None, filter_size=(3, 3)):
         """
         Function: Opening
@@ -353,8 +399,9 @@ class MorphologicalOperations(ImageFiltering):
             image = self._binarize_image(image)
         if kernel is None:
             kernel = np.ones(filter_size, np.uint8)
-        opened_image =  cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
+        opened_image = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)
         return opened_image
+
     def closing(self, image, kernel=None, filter_size=(3, 3)):
         """
         Function: Closing
@@ -372,8 +419,9 @@ class MorphologicalOperations(ImageFiltering):
             image = self._binarize_image(image)
         if kernel is None:
             kernel = np.ones(filter_size, np.uint8)
-        closed_image =  cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
+        closed_image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
         return closed_image
+
     def morphological_gradient(self, image, kernel=None, filter_size=(3, 3)):
         """
         Function: Morphological Gradient
@@ -409,8 +457,9 @@ class MorphologicalOperations(ImageFiltering):
             image = self._binarize_image()
         gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, filter_size)
-        white_hat_image= cv2.morphologyEx(gray_image, cv2.MORPH_TOPHAT, kernel)
+        white_hat_image = cv2.morphologyEx(gray_image, cv2.MORPH_TOPHAT, kernel)
         return white_hat_image
+
     def black_hat(self, image, filter_size=(3, 3)):
         """
         Function: Black Hat
@@ -430,12 +479,13 @@ class MorphologicalOperations(ImageFiltering):
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, filter_size)
         black_hat_image = cv2.morphologyEx(gray_image, cv2.MORPH_BLACKHAT, kernel)
         return black_hat_image
-    
+
+
 class ExposureOperations(ImageFiltering):
     def __init__(self):
         super().__init__()
-    
-    def brighten_image(self,image,alpha = 1,beta = 10):
+
+    def brighten_image(self, image, alpha=1, beta=10):
         """
         Function: Brighten Image
         Description: Increase the brightness of the given image using the specified alpha and beta values.
@@ -451,7 +501,8 @@ class ExposureOperations(ImageFiltering):
 
         brightened_image = cv2.convertScaleAbs(image, alpha, beta)
         return brightened_image
-    def darken_image(self,image,alpha = 1,beta = -10):
+
+    def darken_image(self, image, alpha=1, beta=-10):
         """
         Function: Darken Image
         Description: Decrease the brightness of the given image using the specified alpha and beta values.
@@ -467,7 +518,8 @@ class ExposureOperations(ImageFiltering):
 
         darkened_image = cv2.convertScaleAbs(image, alpha, beta)
         return darkened_image
-    def contrast_image(self,image,alpha = 1.2,beta = 0):
+
+    def contrast_image(self, image, alpha=1.2, beta=0):
         """
         Function: Contrast Image
         Description: Adjust the contrast of the given image using the specified alpha and beta values.

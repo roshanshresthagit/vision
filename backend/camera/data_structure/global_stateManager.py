@@ -3,13 +3,14 @@ from dataclasses import dataclass, field, make_dataclass
 from typing import Any, Dict, Type, TypeVar, Optional
 import yaml
 
-T = TypeVar('T')
+T = TypeVar("T")
+
 
 class DataStore(QObject):
     """
     DataStore is a centralized state manager for a PyQt application.
     It follows the Singleton pattern to ensure a single instance,
-    and manages dataclasses and their instances in a thread-safe manner.  
+    and manages dataclasses and their instances in a thread-safe manner.
     """
 
     _instance = None  # Class-level attribute to hold the singleton instance
@@ -77,9 +78,11 @@ class DataStore(QObject):
         with QMutexLocker(self._mutex):
             if name in self._registry:
                 raise ValueError(f"Dataclass {name} already exists.")
-            
+
             # Create a new dataclass with the specified fields
-            new_class = make_dataclass(name, [(f, t, field(default=None)) for f, t in fields.items()])
+            new_class = make_dataclass(
+                name, [(f, t, field(default=None)) for f, t in fields.items()]
+            )
             self._registry[name] = new_class
             return new_class
 
@@ -112,7 +115,9 @@ class DataStore(QObject):
             else:
                 raise ValueError(f"Dataclass {name} does not exist.")
 
-    def update_dataclass_instance(self, dataclass_name: str, key: str, updates: Dict[str, Any]):
+    def update_dataclass_instance(
+        self, dataclass_name: str, key: str, updates: Dict[str, Any]
+    ):
         """
         Update specific attributes of a dataclass instance stored in _data.
         Ensure the dataclass and instance exist before updating.
@@ -129,7 +134,7 @@ class DataStore(QObject):
         with QMutexLocker(self._mutex):
             if dataclass_name not in self._registry:
                 raise ValueError(f"Dataclass {dataclass_name} is not registered.")
-            
+
             dataclass_instance = self._data.get(key, None)
             if not dataclass_instance:
                 raise ValueError(f"No instance found for key {key}.")
@@ -161,13 +166,15 @@ class DataStore(QObject):
             dataclass_instance = self._data.get(key, None)
             if not dataclass_instance:
                 raise ValueError(f"No instance found for key {key}.")
-            
+
             if hasattr(dataclass_instance, attribute):
                 return getattr(dataclass_instance, attribute)
             else:
                 raise AttributeError(f"Instance has no attribute {attribute}.")
 
-    def add_dataclass_attribute(self, dataclass_name: str, key: str, attribute: str, value: Any):
+    def add_dataclass_attribute(
+        self, dataclass_name: str, key: str, attribute: str, value: Any
+    ):
         """
         Add a new attribute to a dataclass instance.
 
@@ -184,7 +191,7 @@ class DataStore(QObject):
         with QMutexLocker(self._mutex):
             if dataclass_name not in self._registry:
                 raise ValueError(f"Dataclass {dataclass_name} is not registered.")
-            
+
             dataclass_instance = self._data.get(key, None)
             if not dataclass_instance:
                 raise ValueError(f"No instance found for key {key}.")
@@ -211,7 +218,7 @@ class DataStore(QObject):
         with QMutexLocker(self._mutex):
             if dataclass_name not in self._registry:
                 raise ValueError(f"Dataclass {dataclass_name} is not registered.")
-            
+
             dataclass_instance = self._data.get(key, None)
             if not dataclass_instance:
                 raise ValueError(f"No instance found for key {key}.")
@@ -234,7 +241,7 @@ class DataStore(QObject):
         Raises:
             ValueError: If the YAML file cannot be loaded or dataclass creation fails.
         """
-        with open(yaml_file, 'r') as file:
+        with open(yaml_file, "r") as file:
             config = yaml.safe_load(file)
 
         if not isinstance(config, dict):

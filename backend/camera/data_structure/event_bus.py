@@ -9,7 +9,7 @@ class EventBus:
 
     def register_event(self, event_name):
         self._subscribers[event_name] = []
-    
+
     def subscribe(self, event_name, callback):
         if event_name not in self._subscribers:
             self.register_event(event_name)

@@ -6,8 +6,7 @@ class calculation:
     def __init__(self):
         pass
 
-    def find_slope_and_intercept(self,X, y):
-    
+    def find_slope_and_intercept(self, X, y):
         """
         Function: find_slope_and_intercept
         Description: Compute slope and intercept for linear regression.
@@ -36,9 +35,7 @@ class calculation:
 
         return params[1], params[0]
 
-
-    def point_to_point(self,point1, point2):
-    
+    def point_to_point(self, point1, point2):
         """
         Function: point_to_point
         Description: Compute Euclidean distance between two points.
@@ -55,9 +52,7 @@ class calculation:
         distance = math.sqrt(sum((p1 - p2) ** 2 for p1, p2 in zip(point1, point2)))
         return distance
 
-
-    def point_to_line_segment(self,point, line):
-    
+    def point_to_line_segment(self, point, line):
         """
         Function: point_to_line_segment
         Description: Compute Euclidean distance, angle and nearest point from a point to a line segment.
@@ -85,14 +80,14 @@ class calculation:
         if np.isclose(np.linalg.norm(vec_to_p), 0) or np.isclose(np.linalg.norm(v), 0):
             angle = 0.0
         else:
-            cosang = np.dot(vec_to_p, v) / (np.linalg.norm(vec_to_p) * np.linalg.norm(v))
+            cosang = np.dot(vec_to_p, v) / (
+                np.linalg.norm(vec_to_p) * np.linalg.norm(v)
+            )
             angle = math.degrees(math.acos(np.clip(cosang, -1, 1)))
 
         return dist, angle, (proj[0], proj[1])
 
-
-    def point_to_line(self,point, line):
-    
+    def point_to_line(self, point, line):
         """
         Function: point_to_line
         Description: Compute Euclidean distance, angle and nearest point from a point to a line.
@@ -104,7 +99,7 @@ class calculation:
         Returns:
             Tuple[float, float, Tuple[float, float]]: (distance, angle_deg, nearest_point).
         """
-        
+
         slope, intercept = line
         x0, y0 = point
 
@@ -125,14 +120,12 @@ class calculation:
         if np.isclose(mag_vec, 0) or np.isclose(mag_base, 0):
             angle = 0.0
         else:
-            cosang = (vec[0]*base[0] + vec[1]*base[1]) / (mag_vec * mag_base)
+            cosang = (vec[0] * base[0] + vec[1] * base[1]) / (mag_vec * mag_base)
             angle = math.degrees(math.acos(np.clip(cosang, -1, 1)))
 
         return dist, angle, (x_proj, y_proj)
 
-
-    def line_to_line(self,line1, line2):
-    
+    def line_to_line(self, line1, line2):
         """
         Function: line_to_line
         Description: Compute Euclidean distance, and closest points between two lines.
@@ -163,8 +156,7 @@ class calculation:
         distance = float(np.linalg.norm(c1 - c2)), (c1[0], c1[1]), (c2[0], c2[1])
         return distance
 
-    def find_angle_and_intersection(self,line1, line2):
-    
+    def find_angle_and_intersection(self, line1, line2):
         """
         Function: find_angle_and_intersection
         Description: Compute the angle between two lines in degrees, and the intersection point.
@@ -186,24 +178,24 @@ class calculation:
             return 90.0, (b2, b1)
         x_int = (b2 - b1) / (m1 - m2)
         y_int = m1 * x_int + b1
-        if np.isclose(m1*m2, -1):
+        if np.isclose(m1 * m2, -1):
             angle = 90.0
         else:
-            angle = math.degrees(abs(math.atan((m2 - m1)/(1 + m1*m2))))
+            angle = math.degrees(abs(math.atan((m2 - m1) / (1 + m1 * m2))))
         return angle, (x_int, y_int)
 
-
-    def get_slope_at_certain_angle(self,line=None, slope_intercept=None, angle_degrees=0):
-    
+    def get_slope_at_certain_angle(
+        self, line=None, slope_intercept=None, angle_degrees=0
+    ):
         """
         Function: get_slope_at_certain_angle
         Description: Compute the slope of a line after rotating it by a certain angle from the horizontal.
-        
+
         Parameters:
             line (Tuple[Tuple[float, float], Tuple[float, float]]): The line defined by two points.
             slope_intercept (Tuple[float, float]): The line defined by its slope and intercept.
             angle_degrees (float): The angle in degrees to rotate the line.
-        
+
         Returns:
             Tuple[float, float]: The new slope and intercept of the rotated line.
 
@@ -215,10 +207,10 @@ class calculation:
             dx, dy = x2 - x1, y2 - y1
             if dx == 0 and dy == 0:
                 raise ValueError("The two points are the same; cannot form a vector.")
-            slope = np.inf if dx == 0 else dy/dx
+            slope = np.inf if dx == 0 else dy / dx
             mag = math.hypot(dx, dy)
-            unit = (dx/mag, dy/mag)
-            intercept = None if slope == np.inf else y1 - slope*x1
+            unit = (dx / mag, dy / mag)
+            intercept = None if slope == np.inf else y1 - slope * x1
         else:
             slope, intercept = slope_intercept
             if slope == np.inf:
@@ -227,25 +219,23 @@ class calculation:
                 unit = (1, 0)
             else:
                 mag = math.hypot(1, slope)
-                unit = (1/mag, slope/mag)
+                unit = (1 / mag, slope / mag)
         rad = math.radians(angle_degrees)
         ux, uy = unit
-        nx = ux*math.cos(rad) - uy*math.sin(rad)
-        ny = ux*math.sin(rad) + uy*math.cos(rad)
-        new_slope = np.inf if np.isclose(nx, 0) else ny/nx
+        nx = ux * math.cos(rad) - uy * math.sin(rad)
+        ny = ux * math.sin(rad) + uy * math.cos(rad)
+        new_slope = np.inf if np.isclose(nx, 0) else ny / nx
         if slope_intercept is not None:
             if new_slope == np.inf or new_slope == 0:
                 return new_slope, intercept
             # rotate intercept about origin
-            rx = -intercept*math.sin(rad)
-            ry = intercept*math.cos(rad)
-            new_int = ry - new_slope*rx
+            rx = -intercept * math.sin(rad)
+            ry = intercept * math.cos(rad)
+            new_int = ry - new_slope * rx
             return new_slope, new_int
         return new_slope, intercept
 
-
-    def calculate_new_line(self,line, offset_distance=None, offset_point=None):
-
+    def calculate_new_line(self, line, offset_distance=None, offset_point=None):
         """
         Function: calculate_new_line
         Description: Calculate a new line parallel to the given line, offset by a specified distance or through a specific point.
@@ -259,21 +249,21 @@ class calculation:
             tuple: A tuple containing the slope and intercept of the new line.
         """
 
-        from numpy import sqrt
         slope, intercept = line
         if slope == np.inf:
             if offset_point is not None:
                 return np.inf, offset_point[0]
             if offset_distance is not None:
                 return np.inf, intercept + offset_distance
-            raise ValueError("Provide offset_distance or offset_point for vertical line.")
+            raise ValueError(
+                "Provide offset_distance or offset_point for vertical line."
+            )
         if offset_point is not None:
             x, y = offset_point
-            new_int = y - slope*x
+            new_int = y - slope * x
         elif offset_distance is not None:
-            norm = math.hypot(slope,  -1)
-            new_int = intercept + offset_distance*norm
+            norm = math.hypot(slope, -1)
+            new_int = intercept + offset_distance * norm
         else:
             raise ValueError("Provide offset_distance or offset_point.")
         return slope, new_int
-

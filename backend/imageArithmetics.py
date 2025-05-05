@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+
 class ImageArithmetic:
     def __init__(self):
         """Initializes the ImageArithmetic class."""

@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+
 class Geometric:
     def __init__(self):
         pass
@@ -8,9 +9,14 @@ class Geometric:
 
 class Transformations(Geometric):
     def __init__(self):
-       
         super().__init__()
-    def affine_transform(self, image, src_points=[[50,50],[200,50],[50,200]], dst_points=[[10,100],[200,50],[100,250]]):
+
+    def affine_transform(
+        self,
+        image,
+        src_points=[[50, 50], [200, 50], [50, 200]],
+        dst_points=[[10, 100], [200, 50], [100, 250]],
+    ):
         """
         Function: affine_transform
         Description: Apply an affine transformation to an image.
@@ -25,6 +31,7 @@ class Transformations(Geometric):
         M = cv2.getAffineTransform(np.float32(src_points), np.float32(dst_points))
         transformed_image = cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
         return transformed_image
+
     def perspective_transform(self, image, src_points, dst_points):
         """
         Function: perspective_transform
@@ -38,9 +45,12 @@ class Transformations(Geometric):
         """
 
         M = cv2.getPerspectiveTransform(np.float32(src_points), np.float32(dst_points))
-        transformed_image = cv2.warpPerspective(image, M, (image.shape[1], image.shape[0]))
+        transformed_image = cv2.warpPerspective(
+            image, M, (image.shape[1], image.shape[0])
+        )
         return transformed_image
-    def warp_affine(self, image, src_pts,dst_pts):
+
+    def warp_affine(self, image, src_pts, dst_pts):
         """
         Function: warp_affine
         Description: Apply an affine transformation to an image with the given source and destination points.
@@ -53,9 +63,10 @@ class Transformations(Geometric):
         """
         M = cv2.getAffineTransform(np.float32(src_pts), np.float32(dst_pts))
 
-        transformed_image =  cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
+        transformed_image = cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
         return transformed_image
-    def warp_perspective(self, image, src_pts,dst_pts):
+
+    def warp_perspective(self, image, src_pts, dst_pts):
         """
         Function: warp_perspective
         Description: Apply a perspective transformation to an image with the given source and destination points.
@@ -67,8 +78,11 @@ class Transformations(Geometric):
             ndarray: The transformed image with applied perspective transformation.
         """
         M = cv2.getPerspectiveTransform(np.float32(src_pts), np.float32(dst_pts))
-        transformed_image = cv2.warpPerspective(image, M, (image.shape[1], image.shape[0]))
+        transformed_image = cv2.warpPerspective(
+            image, M, (image.shape[1], image.shape[0])
+        )
         return transformed_image
+
     def rotate(self, image, angle, center=None, scale=1.0):
         """
         Function: Rotate
@@ -86,8 +100,9 @@ class Transformations(Geometric):
         if center is None:
             center = (w // 2, h // 2)
         M = cv2.getRotationMatrix2D(center, angle, scale)
-        transformed_image= cv2.warpAffine(image, M, (w, h))
+        transformed_image = cv2.warpAffine(image, M, (w, h))
         return transformed_image
+
     def translate(self, image, tx=10, ty=10):
         """
         Function: translate
@@ -100,8 +115,9 @@ class Transformations(Geometric):
             ndarray: The translated image.
         """
         M = np.float32([[1, 0, tx], [0, 1, ty]])
-        transformed_image =  cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
+        transformed_image = cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
         return transformed_image
+
     def flip(self, image, flip_type):
         """
         Function: Flip
@@ -114,9 +130,9 @@ class Transformations(Geometric):
         """
 
         if flip_type == "vertical":
-            flipped_image =  cv2.flip(image, 0)
+            flipped_image = cv2.flip(image, 0)
         elif flip_type == "horizontal":
-            flipped_image =  cv2.flip(image, 1)
+            flipped_image = cv2.flip(image, 1)
         return flipped_image
 
     def scale(self, image, fx, fy):
@@ -130,12 +146,14 @@ class Transformations(Geometric):
         Output:
             ndarray: The scaled image.
         """
-        scaled_image = cv2.resize(image, None, fx=fx, fy=fy, interpolation=cv2.INTER_LINEAR)
+        scaled_image = cv2.resize(
+            image, None, fx=fx, fy=fy, interpolation=cv2.INTER_LINEAR
+        )
         return scaled_image
+
 
 class MomentsAndCentroids(Geometric):
     def __init__(self):
-        
         super().__init__()
 
     def raw_moments(self, image):
@@ -148,7 +166,7 @@ class MomentsAndCentroids(Geometric):
             dict: A dictionary containing the computed raw moments of the image.
         """
 
-        moments =  cv2.moments(image)
+        moments = cv2.moments(image)
         return moments
 
     def central_moments(self, image):
@@ -162,8 +180,13 @@ class MomentsAndCentroids(Geometric):
         """
         m = cv2.moments(image)
         moments = {
-            'mu20': m['mu20'], 'mu11': m['mu11'], 'mu02': m['mu02'],
-            'mu30': m['mu30'], 'mu21': m['mu21'], 'mu12': m['mu12'], 'mu03': m['mu03']
+            "mu20": m["mu20"],
+            "mu11": m["mu11"],
+            "mu02": m["mu02"],
+            "mu30": m["mu30"],
+            "mu21": m["mu21"],
+            "mu12": m["mu12"],
+            "mu03": m["mu03"],
         }
         return moments
 
@@ -190,9 +213,9 @@ class MomentsAndCentroids(Geometric):
             tuple: A tuple containing the x and y coordinates of the centroid of the image as integers.
         """
         m = cv2.moments(image)
-        if m['m00'] != 0:
-            cx = int(m['m10'] / m['m00'])
-            cy = int(m['m01'] / m['m00'])
+        if m["m00"] != 0:
+            cx = int(m["m10"] / m["m00"])
+            cy = int(m["m01"] / m["m00"])
             return (cx, cy)
         else:
             return (0, 0)
@@ -207,9 +230,9 @@ class MomentsAndCentroids(Geometric):
             float: The computed orientation of the image in degrees.
         """
         m = cv2.moments(image)
-        if m['mu20'] - m['mu02'] != 0:
-            angle = 0.5 * np.arctan2(2 * m['mu11'], m['mu20'] - m['mu02'])
-            orient =  np.degrees(angle)
+        if m["mu20"] - m["mu02"] != 0:
+            angle = 0.5 * np.arctan2(2 * m["mu11"], m["mu20"] - m["mu02"])
+            orient = np.degrees(angle)
             return orient
         orient = 0
         return orient
@@ -229,7 +252,6 @@ class MomentsAndCentroids(Geometric):
             ellipse = cv2.fitEllipse(contour)
         return ellipse
 
-
     def bounding_box_center(self, contour):
         """
         Function: bounding_box_center
@@ -244,11 +266,12 @@ class MomentsAndCentroids(Geometric):
         center = (x + w // 2, y + h // 2)
         return center
 
+
 class Resize(Geometric):
     def __init__(self):
         super().__init__()
-        
-    def resize_image(self, image, width, height,interpolation = cv2.INTER_LINEAR):
+
+    def resize_image(self, image, width, height, interpolation=cv2.INTER_LINEAR):
         """
         Function: resize
         Description: Resize an image to a specified width and height.
@@ -259,9 +282,10 @@ class Resize(Geometric):
         Output:
             ndarray: The resized image.
         """
-        resized_image = cv2.resize(image, (width, height),interpolation=interpolation)
+        resized_image = cv2.resize(image, (width, height), interpolation=interpolation)
         return resized_image
-    def gaussian_pyramid(self,image, levels):
+
+    def gaussian_pyramid(self, image, levels):
         """
         Function: gaussian_pyramid
         Description: Generate a Gaussian pyramid of the input image up to a specified number of levels.
@@ -277,7 +301,7 @@ class Resize(Geometric):
             pyramid.append(image)
         return pyramid
 
-    def laplacian_pyramid(self,image, levels):
+    def laplacian_pyramid(self, image, levels):
         """
         Function: laplacian_pyramid
         Description: Generate a Laplacian pyramid from the input image using Gaussian pyramid decomposition.
@@ -296,10 +320,12 @@ class Resize(Geometric):
             laplacian.append(lap)
         laplacian.append(gaussian[-1])
         return laplacian
-    
+
+
 class BlobsAndConnected(Geometric):
     def __init__(self):
         super().__init__()
+
     def simple_blob_detector(image, params=None):
         """
         Function: simple_blob_detector
@@ -346,7 +372,9 @@ class BlobsAndConnected(Geometric):
                 - stats: statistics (x, y, width, height, area) for each label
                 - centroids: centroids (x, y) of each label
         """
-        num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(binary_image)
+        num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(
+            binary_image
+        )
         return num_labels, labels, stats, centroids
 
     def draw_bounding_boxes(image, stats, min_area=50):
@@ -378,7 +406,9 @@ class BlobsAndConnected(Geometric):
         """
         num_labels, labels = cv2.connectedComponents(image)
         output = np.zeros((image.shape[0], image.shape[1], 3), dtype=np.uint8)
-        colors = [tuple(np.random.randint(0, 255, 3).tolist()) for _ in range(num_labels)]
+        colors = [
+            tuple(np.random.randint(0, 255, 3).tolist()) for _ in range(num_labels)
+        ]
 
         for y in range(image.shape[0]):
             for x in range(image.shape[1]):
@@ -387,10 +417,12 @@ class BlobsAndConnected(Geometric):
                     output[y, x] = colors[label]
         return output
 
+
 class HoughTransform(Geometric):
     def __init__(self):
         super().__init__()
-    def hough_line_transform(image, rho=1, theta=np.pi/180, threshold=150):
+
+    def hough_line_transform(image, rho=1, theta=np.pi / 180, threshold=150):
         """
         Function: hough_line_transform
         Description: Detects lines in a binary edge image using the standard Hough Line Transform.
@@ -405,7 +437,14 @@ class HoughTransform(Geometric):
         lines = cv2.HoughLines(image, rho, theta, threshold)
         return lines
 
-    def probabilistic_hough_line_transform(image, rho=1, theta=np.pi/180, threshold=100, min_line_length=50, max_line_gap=10):
+    def probabilistic_hough_line_transform(
+        image,
+        rho=1,
+        theta=np.pi / 180,
+        threshold=100,
+        min_line_length=50,
+        max_line_gap=10,
+    ):
         """
         Function: probabilistic_hough_line_transform
         Description: Detects lines in a binary edge image using the Probabilistic Hough Line Transform.
@@ -420,10 +459,19 @@ class HoughTransform(Geometric):
             list: A list of lines, where each line is represented as [x1, y1, x2, y2].
                 Returns None if no lines are found.
         """
-        lines = cv2.HoughLinesP(image, rho, theta, threshold, minLineLength=min_line_length, maxLineGap=max_line_gap)
+        lines = cv2.HoughLinesP(
+            image,
+            rho,
+            theta,
+            threshold,
+            minLineLength=min_line_length,
+            maxLineGap=max_line_gap,
+        )
         return lines
 
-    def hough_circle_detection(image, dp=1.2, min_dist=20, param1=100, param2=30, min_radius=0, max_radius=0):
+    def hough_circle_detection(
+        image, dp=1.2, min_dist=20, param1=100, param2=30, min_radius=0, max_radius=0
+    ):
         """
         Function: hough_circle_detection
         Description: Detects circles in a grayscale image using the Hough Circle Transform.
@@ -439,9 +487,16 @@ class HoughTransform(Geometric):
             ndarray: An array of detected circles, each defined by (x_center, y_center, radius).
                     Returns None if no circles are detected.
         """
-        circles = cv2.HoughCircles(image, cv2.HOUGH_GRADIENT, dp, min_dist,
-                                param1=param1, param2=param2,
-                                minRadius=min_radius, maxRadius=max_radius)
+        circles = cv2.HoughCircles(
+            image,
+            cv2.HOUGH_GRADIENT,
+            dp,
+            min_dist,
+            param1=param1,
+            param2=param2,
+            minRadius=min_radius,
+            maxRadius=max_radius,
+        )
         if circles is not None:
             circles = np.uint16(np.around(circles))
         return circles

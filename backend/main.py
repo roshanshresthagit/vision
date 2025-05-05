@@ -2,7 +2,7 @@ import json
 import base64
 import asyncio
 import inspect
-import functions, imageFiltering, colorSpaceOperations,geometric,calculation, contourAnalysis
+import functions, imageFiltering, colorSpaceOperations, geometric, calculation, contourAnalysis, imageArithmetics, imageEnhancement, visualization, roi
 import numpy as np
 from io import BytesIO
 from pydantic import BaseModel
@@ -15,7 +15,18 @@ from dic_gen import get_class_info
 
 
 # List of modules containing functions to be exposed
-MODULES = [functions, imageFiltering, colorSpaceOperations, geometric,calculation, contourAnalysis]
+MODULES = [
+    functions,
+    imageFiltering,
+    colorSpaceOperations,
+    geometric,
+    calculation,
+    contourAnalysis,
+    imageEnhancement,
+    imageArithmetics,
+    visualization,
+    roi,
+]
 
 app = FastAPI()
 app.add_middleware(
@@ -26,15 +37,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class Node(BaseModel):
     id: str
-    type: str  
+    type: str
     value: Any = None
     data: Dict[str, Any] = {}
+
 
 class Edge(BaseModel):
     source: str
     target: str
+
 
 class FlowRequest(BaseModel):
     nodes: List[Node]
@@ -50,16 +64,20 @@ def decode_base64_image(base64_string: str) -> np.ndarray:
     img = Image.open(BytesIO(img_bytes))
     return np.array(img)
 
+
 def encode_to_base64(value: Any) -> str:
     """Encode various types to base64 strings"""
     if isinstance(value, np.ndarray):
         image = Image.fromarray(value)
         buffered = BytesIO()
         image.save(buffered, format="JPEG")
-        return "data:image/jpeg;base64," + base64.b64encode(buffered.getvalue()).decode()
+        return (
+            "data:image/jpeg;base64," + base64.b64encode(buffered.getvalue()).decode()
+        )
     elif isinstance(value, (int, float, str)):
         return str(value)
     return json.dumps(value)
+
 
 def find_function_handler(func_name: str) -> tuple[callable, bool]:
     """Search for a function across all modules and return its handler and whether it's a class method"""
@@ -74,6 +92,7 @@ def find_function_handler(func_name: str) -> tuple[callable, bool]:
             elif callable(obj) and name == func_name:
                 return obj, False  # It's a standalone function
     return None, False
+
 
 @app.post("/execute_flow")
 async def execute_flow(request: Request):
@@ -107,7 +126,10 @@ async def execute_flow(request: Request):
                     src_node = next((n for n in nodes if n["id"] == src_id), None)
                     if src_node and src_node["type"] == "functionNode":
                         await process_function_node(src_id)
-                    elif src_node and src_node["type"] in ["inputNode","imageInputNode"]:
+                    elif src_node and src_node["type"] in [
+                        "inputNode",
+                        "imageInputNode",
+                    ]:
                         node_values[src_id] = inputValues.get(src_id)
 
                 val = node_values.get(src_id)
@@ -126,7 +148,8 @@ async def execute_flow(request: Request):
                     if is_class_method:
                         # Get the class that contains this method
                         cls = next(
-                            obj for module in MODULES
+                            obj
+                            for module in MODULES
                             for name, obj in vars(module).items()
                             if inspect.isclass(obj) and func_name in vars(obj)
                         )
@@ -135,7 +158,7 @@ async def execute_flow(request: Request):
                     else:
                         # It's a standalone function
                         result = func_handler(*input_values)
-                    
+
                     node_values[node_id] = result
                 except Exception as e:
                     print(f"Error executing {func_name}: {str(e)}")
@@ -149,27 +172,32 @@ async def execute_flow(request: Request):
             while pending_edges:
                 to_remove = []
                 for edge in pending_edges:
-                    target_node = next((n for n in nodes if n["id"] == edge["target"]), None)
+                    target_node = next(
+                        (n for n in nodes if n["id"] == edge["target"]), None
+                    )
                     if target_node and target_node["type"] == "resultNode":
                         source_id = edge["source"]
-                        source_node = next((n for n in nodes if n["id"] == source_id), None)
+                        source_node = next(
+                            (n for n in nodes if n["id"] == source_id), None
+                        )
                         if source_node and source_node["type"] == "functionNode":
                             await process_function_node(source_id)
 
-                        result_value = encode_to_base64(node_values.get(source_id, None))
+                        result_value = encode_to_base64(
+                            node_values.get(source_id, None)
+                        )
 
-                        response_data = json.dumps({
-                            "resultNode": edge["target"],
-                            "value": result_value
-                        })
+                        response_data = json.dumps(
+                            {"resultNode": edge["target"], "value": result_value}
+                        )
                         yield response_data + "\n"
                         to_remove.append(edge)
 
                 for edge in to_remove:
                     pending_edges.remove(edge)
-                
+
                 await asyncio.sleep(0.1)
-                    
+
             yield json.dumps({"message": "All results processed"}) + "\n"
 
         except Exception as e:
@@ -177,15 +205,17 @@ async def execute_flow(request: Request):
 
     return StreamingResponse(flow_processor(), media_type="application/json")
 
+
 @app.get("/function_dict")
 async def get_function_json():
     """Get detailed function dictionary from all modules"""
     try:
         function_dict = get_class_info(MODULES, islist=False)
         return function_dict
-    except Exception as e: 
+    except Exception as e:
         return {"error": str(e)}
-    
+
+
 @app.get("/function_list")
 async def get_function_list_json():
     """Get simplified function list from all modules"""
@@ -194,6 +224,7 @@ async def get_function_list_json():
         return function_list
     except Exception as e:
         return {"error": str(e)}
+
 
 @app.get("/get_functions")
 async def get_functions():
@@ -204,6 +235,6 @@ async def get_functions():
         function_dict[module_name] = {
             name: inspect.getsource(obj)
             for name, obj in vars(module).items()
-            if callable(obj) and not name.startswith('_')
+            if callable(obj) and not name.startswith("_")
         }
     return function_dict

@@ -28,8 +28,8 @@ class ROIS:
         y = max(0, min(y, h_img - 1))
         w = min(w, w_img - x)
         h = min(h, h_img - y)
-        
-        return image[y:y+h, x:x+w]
+
+        return image[y : y + h, x : x + w]
 
     def polygon_roi(self, image, points):
         """
@@ -47,7 +47,7 @@ class ROIS:
         if not points or len(points) < 3:
             print("No points given that form polygon.")
             return None, None
-            
+
         mask = np.zeros(image.shape[:2], dtype=np.uint8)
         cv2.fillPoly(mask, [np.array(points, dtype=np.int32)], 255)
         roi = cv2.bitwise_and(image, image, mask=mask)
@@ -73,7 +73,7 @@ class ROIS:
         x = max(0, min(x, w_img - 1))
         y = max(0, min(y, h_img - 1))
         radius = min(radius, min(x, y, w_img - x, h_img - y))
-        
+
         mask = np.zeros(image.shape[:2], dtype=np.uint8)
         cv2.circle(mask, (x, y), radius, 255, -1)
         roi = cv2.bitwise_and(image, image, mask=mask)
@@ -92,10 +92,12 @@ class ROIS:
         """
         r = cv2.selectROI("Select ROI", image, fromCenter=False, showCrosshair=True)
         cv2.destroyAllWindows()
-        if r[2] <= 0 or r[3] <= 0:  # Changed from == 0 to <= 0 to handle negative values
+        if (
+            r[2] <= 0 or r[3] <= 0
+        ):  # Changed from == 0 to <= 0 to handle negative values
             return None
         x, y, w, h = r
-        return image[y:y+h, x:x+w]
+        return image[y : y + h, x : x + w]
 
     def fiducial_marker_roi(self, image, dictionary=cv2.aruco.DICT_4X4_50):
         """
@@ -110,7 +112,7 @@ class ROIS:
             ndarray: ROI image if markers found.
             ndarray: Binary mask used for ROI.
         """
-        
+
         aruco_dict = cv2.aruco.getPredefinedDictionary(dictionary)
         parameters = cv2.aruco.DetectorParameters()
         detector = cv2.aruco.ArucoDetector(aruco_dict, parameters)
@@ -124,7 +126,7 @@ class ROIS:
         cv2.fillPoly(mask, [pts], 255)
         roi = cv2.bitwise_and(image, image, mask=mask)
         return roi, mask
-      
+
     def mask_based_roi(self, image, mask):
         """
         Function: Mask-Based ROI
@@ -142,6 +144,6 @@ class ROIS:
             print("Warning: Mask and image dimensions do not match")
             # Resize mask to match image dimensions
             mask = cv2.resize(mask, (image.shape[1], image.shape[0]))
-            
+
         image = cv2.bitwise_and(image, image, mask=mask)
         return image

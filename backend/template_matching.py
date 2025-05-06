@@ -1,7 +1,7 @@
-import os
-import sys
 import cv2
 import numpy as np
+from MTM import matchTemplates
+
 class Matching:
     def __init__(self):
         pass
@@ -9,6 +9,85 @@ class Matching:
 class Template(Matching):
     def __init__(self):
         super().__init__()
+    
+    def single_template_match(
+            self,
+            template: np.ndarray,
+            scene: np.ndarray,
+            label: str = "template",
+            mask= None,
+            method: str = "TM_CCOEFF_NORMED",
+            score_threshold: float = 0.5,
+            iou_threshold: float = 0.3,
+            search_box= None
+            ):
+        """
+            Function: match_single_template_with_nms
+            Description: Performs single-template matching with optional mask, 
+                        applies IoU-based non-maximum suppression, and returns final matches.
+
+            Inputs:
+                template (ndarray): Template image.
+                scene (ndarray): Scene image to search in.
+                label (str, optional): Label to associate with template. Defaults to "template".
+                mask (ndarray, optional): Optional mask for the template. Defaults to None.
+                method (str, optional): OpenCV template matching method as string. Defaults to "TM_CCOEFF_NORMED".
+                score_threshold (float, optional): Score threshold to filter matches. Defaults to 0.5.
+                iou_threshold (float, optional): IoU threshold for non-max suppression. Defaults to 0.3.
+                search_box (tuple, optional): ROI within scene to restrict matching as (x, y, w, h). Defaults to None.
+
+            Output:
+                List[Tuple[str, Tuple[int, int, int, int], float]]: Filtered matches as (label, bbox, score).
+        """
+
+        tpl_entry = (label, template) if mask is None else (label, template, mask)
+        method_enum = self._str_to_cv_method(method)
+
+        raw_hits = matchTemplates(
+            [tpl_entry],
+            self.scene_img,
+            method=self.method,
+            N_object=float("inf"),
+            score_threshold=self.score_threshold,
+            maxOverlap=1.0,
+            searchBox=self.search_box
+        )
+        final_hits = self._non_max_suppression(raw_hits, iou_threshold)
+        return final_hits
+
+    def _str_to_cv_method(self, s: str) -> int:
+        return {
+            "TM_SQDIFF":        cv2.TM_SQDIFF,
+            "TM_SQDIFF_NORMED": cv2.TM_SQDIFF_NORMED,
+            "TM_CCORR":         cv2.TM_CCORR,
+            "TM_CCORR_NORMED":  cv2.TM_CCORR_NORMED,
+            "TM_CCOEFF":        cv2.TM_CCOEFF,
+            "TM_CCOEFF_NORMED": cv2.TM_CCOEFF_NORMED,
+        }.get(s.upper(), cv2.TM_CCOEFF_NORMED)
+
+    def _compute_iou(self, boxA, boxB) -> float:
+        xA = max(boxA[0], boxB[0])
+        yA = max(boxA[1], boxB[1])
+        xB = min(boxA[0] + boxA[2], boxB[0] + boxB[2])
+        yB = min(boxA[1] + boxA[3], boxB[1] + boxB[3])
+        interW = max(0, xB - xA)
+        interH = max(0, yB - yA)
+        interArea = interW * interH
+        union = boxA[2] * boxA[3] + boxB[2] * boxB[3] - interArea
+        return interArea / union if union > 0 else 0
+
+    def _non_max_suppression(
+        self,
+        hits,
+        iou_thresh: float
+    ):
+        hits_sorted = sorted(hits, key=lambda h: h[2], reverse=True)
+        keep = []
+        for lbl, box, sc in hits_sorted:
+            if any(self._compute_iou(box, k_box) >= iou_thresh for _, k_box, _ in keep):
+                continue
+            keep.append((lbl, box, sc))
+        return keep
 
 class FeatureDetectionClassical(Matching):
     def __init__(self):

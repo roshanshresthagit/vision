@@ -2,7 +2,7 @@ import json
 import base64
 import asyncio
 import inspect
-import functions, imageFiltering, colorSpaceOperations, geometric, calculation, contourAnalysis, imageArithmetics, imageEnhancement, visualization, roi
+import functions, imageFiltering, colorSpaceOperations, geometric, calculation, contourAnalysis, imageArithmetics, imageEnhancement, visualization, roi, matching
 import numpy as np
 from io import BytesIO
 from pydantic import BaseModel
@@ -26,6 +26,7 @@ MODULES = [
     imageArithmetics,
     visualization,
     roi,
+    matching
 ]
 
 app = FastAPI()

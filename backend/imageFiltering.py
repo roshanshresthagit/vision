@@ -379,8 +379,8 @@ class MorphologicalOperations(ImageFiltering):
             image = self._binarize_image(image)
         if kernel is None:
             kernel = np.ones(filter_size, np.uint8)
-        dialated_image = cv2.dilate(image, kernel=kernel, iterations=iterations)
-        return dialated_image
+        dilated_image = cv2.dilate(image, kernel=kernel, iterations=iterations)
+        return dilated_image
 
     def opening(self, image, kernel=None, filter_size=(3, 3)):
         """

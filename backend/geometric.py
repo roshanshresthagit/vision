@@ -213,12 +213,11 @@ class MomentsAndCentroids(Geometric):
             tuple: A tuple containing the x and y coordinates of the centroid of the image as integers.
         """
         m = cv2.moments(image)
+        (cx, cy) = (0, 0)
         if m["m00"] != 0:
             cx = int(m["m10"] / m["m00"])
             cy = int(m["m01"] / m["m00"])
-            return (cx, cy)
-        else:
-            return (0, 0)
+        return (cx, cy)
 
     def orientation(self, image):
         """
@@ -230,11 +229,10 @@ class MomentsAndCentroids(Geometric):
             float: The computed orientation of the image in degrees.
         """
         m = cv2.moments(image)
+        orient = 0
         if m["mu20"] - m["mu02"] != 0:
             angle = 0.5 * np.arctan2(2 * m["mu11"], m["mu20"] - m["mu02"])
             orient = np.degrees(angle)
-            return orient
-        orient = 0
         return orient
 
     def fit_ellipse(self, contour):

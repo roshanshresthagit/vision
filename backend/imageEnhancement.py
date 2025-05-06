@@ -1,7 +1,5 @@
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
-
 
 class ImageEnhancement:
     def __init__(self):
@@ -17,7 +15,8 @@ class ImageEnhancement:
         """
         if len(image.shape) == 3:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        return cv2.equalizeHist(image)
+        contrast_enhanced_image = cv2.equalizeHist(image) 
+        return contrast_enhanced_image
 
     def clahe(
         self, image: np.ndarray, clip_limit=2.0, tile_grid_size=(8, 8)
@@ -31,7 +30,8 @@ class ImageEnhancement:
         if len(image.shape) == 3:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=tile_grid_size)
-        return clahe.apply(image)
+        clahe_enhanced_image = clahe.apply(image)
+        return clahe_enhanced_image
 
     def gamma_correction(self, image: np.ndarray, gamma: float) -> np.ndarray:
         """
@@ -44,7 +44,8 @@ class ImageEnhancement:
         table = np.array([(i / 255.0) ** inv_gamma * 255 for i in range(256)]).astype(
             "uint8"
         )
-        return cv2.LUT(image, table)
+        gamma_corrected_image = cv2.LUT(image, table)
+        return gamma_corrected_image
 
     def logarithmic_transform(self, image: np.ndarray) -> np.ndarray:
         """
@@ -56,7 +57,9 @@ class ImageEnhancement:
         image = image.astype(np.float32) + 1  # avoid log(0)
         log_image = np.log(image)
         log_image = cv2.normalize(log_image, None, 0, 255, cv2.NORM_MINMAX)
-        return log_image.astype(np.uint8)
+        log_image = log_image.astype(np.uint8)
+        return log_image
+        
 
     def power_law_transform(self, image: np.ndarray, gamma: float) -> np.ndarray:
         """
@@ -78,7 +81,8 @@ class ImageEnhancement:
         # Output: Sharpened image
         """
         kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
-        return cv2.filter2D(image, -1, kernel)
+        sharpened_image = cv2.filter2D(image, -1, kernel)
+        return sharpened_image
 
     def edge_enhancement(self, image: np.ndarray) -> np.ndarray:
         """

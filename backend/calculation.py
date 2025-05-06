@@ -1,6 +1,6 @@
 import math
 import numpy as np
-
+import cv2
 
 class calculation:
     def __init__(self):
@@ -267,3 +267,110 @@ class calculation:
         else:
             raise ValueError("Provide offset_distance or offset_point.")
         return slope, new_int
+    def calculate_polygon_area_centroid(polygon_points= [[100, 50], [200, 80], [250, 200], [150, 250], [80, 180]]):
+        """
+        Function: calculate_polygon_area_centroid  
+        Description: Calculate the area and centroid of a polygon using OpenCV.
+
+        Input:
+            polygon_points (list, optional): List of (x, y) coordinates representing the polygon vertices. If not provided, a default polygon will be used.
+        Output:
+            tuple: A tuple containing:
+                - area (float): The area of the polygon.
+                - centroid (tuple): The centroid coordinates as (cx, cy).
+        """
+        if len(polygon_points) < 3:
+            raise ValueError("Polygon must have at least 3 points.")
+        
+        contour = np.array(polygon_points, dtype=np.int32).reshape((-1, 1, 2))
+        
+        area = cv2.contourArea(contour)
+        
+        M = cv2.moments(contour)
+        if M["m00"] != 0:
+            cx = int(M["m10"] / M["m00"])
+            cy = int(M["m01"] / M["m00"])
+        else:
+            cx, cy = 0, 0
+        
+        return area, (cx, cy)
+
+    def overlay_grid(image, grid_size=50, color=(0, 255, 0), thickness=1, show_labels=True):
+      
+        """
+        Function: overlay_grid
+        Description: Overlay a grid on a given image for visual measurement and alignment.
+        Inputs:
+            image (ndarray): The input image.
+            grid_size (int, optional): Grid size in pixels. Defaults to 50.
+            color (tuple, optional): Grid line color as (B, G, R). Defaults to green.
+            thickness (int, optional): Grid line thickness. Defaults to 1.
+            show_labels (bool, optional): Whether to show the grid coordinates. Defaults to True.
+        Output:
+            ndarray: The input image with overlaid grid.
+        """
+        output = image.copy()
+        height, width = output.shape[:2]
+        
+        # Draw vertical lines
+        for x in range(0, width, grid_size):
+            cv2.line(output, (x, 0), (x, height), color=color, thickness=thickness)
+            if show_labels:
+                cv2.putText(output, str(x), (x+5, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
+
+        # Draw horizontal lines
+        for y in range(0, height, grid_size):
+            cv2.line(output, (0, y), (width, y), color=color, thickness=thickness)
+            if show_labels:
+                cv2.putText(output, str(y), (5, y+15), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
+        
+        return output
+   
+
+    def overlay_calibrated_grid(image, pt1, pt2, real_distance, unit="mm", spacing=10, color=(255, 0, 0), thickness=1, show_labels=True):
+        """
+        Function: overlay_calibrated_grid
+        Description: Draws a calibrated grid based on a known real-world distance between two points.
+        
+        Inputs:
+        - image: Input image (numpy array)
+        - pt1, pt2: Tuple (x, y) coordinates for two reference points in the image
+        - real_distance: Real-world distance between pt1 and pt2 (e.g., in mm)
+        - unit: String unit label (e.g., "mm", "cm")
+        - spacing: Grid spacing in real-world units
+        - color: Line color
+        - thickness: Line thickness
+        - show_labels: Show measurement labels or not
+        
+        Output:
+        - image with calibrated grid overlay
+        """
+        output = image.copy()
+        height, width = output.shape[:2]
+
+        # Calculate pixels per unit
+        pixel_dist = np.linalg.norm(np.array(pt2) - np.array(pt1))
+        pixels_per_unit = pixel_dist / real_distance
+
+        # Calculate spacing in pixels
+        pixel_spacing = spacing * pixels_per_unit
+
+        # Draw vertical lines
+        for x in np.arange(0, width, pixel_spacing):
+            x = int(round(x))
+            cv2.line(output, (x, 0), (x, height), color=color, thickness=thickness)
+            if show_labels:
+                label = f"{round(x / pixels_per_unit)}{unit}"
+                cv2.putText(output, label, (x + 2, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
+
+        # Draw horizontal lines
+        for y in np.arange(0, height, pixel_spacing):
+            y = int(round(y))
+            cv2.line(output, (0, y), (width, y), color=color, thickness=thickness)
+            if show_labels:
+                label = f"{round(y / pixels_per_unit)}{unit}"
+                cv2.putText(output, label, (5, y + 15), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 255), 1)
+
+        return output
+
+

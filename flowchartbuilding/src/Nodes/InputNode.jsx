@@ -4,12 +4,16 @@ import "./InputNode.css";
 
 const InputNode = ({ data }) => {
   const handleChange = (e) => {
-    const { value } = e.target;
-    if (!isNaN(value) && value.trim() !== "") {
-      data.setValue(Number(value)); 
-    } else {
-      data.setValue(value); 
+    const input = e.target.value;
+    let parsedValue = input;
+
+    try {
+      parsedValue = JSON.parse(input);
+    } catch {
+      parsedValue = input;
     }
+
+    data.setValue(parsedValue);
   };
 
   return (

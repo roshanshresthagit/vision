@@ -2,11 +2,11 @@ import json
 import base64
 import asyncio
 import inspect
-import functions, colorSpaceOperations, imageFiltering
+import functions, imageFiltering, colorSpaceOperations, geometric, calculation, contourAnalysis, imageArithmetics, imageEnhancement, visualization, roi, matching
 import numpy as np
 from io import BytesIO
 from pydantic import BaseModel
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Union
 from fastapi.responses import StreamingResponse
 from fastapi import FastAPI, Request
 from PIL import Image
@@ -14,26 +14,42 @@ from fastapi.middleware.cors import CORSMiddleware
 from dic_gen import get_class_info
 
 
-MODULES = [functions, colorSpaceOperations, imageFiltering]
+# List of modules containing functions to be exposed
+MODULES = [
+    functions,
+    imageFiltering,
+    colorSpaceOperations,
+    geometric,
+    calculation,
+    contourAnalysis,
+    imageEnhancement,
+    imageArithmetics,
+    visualization,
+    roi,
+    matching
+]
 
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*",],  
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"], 
-    allow_headers=["*"],  
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
 
 class Node(BaseModel):
     id: str
-    type: str  
+    type: str
     value: Any = None
     data: Dict[str, Any] = {}
+
 
 class Edge(BaseModel):
     source: str
     target: str
+
 
 class FlowRequest(BaseModel):
     nodes: List[Node]
@@ -41,19 +57,24 @@ class FlowRequest(BaseModel):
     inputValues: Dict[str, Any] = {}
 
 
-def decode_base64_image(base64_string):
+def decode_base64_image(base64_string: str) -> np.ndarray:
+    """Decode base64 image string to numpy array"""
     if base64_string.startswith("data:image"):
         base64_string = base64_string.split(",")[1]
     img_bytes = base64.b64decode(base64_string)
     img = Image.open(BytesIO(img_bytes))
     return np.array(img)
 
-def encode_to_base64(value):
+
+def encode_to_base64(value: Any) -> str:
+    """Encode various types to base64 strings"""
     if isinstance(value, np.ndarray):
         image = Image.fromarray(value)
         buffered = BytesIO()
         image.save(buffered, format="JPEG")
-        return "data:image/jpeg;base64," + base64.b64encode(buffered.getvalue()).decode()
+        return (
+            "data:image/jpeg;base64," + base64.b64encode(buffered.getvalue()).decode()
+        )
     elif isinstance(value, (int, float, str)):
         return str(value)
     return json.dumps(value)
@@ -72,7 +93,8 @@ def find_function_handler(func_name: str) -> tuple[callable, bool]:
             elif callable(obj) and name == func_name:
                 return obj, False  # It's a standalone function
     return None, False
-    
+
+
 @app.post("/execute_flow")
 async def execute_flow(request: Request):
     data = await request.json()
@@ -90,7 +112,7 @@ async def execute_flow(request: Request):
     async def flow_processor():
         pending_edges = list(edges)
 
-        async def process_function_node(node_id):
+        async def process_function_node(node_id: str):
             if node_id in processed_nodes:
                 return
 
@@ -109,7 +131,10 @@ async def execute_flow(request: Request):
                     src_node = next((n for n in nodes if n["id"] == src_id), None)
                     if src_node and src_node["type"] == "functionNode":
                         await process_function_node(src_id)
-                    elif src_node and src_node["type"] in ["inputNode", "imageInputNode"]:
+                    elif src_node and src_node["type"] in [
+                        "inputNode",
+                        "imageInputNode",
+                    ]:
                         node_values[src_id] = inputValues.get(src_id)
 
                 val = node_values.get(src_id)
@@ -169,19 +194,24 @@ async def execute_flow(request: Request):
             while pending_edges:
                 to_remove = []
                 for edge in pending_edges:
-                    target_node = next((n for n in nodes if n["id"] == edge["target"]), None)
+                    target_node = next(
+                        (n for n in nodes if n["id"] == edge["target"]), None
+                    )
                     if target_node and target_node["type"] == "resultNode":
                         source_id = edge["source"]
-                        source_node = next((n for n in nodes if n["id"] == source_id), None)
+                        source_node = next(
+                            (n for n in nodes if n["id"] == source_id), None
+                        )
                         if source_node and source_node["type"] == "functionNode":
                             await process_function_node(source_id)
 
-                        result_value = encode_to_base64(node_values.get(source_id, None))
+                        result_value = encode_to_base64(
+                            node_values.get(source_id, None)
+                        )
 
-                        response_data = json.dumps({
-                            "resultNode": edge["target"],
-                            "value": result_value
-                        })
+                        response_data = json.dumps(
+                            {"resultNode": edge["target"], "value": result_value}
+                        )
                         yield response_data + "\n"
                         to_remove.append(edge)
 
@@ -205,7 +235,8 @@ async def get_function_json():
         return function_dict
     except Exception as e: 
         return {"error": str(e)}
-    
+
+
 @app.get("/function_list")
 async def get_function_list_json():
     """Get simplified function list from all modules"""
@@ -214,6 +245,7 @@ async def get_function_list_json():
         return function_list
     except Exception as e:
         return {"error": str(e)}
+
 
 @app.get("/get_functions")
 async def get_functions():

@@ -1,5 +1,6 @@
 import sys
 import pathlib as path
+
 sys.path.append(str(path.Path(__file__).parent.resolve()))
 
 import threading
@@ -7,6 +8,7 @@ from event_bus import EventBus
 from typing import Any
 
 FILE_path = path.Path(__file__).parent.parent.resolve()
+
 
 class SingletonMeta(type):
     _instances = {}
@@ -19,17 +21,18 @@ class SingletonMeta(type):
                 cls._instances[cls] = instance
         return cls._instances.get(cls, None)
 
+
 class DataStore(metaclass=SingletonMeta):
     """
     DataStore is a centralized state manager for a Python application.
     It manages variables in a thread-safe manner.
     """
+
     def __init__(self):
         self._data = {}
         self._event_bus = EventBus()
         self._lock = threading.Lock()
-    
-    
+
     def update_data(self, key: str, value: Any):
         """
         INFO: Update or add the value associated with a given key in the _data dictionary.
@@ -42,7 +45,7 @@ class DataStore(metaclass=SingletonMeta):
         with self._lock:
             is_update = key in self._data
             self._data[key] = value
-            action = 'update' if is_update else 'add'
+            action = "update" if is_update else "add"
 
             self._notify_data_updated(key, value, action)
 
@@ -72,16 +75,16 @@ class DataStore(metaclass=SingletonMeta):
         with self._lock:
             if key in self._data:
                 del self._data[key]
-                self._notify_data_updated(key, None, 'delete')
+                self._notify_data_updated(key, None, "delete")
             else:
                 raise ValueError(f"Key {key} does not exist.")
+
     def on_update(self, key, callback):
         """Subscribe to updates for a specific key."""
         with self._lock:
             if key not in self._data:
                 self._data[key] = []
             self._data[key].append(callback)
-
 
     def _notify_data_updated(self, key: str, data: Any, action: str):
         """
@@ -93,9 +96,6 @@ class DataStore(metaclass=SingletonMeta):
         RETURNS:
             None
         """
-        data_info = {
-            'action': action,
-            'data': data
-        }
-        channel = 'data' + action
+        data_info = {"action": action, "data": data}
+        channel = "data" + action
         # self._event_bus.emit(event_name=key, data=data_info, channel=channel)

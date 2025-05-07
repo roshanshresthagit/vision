@@ -2,7 +2,7 @@ import json
 import base64
 import asyncio
 import inspect
-import functions, imageFiltering, colorSpaceOperations, geometric, calculation, contourAnalysis, imageArithmetics, imageEnhancement, visualization, roi, matching
+import functions, imageFiltering, colorSpaceOperations, geometric, calculation, contourAnalysis, imageArithmetics, imageEnhancement, visualization, roi, template_matching
 import numpy as np
 from io import BytesIO
 from pydantic import BaseModel
@@ -26,7 +26,7 @@ MODULES = [
     imageArithmetics,
     visualization,
     roi,
-    matching
+    template_matching
 ]
 
 app = FastAPI()
@@ -66,18 +66,33 @@ def decode_base64_image(base64_string: str) -> np.ndarray:
     return np.array(img)
 
 
-def encode_to_base64(value: Any) -> str:
-    """Encode various types to base64 strings"""
+def processing_to_send_result(value: Any) -> str:
+    """Encode various types to base64 or JSON strings"""
     if isinstance(value, np.ndarray):
         image = Image.fromarray(value)
         buffered = BytesIO()
         image.save(buffered, format="JPEG")
-        return (
-            "data:image/jpeg;base64," + base64.b64encode(buffered.getvalue()).decode()
-        )
+        return "data:image/jpeg;base64," + base64.b64encode(buffered.getvalue()).decode()
+
     elif isinstance(value, (int, float, str)):
         return str(value)
-    return json.dumps(value)
+
+    elif isinstance(value, list):
+        def convert(item):
+            if isinstance(item, np.ndarray):
+                return item.tolist()
+            elif isinstance(item, (int, float, str, list, dict)):
+                return item
+            return str(item)  
+
+        converted = [convert(i) for i in value]
+        return json.dumps(converted)
+
+    elif isinstance(value, dict):
+        return json.dumps(value)
+
+    return str(value)
+
 
 
 def find_function_handler(func_name: str) -> tuple[callable, bool]:
@@ -205,7 +220,7 @@ async def execute_flow(request: Request):
                         if source_node and source_node["type"] == "functionNode":
                             await process_function_node(source_id)
 
-                        result_value = encode_to_base64(
+                        result_value = processing_to_send_result(
                             node_values.get(source_id, None)
                         )
 
@@ -247,15 +262,15 @@ async def get_function_list_json():
         return {"error": str(e)}
 
 
+
+#gets all used function code form function.py########
+def get_function_code(func):
+    return inspect.getsource(func)
+
 @app.get("/get_functions")
 async def get_functions():
-    """Get source code of all functions from all modules"""
-    function_dict = {}
-    for module in MODULES:
-        module_name = module.__name__
-        function_dict[module_name] = {
-            name: inspect.getsource(obj)
-            for name, obj in vars(module).items()
-            if callable(obj) and not name.startswith('_')
-        }
+    function_dict = {name:inspect.getsource(obj)
+                     for name, obj in vars(functions).items()
+                     if callable(obj)}
+
     return function_dict

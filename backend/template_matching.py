@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from MTM import matchTemplates
+from mtm import matchTemplates
 
 class Matching:
     def __init__(self):

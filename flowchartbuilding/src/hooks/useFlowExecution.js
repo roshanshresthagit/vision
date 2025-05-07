@@ -4,7 +4,7 @@ export const useFlowExecution = (nodes, edges, inputs, setNodes) => {
   const [generatedCode, setGeneratedCode] = useState("");
 
   const executeFlow = async () => {
-    console.log("Executing nodes:", nodes);
+
     const nodeValues = {};
 
     nodes.forEach(({ id, type }) => {

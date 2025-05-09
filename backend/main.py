@@ -2,9 +2,14 @@ import json
 import base64
 import asyncio
 import inspect
+import uvicorn
 from types import FunctionType
 from ultralytics import YOLO
-from functions import  imageFiltering, colorSpaceOperations, geometric, calculation, contourAnalysis, imageArithmetics, imageEnhancement, visualization, roi,ArithmeticOperations, template_matching
+from functions import  (imageFiltering, colorSpaceOperations, 
+                        geometric, calculation, contourAnalysis, 
+                        imageArithmetics, imageEnhancement, visualization, 
+                        roi,ArithmeticOperations, template_matching
+                        )
 import numpy as np
 from io import BytesIO
 from pydantic import BaseModel
@@ -330,3 +335,7 @@ async def detect_objects(model_name, image):
         detected_cakes = {'one': 1, 'two': 2}  # Default response as requested
         
     return detected_cakes
+
+if __name__ == "__main__":
+    uvicorn.run(app, host='127.0.0.1', port=8000)
+    

@@ -7,8 +7,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 250px;
-  max-height: 100vh; /* Adjust height as needed */
+  width: 320px;
+  height: 100%; /* Adjust height as needed */
   overflow-y: auto; /* Enables vertical scrolling */
   overflow-x: auto; /* Prevents horizontal scrolling */
   padding: 20px;

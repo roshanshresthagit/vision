@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Handle, Position } from "reactflow";
+import "./HandleStyles.css"; // Assuming you have a CSS file for styling
 
 const ResultNode = ({ data }) => {
   const [imgWidth, setImgWidth] = useState("auto");
@@ -47,16 +48,31 @@ const ResultNode = ({ data }) => {
 
   return (
     <div className="result-node" style={{ width: isImage ? imgWidth : "auto" }}>
-      <Handle type="target" position={Position.Left} />
+      <Handle 
+        type="target" 
+        position={Position.Left} 
+        className="custom-handle"
+      />
       <div className="node-content">
-        <div className="node-label">Result</div>
-        <div className="result-value" style={{ maxHeight: 300, overflow: "auto" }}>
+        <div 
+          className="node-label">Result
+        </div>
+        <div 
+          className="result-value" 
+          style={{ maxHeight: 300, overflow: "auto" }}
+        >
           {isImage ? (
-            <img src={imageSrc} alt="Result" style={{ width: "100%" }} />
+            <img 
+              src={imageSrc} 
+              alt="Result" 
+              style={{ width: "100%" }} 
+            />
           ) : parsedValue && Array.isArray(parsedValue) ? (
             renderList(parsedValue)
           ) : (
-            <span>{parsedValue ?? String(data.value)}</span>
+            <span>
+              {parsedValue ?? String(data.value)}
+            </span>
           )}
         </div>
       </div>

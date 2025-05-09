@@ -4,7 +4,6 @@ import {
     Position,
     useUpdateNodeInternals,
     useReactFlow,
-    getConnectedEdges,
 } from "reactflow";
 import "./ModelInputNode.css";
 import "./HandleStyles.css";

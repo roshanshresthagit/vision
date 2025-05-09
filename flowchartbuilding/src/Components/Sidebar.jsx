@@ -76,6 +76,15 @@ const Sidebar = ({ onDragStart, functionListCall, isVisible }) => {
             Model Input
           </button>
           <button
+            className="function-button"
+            draggable
+            onDragStart={(event) =>
+              onDragStart(event, { id: "modelnode", label: "Model Node", func: "modelnode" })
+            }
+          >
+            Model Node
+          </button>
+          <button
             className="function-button result-button"
             draggable
             onDragStart={(event) =>

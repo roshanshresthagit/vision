@@ -2,11 +2,13 @@ import json
 import base64
 import asyncio
 import inspect
-import functions, imageFiltering, colorSpaceOperations, geometric, calculation, contourAnalysis, imageArithmetics, imageEnhancement, visualization, roi, template_matching
+from types import FunctionType
+from ultralytics import YOLO
+from functions import  imageFiltering, colorSpaceOperations, geometric, calculation, contourAnalysis, imageArithmetics, imageEnhancement, visualization, roi,ArithmeticOperations, template_matching
 import numpy as np
 from io import BytesIO
 from pydantic import BaseModel
-from typing import Dict, List, Any, Union
+from typing import Dict, List, Any
 from fastapi.responses import StreamingResponse
 from fastapi import FastAPI, Request
 from PIL import Image
@@ -16,7 +18,7 @@ from dic_gen import get_class_info
 
 # List of modules containing functions to be exposed
 MODULES = [
-    functions,
+    ArithmeticOperations,
     imageFiltering,
     colorSpaceOperations,
     geometric,
@@ -55,6 +57,11 @@ class FlowRequest(BaseModel):
     nodes: List[Node]
     edges: List[Edge]
     inputValues: Dict[str, Any] = {}
+
+class DetectionRequest(BaseModel):
+    model_name: str
+    image: str
+
 
 
 def decode_base64_image(base64_string: str) -> np.ndarray:
@@ -264,13 +271,62 @@ async def get_function_list_json():
 
 
 #gets all used function code form function.py########
-def get_function_code(func):
-    return inspect.getsource(func)
-
 @app.get("/get_functions")
 async def get_functions():
-    function_dict = {name:inspect.getsource(obj)
-                     for name, obj in vars(functions).items()
-                     if callable(obj)}
+    function_sources = {}
+    for module in MODULES:
+        module_name = module.__name__
+        for name, obj in inspect.getmembers(module):
+            if isinstance(obj, FunctionType):
+                function_sources[f"{module_name}.{name}"] = inspect.getsource(obj)
+            elif inspect.isclass(obj):
+                class_name = obj.__name__
+                for meth_name, meth_obj in inspect.getmembers(obj, predicate=inspect.isfunction):
+                    full_name = f"{module_name}.{class_name}.{meth_name}"
+                    try:
+                        function_sources[full_name] = inspect.getsource(meth_obj)
+                    except TypeError:
+                        function_sources[full_name] = f"# Could not retrieve source for {full_name}"
 
-    return function_dict
+    return function_sources
+
+
+@app.post("/update")
+async def update(data: DetectionRequest):
+    try:
+        # Convert base64 image to numpy array
+        image_array = decode_base64_image(data.image)
+        return await detect_objects(data.model_name, image_array)
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.get("/detect")
+async def detect_objects(model_name, image):
+    model = YOLO(model_name)
+    
+    detected_cakes = {}  # Dictionary to store cake detections
+    total_detections = 0
+    
+    results = model(image, verbose=False)
+    for result in results:
+        boxes = result.boxes  # Get boxes on regular rectangle format
+        for box in boxes:
+            total_detections += 1
+            # Get box coordinates
+            coords = box.xyxy[0].cpu().numpy()  # Get box coordinates in (x1, y1, x2, y2) format
+            coords = [int(c) for c in coords]
+            
+            # Get confidence score
+            confidence = float(box.conf[0].cpu().numpy())
+            
+            # Store detection with simple numbering format
+            detected_cakes[f'cake_{total_detections}'] = {
+                'confidence': confidence,
+                'coordinates': coords.tolist() if hasattr(coords, 'tolist') else coords
+            }
+    # If no detections were made, return empty dictionary
+    if not detected_cakes:
+        detected_cakes = {'one': 1, 'two': 2}  # Default response as requested
+        
+    return detected_cakes

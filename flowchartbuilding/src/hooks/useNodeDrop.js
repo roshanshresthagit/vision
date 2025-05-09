@@ -24,6 +24,7 @@ export const useNodeDrop = ({
       const isInput = func.id === "input";
       const isImageInput = func.id === "imageinput";
       const isModelInput = func.id === "modelinput";
+      const isModelNode = func.id === "modelnode";
 
       const newNode = {
         id: newNodeId,
@@ -33,16 +34,18 @@ export const useNodeDrop = ({
           ? "imageInputNode"
           : isModelInput
           ? "modelInputNode"
+          : isModelNode
+          ? "modelNode"
           : func.id === "result"
           ? "resultNode"
           : "functionNode",
         position,
         data: {
-          label: isInput || isImageInput || isModelInput ? `${func.label}${inputNodeCount}` : func.label,
+          label: isInput || isImageInput || isModelInput || isModelNode ? `${func.label}${inputNodeCount}` : func.label,
           func: func.func,
-          value: isInput || isImageInput || isModelInput ? 0 : undefined,
+          value: isInput || isImageInput || isModelInput || isModelNode ? 0 : undefined,
           setValue:
-            isInput || isImageInput || isModelInput
+            isInput || isImageInput || isModelInput || isModelNode
               ? (val) =>
                   setInputs((prev) => {
                     const updated = { ...prev, [newNodeId]: val };
@@ -65,7 +68,7 @@ export const useNodeDrop = ({
         setInputNodeCount((count) => count + 1);
       }
 
-      if (!isInput && !isImageInput && !isModelInput && func.func) {
+      if (!isInput && !isImageInput && !isModelInput && !isModelNode && func.func) {
         const getFunctionConfig = (func, dict) => {
           for (const category in dict) {
             if (dict[category].methods?.[func]) return dict[category].methods[func];

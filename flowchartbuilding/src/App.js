@@ -39,7 +39,6 @@ export default function App() {
     event.dataTransfer.setData("application/reactflow", JSON.stringify(func));
     event.dataTransfer.effectAllowed = "move";
   }
-    
   return (
     <div className="container">
       <TopBar

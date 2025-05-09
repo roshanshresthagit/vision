@@ -1,0 +1,30 @@
+/* Base handle style */
+.custom-handle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+/* Image input node handles */
+.image-input-node .custom-handle {
+    background-color: #4CAF50;
+}
+
+/* Model input node handles */
+.model-input-node .custom-handle {
+    background-color: #2196F3;
+}
+
+/* Dynamic node handles */
+.dynamic-node .custom-handle {
+    background-color: #9C27B0;
+}
+
+/* Add specific handle style for ResultNode */
+.result-node .custom-handle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ff6b6b; /* Different color for ResultNode handles */
+}

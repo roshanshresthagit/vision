@@ -2,7 +2,7 @@ import math
 import numpy as np
 import cv2
 
-class calculation:
+class MeasurementTools:
     def __init__(self):
         pass
 

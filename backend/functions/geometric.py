@@ -2,12 +2,12 @@ import cv2
 import numpy as np
 
 
-class Geometric:
+class GeometricOperations:
     def __init__(self):
         pass
 
 
-class Transformations(Geometric):
+class Transformations(GeometricOperations):
     def __init__(self):
         super().__init__()
 
@@ -152,7 +152,7 @@ class Transformations(Geometric):
         return scaled_image
 
 
-class MomentsAndCentroids(Geometric):
+class MomentsAndCentroids(GeometricOperations):
     def __init__(self):
         super().__init__()
 
@@ -265,7 +265,7 @@ class MomentsAndCentroids(Geometric):
         return center
 
 
-class Resize(Geometric):
+class Resize(GeometricOperations):
     def __init__(self):
         super().__init__()
 
@@ -320,7 +320,7 @@ class Resize(Geometric):
         return laplacian
 
 
-class BlobsAndConnected(Geometric):
+class BlobsAndConnected(GeometricOperations):
     def __init__(self):
         super().__init__()
 
@@ -416,7 +416,7 @@ class BlobsAndConnected(Geometric):
         return output
 
 
-class HoughTransform(Geometric):
+class HoughTransform(GeometricOperations):
     def __init__(self):
         super().__init__()
 

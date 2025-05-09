@@ -113,7 +113,7 @@ def find_function_handler(func_name: str) -> tuple[callable, bool]:
                     if callable(method):
                         return method, True  # It's a class method
             elif callable(obj) and name == func_name:
-                return obj, False  # It's a standalone function
+                return obj, False  # It's a standalone function 
     return None, False
 
 

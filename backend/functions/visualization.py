@@ -47,9 +47,8 @@ class Visualization:
         Output:
             image: The image with the rectangle drawn.
         """
-        image = cv2.rectangle(
-            image, starting_point, ending_point, color, thickness, lineType=line_type
-        )
+        image = cv2.rectangle(img = image,pt1 = starting_point,pt2=ending_point,color=color,thickness=thickness,lineType=line_type)
+       
         return image
 
     def putCircle(

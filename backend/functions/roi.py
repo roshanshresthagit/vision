@@ -29,7 +29,8 @@ class ROIS:
         w = min(w, w_img - x)
         h = min(h, h_img - y)
 
-        return image[y : y + h, x : x + w]
+        image =  image[y : y + h, x : x + w]
+        return image
 
     def polygon_roi(self, image, points):
         """
@@ -97,7 +98,8 @@ class ROIS:
         ):  # Changed from == 0 to <= 0 to handle negative values
             return None
         x, y, w, h = r
-        return image[y : y + h, x : x + w]
+        image = image[y : y + h, x : x + w]
+        return image
 
     def fiducial_marker_roi(self, image, dictionary=cv2.aruco.DICT_4X4_50):
         """

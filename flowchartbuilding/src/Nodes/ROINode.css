@@ -1,0 +1,53 @@
+/* General handle style */
+.custom-handle {
+  width: 10px;
+  height: 10px;
+  background-color: #555;
+  border: 2px solid white;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+/* Node container */
+.roi-node {
+  background: #f9f9f9;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  font-family: sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+/* Node content */
+.node-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Node label */
+.node-label {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* Canvas overlay */
+.roi-node canvas {
+  pointer-events: auto;
+  z-index: 5;
+}
+
+/* Image with canvas overlay */
+.roi-node img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Optional scrollbar if content grows */
+.roi-node .result-value {
+  max-height: 300px;
+  overflow-y: auto;
+}

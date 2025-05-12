@@ -26,6 +26,37 @@ class ShapeAnalysis(ContourAnalysis):
             image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
         )
         return contours
+    
+    def draw_contours(self, original_bgr_image, contours):
+
+        """
+        Function: Draw Contours
+        Description: Draw detected contours on the image.
+        Input:
+            image: The input image (BGR format).
+            contours: A list of detected contours.
+        Output
+            image_with_contours: The input image with contours drawn.
+        """
+        image_with_contours = cv2.drawContours(
+            original_bgr_image, contours, -1, (0, 255, 0), 2
+        )
+        return image_with_contours
+
+    def filter_contours(self, contours, min_area=1000):
+        """
+        Function: Filter Contours
+        Description: Filter contours based on area.
+        Input:
+            contours: A list of detected contours.
+            min_area: Minimum area threshold for filtering.
+        Output
+            filtered_contours: A list of filtered contours.
+        """
+        filtered_contours = [
+            contour for contour in contours if cv2.contourArea(contour) > min_area
+        ]
+        return filtered_contours
 
     def convex_hull(self, contour):
         """

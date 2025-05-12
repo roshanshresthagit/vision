@@ -4,7 +4,7 @@ import InputNode from "../Nodes/InputNode";
 import ResultNode from "../Nodes/ResultNode";
 import ModelInputNode from "../Nodes/ModelInputNode";
 import ModelNode from "../Nodes/ModelNode";
-
+import RoiInputNode from "../Nodes/ROINode";
 
 
 export const DefaultInputList = [
@@ -13,6 +13,7 @@ export const DefaultInputList = [
     { id: "image-input", label: "Image Input" },
     { id: "model-input", label: "Model Input"},
     { id: "model-node", label: "Model Node"},
+    { id: "roi-input", label: "ROI Input" },
 
   ];
   
@@ -23,4 +24,5 @@ export const DefaultInputList = [
     resultNode: ResultNode,
     modelInputNode: ModelInputNode,
     modelNode: ModelNode,
+    roiInputNode: RoiInputNode,
   };

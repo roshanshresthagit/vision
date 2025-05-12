@@ -1,5 +1,6 @@
 export const useCodeGeneration = (nodes, edges, functionDefinitions) => {
   const generatePythonCode = () => {
+    console.log("Generating Python code...", functionDefinitions);
     let code = "# Auto-generated Python script\n\n";
 
     // 1. Find all used functions

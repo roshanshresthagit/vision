@@ -119,6 +119,15 @@ const Sidebar = ({ onDragStart, functionListCall, isVisible }) => {
             Model Node
           </button>
           <button
+            className="function-button"
+            draggable
+            onDragStart={(event) =>
+              onDragStart(event, { id: "roiinput", label: "ROI Input", func: "roiinput" })
+            }
+          >
+            ROI Input
+          </button>
+          <button
             className="function-button result-button"
             draggable
             onDragStart={(event) =>

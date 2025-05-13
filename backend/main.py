@@ -2,7 +2,6 @@ import json
 import base64
 import asyncio
 import inspect
-import uvicorn
 from types import FunctionType
 from ultralytics import YOLO
 from functions import  (imageFiltering, colorSpaceOperations, 
@@ -303,7 +302,7 @@ async def get_functions():
                         function_sources[full_name] = inspect.getsource(meth_obj)
                     except TypeError:
                         function_sources[full_name] = f"# Could not retrieve source for {full_name}"
-
+    
     return function_sources
 
 

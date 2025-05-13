@@ -32,7 +32,6 @@ export default function App() {
   const { onDeleteNode } = useNodeDeletion({ selectedNodeId, setSelectedNodeId, setNodes, setEdges, });
   const [isCodeVisible, setIsCodeVisible] = useState(true);
 
-  console.log("functiond efinitions", JSON.stringify(functionDefinitions));
 
   const toggleSidebar = () => {
     setIsSidebarVisible((prev) => !prev);
@@ -99,7 +98,7 @@ export default function App() {
                 onClick={() => setIsCodeVisible(false)}
                 style={{
                   position: "absolute",
-                  top: "4px",
+                  top: "40px",
                   right: "4px",
                   background: "#e74c3c",
                   border: "none",

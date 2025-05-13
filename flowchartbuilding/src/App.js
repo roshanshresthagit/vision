@@ -3,7 +3,7 @@ import TopBar from "./Components/TopBar";
 import Sidebar from "./Components/Sidebar";
 import FlowCanvas from "./Components/FlowCanvas";
 import { useFlowData } from "./hooks/useFlowData";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useEdgeManagement } from "./hooks/useEdgeManagement";
 import { nodeTypes, DefaultInputList } from "./constants/nodes";
 import { useNodesState, useEdgesState, useReactFlow } from "reactflow";
@@ -30,6 +30,9 @@ export default function App() {
   const { executeFlow, generatedCode, setGeneratedCode} = useFlowExecution(nodes, edges, inputs, setNodes);
   const { onDrop } = useNodeDrop({ nodeId, inputNodeCount, functionDict, setInputs, setNodes, setEdges,setNodeId, setInputNodeCount,});
   const { onDeleteNode } = useNodeDeletion({ selectedNodeId, setSelectedNodeId, setNodes, setEdges, });
+  const [isCodeVisible, setIsCodeVisible] = useState(true);
+
+  console.log("functiond efinitions", JSON.stringify(functionDefinitions));
 
   const toggleSidebar = () => {
     setIsSidebarVisible((prev) => !prev);
@@ -74,11 +77,52 @@ export default function App() {
             onDrop={onDrop}
             onInit={setRfInstance}
           />
-          <SyntaxHighlighter language="python" style={coy}>
+          {/* <SyntaxHighlighter language="python" style={coy}>
             {typeof generatedCode === "string"
               ? generatedCode
               : JSON.stringify(generatedCode, null, 2)}
-          </SyntaxHighlighter>
+          </SyntaxHighlighter> */}
+          {isCodeVisible && (
+            <div
+              style={{
+                maxWidth: "640px",
+                maxHeight: "400px",
+                overflow: "auto",
+                border: "1px solid #ccc",
+                borderRadius: "8px",
+                marginTop: "16px",
+                position: "relative",
+                backgroundColor: "#f9f9f9",
+              }}
+            >
+              <button
+                onClick={() => setIsCodeVisible(false)}
+                style={{
+                  position: "absolute",
+                  top: "4px",
+                  right: "4px",
+                  background: "#e74c3c",
+                  border: "none",
+                  color: "#fff",
+                  padding: "4px 8px",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  fontSize: "12px"
+                }}
+              >
+                Close
+              </button>
+              <SyntaxHighlighter
+                language="python"
+                style={coy}
+                customStyle={{ margin: 0, padding: "1em", overflowX: "auto" }}
+              >
+                {typeof generatedCode === "string"
+                  ? generatedCode
+                  : JSON.stringify(generatedCode, null, 2)}
+              </SyntaxHighlighter>
+            </div>
+          )}
         </div>
       </div>
     </div>

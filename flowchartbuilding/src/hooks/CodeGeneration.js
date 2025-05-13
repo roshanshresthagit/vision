@@ -7,7 +7,7 @@ export const useCodeGeneration = (nodes, edges, functionDefinitions) => {
     const functionNodes = nodes.filter(node => node.type === "functionNode");
     const usedFunctions = new Set(functionNodes.map(node => node.data.func));
 
-    // 2. Extract only the needed function definitions with original parameters
+    // 2. Extract relevant function definitions (without class and 'self' parameter)
     const allDefinitions = {};
     if (functionDefinitions) {
       for (const category in functionDefinitions) {
@@ -16,45 +16,39 @@ export const useCodeGeneration = (nodes, edges, functionDefinitions) => {
         }
       }
     }
+
     const extractedFunctions = {};
-    
-    Object.entries(allDefinitions).forEach(([className, classCode]) => {
-      // Find all method definitions in the class
-      const methodDefinitions = classCode.match(/def\s+(\w+)\(([^)]*)\):[^]+?(?=\n\s*(def|class|$))/g) || [];
-      
-      methodDefinitions.forEach(methodDef => {
-        const funcNameMatch = methodDef.match(/def\s+(\w+)\(/);
-        if (funcNameMatch && usedFunctions.has(funcNameMatch[1])) {
-          // Extract the original parameters
-          const paramsMatch = methodDef.match(/def\s+\w+\(([^)]*)\)/);
-          const originalParams = paramsMatch ? paramsMatch[1].replace(/\s*self\s*,?\s*/, '') : '';
-          
-          // Store the function with its original parameters
-          extractedFunctions[funcNameMatch[1]] = {
-            code: methodDef
-              .replace(/\bself\./g, '') // Remove self references
-              .replace(/\(\s*self\s*,?\s*/, '(') // Remove self parameter
-              .replace(/,\s*\)/, ')'), // Clean up trailing commas
-            params: originalParams
-          };
+
+    Object.entries(allDefinitions).forEach(([fullFuncName, funcCode]) => {
+      const funcNameMatch = fullFuncName.match(/\.([^\.]+)$/);
+      if (funcNameMatch && funcNameMatch[1] && usedFunctions.has(funcNameMatch[1])) {
+        if (funcCode) {
+          // Process the function code to remove 'self' and adjust function name
+          let processedCode = funcCode
+            .replace(/def\s+(\w+)\(/, `def ${funcNameMatch[1]}(`)  // Ensure correct function name
+            .replace(/(def\s+\w+\()\s*self,?\s*/, '$1'); // Remove 'self' parameter
+
+          extractedFunctions[funcNameMatch[1]] = processedCode;
         }
-      });
+      }
     });
 
-    // Add the extracted functions to code
-    Object.values(extractedFunctions).forEach(func => {
-      code += `${func.code}\n\n`;
+    // 3. Add function definitions to the code
+    Object.values(extractedFunctions).forEach(funcCode => {
+      code += `${funcCode}\n\n`;
     });
 
-    // 3. Add input values
-    const inputs = nodes.filter(node => node.type === "inputNode"|| node.type === "imageInputNode");
+    // 4. Add input values
+    const inputs = nodes.filter(node => node.type === "inputNode" || node.type === "imageInputNode");
     inputs.forEach(input => {
       if (input.data?.func && input.data?.value !== undefined) {
         code += `${input.data.func} = ${input.data.value}\n`;
       }
     });
 
-    // 4. Generate function calls with correct parameter mapping
+    code += "\n";
+
+    // 5. Generate function calls
     const functionCalls = {};
     edges.forEach(({ source, target }) => {
       if (!functionCalls[target]) functionCalls[target] = [];
@@ -65,27 +59,31 @@ export const useCodeGeneration = (nodes, edges, functionDefinitions) => {
       const targetNode = nodes.find(n => n.id === target);
       if (targetNode?.type === "functionNode" && targetNode.data?.func) {
         const funcName = targetNode.data.func;
-        const funcInfo = extractedFunctions[funcName];
-        
-        // Create mapping between parameter names and source values
-        const paramNames = funcInfo?.params.split(',').map(p => p.trim()).filter(p => p) || [];
-        const sourceValues = sources.map((sourceId, i) => {
+        const funcCode = extractedFunctions[funcName];
+
+        // Extract parameter names from the processed function code
+        const paramNamesMatch = funcCode ? funcCode.match(/\(([^)]*)\)/) : null;
+        const paramNames = paramNamesMatch 
+          ? paramNamesMatch[1].split(',').map(p => p.trim()).filter(p => p) 
+          : [];
+
+        const sourceValues = sources.map((sourceId) => {
           const sourceNode = nodes.find(n => n.id === sourceId);
-          return sourceNode?.type === "inputNode" || sourceNode?.type === "imageInputNode" 
-            ? sourceNode.data?.func 
-            : `${targetNode.data.func.toLowerCase()}${sourceId}`;
+          return sourceNode?.type === "inputNode" || sourceNode?.type === "imageInputNode"
+            ? sourceNode.data?.func
+            : `${sourceNode?.data?.func?.toLowerCase() || 'val'}${sourceNode?.id}`;
         }).filter(Boolean);
-        
-        // Pair parameters with values (or use defaults if not enough sources)
-        const paramsWithValues = paramNames.map((param, i) => 
-          sourceValues[i] !== undefined ? sourceValues[i] : param
-        ).join(', ');
+
+        // Ensure we have enough parameters or use the available sources
+        const paramsWithValues = paramNames
+          .map((param, i) => sourceValues[i] || param)
+          .join(', ');
 
         code += `${funcName.toLowerCase()}${targetNode.id} = ${funcName}(${paramsWithValues})\n`;
       }
     });
 
-    // 5. Add final output
+    // 6. Add final output
     const resultNode = nodes.find(node => node.type === "resultNode");
     if (resultNode) {
       const lastEdge = edges.find(edge => edge.target === resultNode.id);

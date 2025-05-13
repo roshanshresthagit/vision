@@ -3,6 +3,7 @@ import { Handle, Position } from "reactflow";
 import "./HandleStyles.css"; // Assuming you have a CSS file for styling
 
 const ResultNode = ({ data }) => {
+  console.log("ResultNode data:", data);
   const [imgWidth, setImgWidth] = useState("auto");
   const [parsedValue, setParsedValue] = useState(null);
 

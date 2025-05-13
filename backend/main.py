@@ -128,7 +128,6 @@ async def execute_flow(request: Request):
     nodes = data.get("nodes", [])
     edges = data.get("edges", [])
     inputValues = data.get("inputValues", {})
-
     node_values = dict(inputValues)
     processed_nodes = set()
 
@@ -146,7 +145,13 @@ async def execute_flow(request: Request):
             node = next((n for n in nodes if n["id"] == node_id), None)
             if not node or node["type"] != "functionNode":
                 return
-
+            
+            # if node["type"]== "roiInputNode":
+            #     roi_data = node_values.get(node_id)
+            #     if isinstance(roi_data, list) and all(isinstance(item, list) for item in roi_data):
+            #         node_values[node_id] = roi_data
+            #     else:
+            #         node_values[node_id] = None
             incoming_edges = [e for e in edges if e["target"] == node_id]
 
             input_dict = {}
@@ -224,7 +229,8 @@ async def execute_flow(request: Request):
                     target_node = next(
                         (n for n in nodes if n["id"] == edge["target"]), None
                     )
-                    if target_node and target_node["type"] == "resultNode":
+                    if target_node and target_node["type"] in ["resultNode", "roiInputNode"]:
+                        print("iths here")
                         source_id = edge["source"]
                         source_node = next(
                             (n for n in nodes if n["id"] == source_id), None
@@ -235,10 +241,15 @@ async def execute_flow(request: Request):
                         result_value = processing_to_send_result(
                             node_values.get(source_id, None)
                         )
-
-                        response_data = json.dumps(
-                            {"resultNode": edge["target"], "value": result_value}
-                        )
+                        if target_node["type"] == "roiInputNode":
+                         
+                           response_data = json.dumps(
+                            {"roiInputNode": edge["target"], "value": result_value},
+                            )
+                        else:
+                            response_data = json.dumps(
+                                {"resultNode": edge["target"], "value": result_value},
+                            )
                         yield response_data + "\n"
                         to_remove.append(edge)
 

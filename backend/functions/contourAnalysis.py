@@ -1,3 +1,4 @@
+import math
 import random
 import cv2
 import numpy as np
@@ -27,6 +28,58 @@ class ShapeAnalysis(ContourAnalysis):
         )
         return contours
     
+    def draw_distance_on_image(self,image, points, thickness=2):
+        color = (0, 255, 0)  # Green color in BGR
+        """
+        Draws two points, a line between them, and the Euclidean distance label.
+
+        Args:
+            image (np.ndarray): The image to draw on.
+            points (list of tuple): List of two points [(x1, y1), (x2, y2)].
+            color (tuple): BGR color for drawing. Default is green.
+            thickness (int): Thickness of the line and circles.
+
+        Returns:
+            np.ndarray: Image with drawings.
+        """
+        if len(points) != 2:
+            raise ValueError("points must be a list of exactly two (x, y) tuples.")
+        
+        point1, point2 = points
+
+        # Calculate Euclidean distance
+        distance = math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
+
+        # Draw circles at points
+        cv2.circle(image, point1, 5, color, -1)
+        cv2.circle(image, point2, 5, color, -1)
+
+        # Draw line between points
+        cv2.line(image, point1, point2, color, thickness)
+
+        # Calculate midpoint for label
+        mid_x = (point1[0] + point2[0]) // 2
+        mid_y = (point1[1] + point2[1]) // 2
+
+        # Put distance text
+        text = f"{distance:.2f}"
+        cv2.putText(image, text, (mid_x + 10, mid_y - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2, cv2.LINE_AA)
+
+        return image
+    
+    def get_contour_centroids(self,contours):
+        centroids = []
+        for cnt in contours:
+            M = cv2.moments(cnt)
+            if M["m00"] != 0:
+                cx = int(M["m10"] / M["m00"])
+                cy = int(M["m01"] / M["m00"])
+                centroids.append((cx, cy))
+            else:
+                centroids.append(None)
+        return centroids
+        
     def draw_contours(self, original_bgr_image, contours):
 
         """

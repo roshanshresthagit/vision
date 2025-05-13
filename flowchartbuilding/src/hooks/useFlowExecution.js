@@ -51,11 +51,20 @@ export const useFlowExecution = (nodes, edges, inputs, setNodes) => {
           buffer = buffer.slice(newlineIndex + 1);
 
           if (line) {
+           
             const data = JSON.parse(line);
+            console.log("Received data:", data);
             if (data.resultNode) {
               setNodes((nds) =>
                 nds.map((node) =>
                   node.id === data.resultNode ? { ...node, data: { ...node.data, value: data.value } } : node
+                )
+              );
+            }
+            if (data.roiInputNode) {
+              setNodes((nds) =>
+                nds.map((node) =>
+                  node.id === data.roiInputNode ? { ...node, data: { ...node.data, value: data.value } } : node
                 )
               );
             }

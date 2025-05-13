@@ -35,7 +35,8 @@ class MeasurementTools:
 
         return params[1], params[0]
 
-    def point_to_point(self, point1, point2):
+    def point_to_point(self, points):
+        print(points)
         """
         Function: point_to_point
         Description: Compute Euclidean distance between two points.
@@ -46,7 +47,8 @@ class MeasurementTools:
 
         Output:
             float: The Euclidean distance between the two points.
-        """
+        """ 
+        point1, point2 = map(np.array, points)
         if len(point1) != len(point2):
             raise ValueError("Both points must have the same dimension.")
         distance = math.sqrt(sum((p1 - p2) ** 2 for p1, p2 in zip(point1, point2)))

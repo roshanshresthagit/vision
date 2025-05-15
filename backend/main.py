@@ -124,6 +124,9 @@ def find_function_handler(func_name: str) -> tuple[callable, bool]:
 @app.post("/execute_flow")
 async def execute_flow(request: Request):
     data = await request.json()
+    with open("flow.json", "w") as f:
+        json.dump(data, f, indent=4)
+        
     nodes = data.get("nodes", [])
     edges = data.get("edges", [])
     inputValues = data.get("inputValues", {})
@@ -304,6 +307,77 @@ async def get_functions():
                         function_sources[full_name] = f"# Could not retrieve source for {full_name}"
     
     return function_sources
+
+# @app.post("/generate_code")
+# async def generate_code(request: Request):
+#     data = await request.json()
+#     nodes = data.get("nodes", [])
+#     edges = data.get("edges", [])
+#     inputValues = data.get("inputValues", {})
+#     node_values = dict(inputValues)
+#     processed_nodes = set()
+
+#     edge_map = {}
+#     for edge in edges:
+#         edge_map.setdefault(edge["target"], []).append(edge["source"])
+
+#     code_lines = []
+
+#     async def flow_processor():
+#         pending_edges = list(edges)
+
+#         async def process_function_node(node_id: str):
+#             if node_id in processed_nodes:
+#                 return
+
+#             node = next((n for n in nodes if n["id"] == node_id), None)
+#             if not node or node["type"] != "functionNode":
+#                 return
+
+#             incoming_edges = [e for e in edges if e["target"] == node_id]
+
+#             input_dict = {}
+#             for edge in incoming_edges:
+#                 src_id = edge["source"]
+#                 target_handle = edge.get("targetHandle")
+
+#                 if src_id not in node_values:
+#                     src_node = next((n for n in nodes if n["id"] == src_id), None)
+#                     if src_node and src_node["type"] == "functionNode":
+#                         await process_function_node(src_id)
+#                     elif src_node and src_node["type"] in [
+#                         "inputNode",
+#                         "imageInputNode",
+#                     ]:
+#                         node_values[src_id] = inputValues.get(src_id)
+
+#                 val = node_values.get(src_id)
+#                 if isinstance(val, str) and val.startswith("data:image"):
+#                     val = decode_base64_image(val)
+
+#                 if target_handle:
+#                     input_dict[target_handle] = val
+#                 else:
+#                     input_dict[src_id] = val
+
+#             if not input_dict:
+#                 return
+
+#             func_name = node["data"].get("func")
+#             found = False
+
+#             for module in MODULES:
+#                 for name, obj in vars(module).items():
+#                     if inspect.isclass(obj) and func_name in vars(obj):
+#                         try:
+#                             method = getattr(obj, func_name)
+#                             if callable(method):
+#                                 sig = inspect.signature(method)
+#                                 params = list(sig.parameters.keys())
+#                                 args = [input_dict.get(p) for p in params if p != "self"]
+#                                 instance = obj()
+#                                 result = method(instance, *args)
+#                                 code_lines.append(f"{node['id']} = {func_name}({', '.join(map(str, args))
 
 
 @app.post("/update")

@@ -3,7 +3,7 @@ import { useCallback } from "react";
 export const useNodeDrop = ({
   nodeId,
   inputNodeCount,
-  functionDict,
+  functionDict, 
   setInputs,
   setNodes,
   setEdges,
@@ -27,6 +27,24 @@ export const useNodeDrop = ({
       const isModelNode = func.id === "modelnode";
       const isRoiInput = func.id === "roiinput";
 
+      // Find the specific function metadata from functionDict
+      const findFunctionMetadata = (funcName, dict) => {
+        for (const category in dict) {
+          if (dict[category].methods?.[funcName]) {
+            return {
+              [funcName]: dict[category].methods[funcName]
+            };
+          }
+          if (dict[category].children) {
+            const result = findFunctionMetadata(funcName, dict[category].children);
+            if (result) return result;
+          }
+        }
+        return null;
+      };
+
+      const functionMetadata = func.func ? findFunctionMetadata(func.func, functionDict) : null;
+
       const newNode = {
         id: newNodeId,
         type: isInput
@@ -44,8 +62,12 @@ export const useNodeDrop = ({
           : "functionNode",
         position,
         data: {
-          label: isInput || isImageInput || isModelInput || isModelNode || isRoiInput  ? `${func.label}${inputNodeCount}` : func.label,
+          label: isInput || isImageInput || isModelInput || isModelNode || isRoiInput  
+            ? `${func.label}${inputNodeCount}` 
+            : func.label,
           func: func.func,
+          // Only include the matched function metadata
+          functionDict: functionMetadata || null,
           value: isInput || isImageInput || isModelInput || isModelNode || isRoiInput ? 0 : undefined,
           setValue:
             isInput || isImageInput || isModelInput || isModelNode || isRoiInput
@@ -60,7 +82,6 @@ export const useNodeDrop = ({
                     return updated;
                   })
               : undefined,
-          functionDict,
         },
       };
 
@@ -71,19 +92,8 @@ export const useNodeDrop = ({
         setInputNodeCount((count) => count + 1);
       }
 
-      if (!isInput && !isImageInput && !isModelInput && !isModelNode && !isRoiInput && func.func) {
-        const getFunctionConfig = (func, dict) => {
-          for (const category in dict) {
-            if (dict[category].methods?.[func]) return dict[category].methods[func];
-            if (dict[category].children) {
-              const result = getFunctionConfig(func, dict[category].children);
-              if (result) return result;
-            }
-          }
-          return null;
-        };
-
-        const methodConfig = getFunctionConfig(func.func, functionDict);
+      if (!isInput && !isImageInput && !isModelInput && !isModelNode && !isRoiInput && func.func && functionMetadata) {
+        const methodConfig = functionMetadata[func.func];
         if (methodConfig?.inputNames) {
           Object.entries(methodConfig.inputNames).forEach(([key, value], index) => {
             if (typeof value === "number" || typeof value === "string") {
@@ -108,7 +118,6 @@ export const useNodeDrop = ({
                       );
                       return updated;
                     }),
-                  functionDict,
                 },
               };
 
@@ -116,7 +125,7 @@ export const useNodeDrop = ({
                 id: `e${inputNodeId}-${newNodeId}`,
                 source: inputNodeId,
                 animated: true,
-                style:{stroke:'green'},
+                style: { stroke: 'green' },
                 target: newNodeId,
                 targetHandle: key,
                 type: "straight",
@@ -133,7 +142,7 @@ export const useNodeDrop = ({
         }
       }
     },
-    [setNodes, setEdges, nodeId, inputNodeCount, functionDict, setInputs,setInputNodeCount, setNodeId]
+    [setNodes, setEdges, nodeId, inputNodeCount, functionDict, setInputs, setInputNodeCount, setNodeId]
   );
 
   return { onDrop };

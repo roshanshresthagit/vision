@@ -1,0 +1,1935 @@
+{
+            "id": "2",
+            "type": "functionNode",
+            "position": {
+                "x": 716.5647888183594,
+                "y": 934.2569580078125
+            },
+            "data": {
+                "label": "Bgr2gray",
+                "func": "BGR2GRAY",
+                "functionDict": {
+                    "ArithmeticOperations": {
+                        "children": null,
+                        "methods": {
+                            "Addition": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "addition"
+                                ]
+                            },
+                            "Subtraction": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "subtraction"
+                                ]
+                            },
+                            "Division": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "division"
+                                ]
+                            },
+                            "Multiplication": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "multiplication"
+                                ]
+                            },
+                            "Average": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "avg"
+                                ]
+                            },
+                            "power": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "power"
+                                ]
+                            },
+                            "square_root": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null
+                                },
+                                "outputNames": [
+                                    "square_root"
+                                ]
+                            },
+                            "greater_than": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "greater_than"
+                                ]
+                            },
+                            "less_than": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "less_than"
+                                ]
+                            },
+                            "equal": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "equal"
+                                ]
+                            },
+                            "greater_than_equal": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "greater_than_equal"
+                                ]
+                            },
+                            "less_than_equal": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "less_than_equal"
+                                ]
+                            },
+                            "not_equal": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "not_equal"
+                                ]
+                            },
+                            "rounding_off": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "rounding_off": null
+                                },
+                                "outputNames": [
+                                    "rounding_off"
+                                ]
+                            },
+                            "to_integer": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null
+                                },
+                                "outputNames": [
+                                    "to_integer"
+                                ]
+                            },
+                            "absolute_value": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null
+                                },
+                                "outputNames": [
+                                    "absolute_value"
+                                ]
+                            },
+                            "in_range": {
+                                "inputs": 3,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "a": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "in_range"
+                                ]
+                            },
+                            "modulus_remainder": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "variable1": null,
+                                    "variable2": null
+                                },
+                                "outputNames": [
+                                    "modulus_remainder"
+                                ]
+                            }
+                        }
+                    },
+                    "ImageFiltering": {
+                        "children": {
+                            "Threshold": {
+                                "children": null,
+                                "methods": {
+                                    "threshold_binary_image": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "lower_th": "120",
+                                            "upper_th": "255"
+                                        },
+                                        "outputNames": [
+                                            "thresholded_image"
+                                        ]
+                                    },
+                                    "inv_threshold_binary_image": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "lower_th": "120",
+                                            "upper_th": "255"
+                                        },
+                                        "outputNames": [
+                                            "thresholded_image"
+                                        ]
+                                    },
+                                    "threshold_truncate_image": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "lower_th": "120",
+                                            "upper_th": "255"
+                                        },
+                                        "outputNames": [
+                                            "thresholded_image"
+                                        ]
+                                    },
+                                    "threshold_to_zero_image": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "lower_th": "120",
+                                            "upper_th": "255"
+                                        },
+                                        "outputNames": [
+                                            "thresholded_image"
+                                        ]
+                                    },
+                                    "threshold_to_zero_inv_image": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "lower_th": "120",
+                                            "upper_th": "255"
+                                        },
+                                        "outputNames": [
+                                            "thresholded_image"
+                                        ]
+                                    },
+                                    "threshold_binary_image_OTSU": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "thresholded_image"
+                                        ]
+                                    },
+                                    "inv_threshold_binary_image_OTSU": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "thresholded_image"
+                                        ]
+                                    },
+                                    "threshold_truncate_image_OTSU": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "thresholded_image"
+                                        ]
+                                    },
+                                    "threshold_to_zero_image_OTSU": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "thresholded_image"
+                                        ]
+                                    },
+                                    "threshold_to_zero_inv_image_OTSU": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "thresholded_image"
+                                        ]
+                                    },
+                                    "threshold_triangle_image": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "thresholded_image"
+                                        ]
+                                    }
+                                }
+                            },
+                            "AdaptiveThreshold": {
+                                "children": null,
+                                "methods": {
+                                    "adaptive_threshold_mean_C": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "block_size": "21",
+                                            "C": "10"
+                                        },
+                                        "outputNames": [
+                                            "threshold_image"
+                                        ]
+                                    },
+                                    "adaptive_threshold_gaussian_C": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "block_size": "21",
+                                            "C": "10"
+                                        },
+                                        "outputNames": [
+                                            "threshold_image"
+                                        ]
+                                    }
+                                }
+                            },
+                            "BlurringAndNoiseReduction": {
+                                "children": null,
+                                "methods": {
+                                    "median_blur": {
+                                        "inputs": 2,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "ksize": "3"
+                                        },
+                                        "outputNames": [
+                                            "blurred_image"
+                                        ]
+                                    },
+                                    "gaussian_blur": {
+                                        "inputs": 4,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "ksize": "3",
+                                            "sigmaX": "0",
+                                            "sigmaY": "0"
+                                        },
+                                        "outputNames": [
+                                            "blurred_image"
+                                        ]
+                                    },
+                                    "bilateral_filter": {
+                                        "inputs": 4,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "d": "9",
+                                            "sigmaColor": "75",
+                                            "sigmaSpace": "75"
+                                        },
+                                        "outputNames": [
+                                            "filtered_image"
+                                        ]
+                                    },
+                                    "box_filter": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "ddepth": "-1",
+                                            "ksize": "3"
+                                        },
+                                        "outputNames": [
+                                            "filtered_image"
+                                        ]
+                                    },
+                                    "non_local_means_denoising": {
+                                        "inputs": 5,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "h": "10",
+                                            "hColor": "10",
+                                            "templateWindowSize": "7",
+                                            "searchWindowSize": "15"
+                                        },
+                                        "outputNames": [
+                                            "image"
+                                        ]
+                                    }
+                                }
+                            },
+                            "MorphologicalOperations": {
+                                "children": null,
+                                "methods": {
+                                    "_is_binarized": {
+                                        "inputs": 1,
+                                        "outputs": 0,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": []
+                                    },
+                                    "_binarize_image": {
+                                        "inputs": 1,
+                                        "outputs": 0,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": []
+                                    },
+                                    "erode": {
+                                        "inputs": 4,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "iterations": "1",
+                                            "kernel": "None",
+                                            "filter_size": "(3, 3)"
+                                        },
+                                        "outputNames": [
+                                            "eroded_image"
+                                        ]
+                                    },
+                                    "dilate": {
+                                        "inputs": 4,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "iterations": "1",
+                                            "kernel": "None",
+                                            "filter_size": "(3, 3)"
+                                        },
+                                        "outputNames": [
+                                            "dilated_image"
+                                        ]
+                                    },
+                                    "opening": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "kernel": "None",
+                                            "filter_size": "(3, 3)"
+                                        },
+                                        "outputNames": [
+                                            "opened_image"
+                                        ]
+                                    },
+                                    "closing": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "kernel": "None",
+                                            "filter_size": "(3, 3)"
+                                        },
+                                        "outputNames": [
+                                            "closed_image"
+                                        ]
+                                    },
+                                    "morphological_gradient": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "kernel": "None",
+                                            "filter_size": "(3, 3)"
+                                        },
+                                        "outputNames": [
+                                            "gradient_image"
+                                        ]
+                                    },
+                                    "white_hat": {
+                                        "inputs": 2,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "filter_size": "(3, 3)"
+                                        },
+                                        "outputNames": [
+                                            "white_hat_image"
+                                        ]
+                                    },
+                                    "black_hat": {
+                                        "inputs": 2,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "filter_size": "(3, 3)"
+                                        },
+                                        "outputNames": [
+                                            "black_hat_image"
+                                        ]
+                                    }
+                                }
+                            },
+                            "ExposureOperations": {
+                                "children": null,
+                                "methods": {
+                                    "brighten_image": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "alpha": "1",
+                                            "beta": "10"
+                                        },
+                                        "outputNames": [
+                                            "brightened_image"
+                                        ]
+                                    },
+                                    "darken_image": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "alpha": "1",
+                                            "beta": "-10"
+                                        },
+                                        "outputNames": [
+                                            "darkened_image"
+                                        ]
+                                    },
+                                    "contrast_image": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "alpha": "1.2",
+                                            "beta": "0"
+                                        },
+                                        "outputNames": [
+                                            "contrasted_image"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "methods": null
+                    },
+                    "ColorSpace": {
+                        "children": null,
+                        "methods": {
+                            "BGR2GRAY": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "bgr_image": null
+                                },
+                                "outputNames": [
+                                    "gray_image"
+                                ]
+                            },
+                            "BGR2RGB": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "bgr_image": null
+                                },
+                                "outputNames": [
+                                    "rgb_image"
+                                ]
+                            },
+                            "BGR2HSV": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "bgr_image": null
+                                },
+                                "outputNames": [
+                                    "hsv_image"
+                                ]
+                            },
+                            "BGR2HSL": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "bgr_image": null
+                                },
+                                "outputNames": [
+                                    "hsl_image"
+                                ]
+                            },
+                            "BGR2YCrCb": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "bgr_image": null
+                                },
+                                "outputNames": [
+                                    "ycrcb_image"
+                                ]
+                            },
+                            "BGR2Lab": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "bgr_image": null
+                                },
+                                "outputNames": [
+                                    "lab_image"
+                                ]
+                            },
+                            "SplitImage": {
+                                "inputs": 1,
+                                "outputs": 3,
+                                "inputNames": {
+                                    "bgr_image": null
+                                },
+                                "outputNames": [
+                                    "blue_image",
+                                    "green_image",
+                                    "red_image"
+                                ]
+                            },
+                            "MergeImage": {
+                                "inputs": 3,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "blue_image": null,
+                                    "green_image": null,
+                                    "red_image": null
+                                },
+                                "outputNames": [
+                                    "merged_image"
+                                ]
+                            }
+                        }
+                    },
+                    "GeometricOperations": {
+                        "children": {
+                            "Transformations": {
+                                "children": null,
+                                "methods": {
+                                    "affine_transform": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "src_points": "[[50, 50], [200, 50], [50, 200]]",
+                                            "dst_points": "[[10, 100], [200, 50], [100, 250]]"
+                                        },
+                                        "outputNames": [
+                                            "transformed_image"
+                                        ]
+                                    },
+                                    "perspective_transform": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "src_points": null,
+                                            "dst_points": null
+                                        },
+                                        "outputNames": [
+                                            "transformed_image"
+                                        ]
+                                    },
+                                    "warp_affine": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "src_pts": null,
+                                            "dst_pts": null
+                                        },
+                                        "outputNames": [
+                                            "transformed_image"
+                                        ]
+                                    },
+                                    "warp_perspective": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "src_pts": null,
+                                            "dst_pts": null
+                                        },
+                                        "outputNames": [
+                                            "transformed_image"
+                                        ]
+                                    },
+                                    "rotate": {
+                                        "inputs": 4,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "angle": null,
+                                            "center": "None",
+                                            "scale": "1.0"
+                                        },
+                                        "outputNames": [
+                                            "transformed_image"
+                                        ]
+                                    },
+                                    "translate": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "tx": "10",
+                                            "ty": "10"
+                                        },
+                                        "outputNames": [
+                                            "transformed_image"
+                                        ]
+                                    },
+                                    "flip": {
+                                        "inputs": 2,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "flip_type": null
+                                        },
+                                        "outputNames": [
+                                            "flipped_image"
+                                        ]
+                                    },
+                                    "scale": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "fx": null,
+                                            "fy": null
+                                        },
+                                        "outputNames": [
+                                            "scaled_image"
+                                        ]
+                                    }
+                                }
+                            },
+                            "MomentsAndCentroids": {
+                                "children": null,
+                                "methods": {
+                                    "raw_moments": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "moments"
+                                        ]
+                                    },
+                                    "central_moments": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "moments"
+                                        ]
+                                    },
+                                    "hu_moments": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "moments"
+                                        ]
+                                    },
+                                    "centroid": {
+                                        "inputs": 1,
+                                        "outputs": 2,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "cx",
+                                            "cy"
+                                        ]
+                                    },
+                                    "orientation": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "orient"
+                                        ]
+                                    },
+                                    "fit_ellipse": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "contour": null
+                                        },
+                                        "outputNames": [
+                                            "ellipse"
+                                        ]
+                                    },
+                                    "bounding_box_center": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "contour": null
+                                        },
+                                        "outputNames": [
+                                            "center"
+                                        ]
+                                    }
+                                }
+                            },
+                            "Resize": {
+                                "children": null,
+                                "methods": {
+                                    "resize_image": {
+                                        "inputs": 4,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "width": null,
+                                            "height": null,
+                                            "interpolation": "cv2.INTER_LINEAR"
+                                        },
+                                        "outputNames": [
+                                            "resized_image"
+                                        ]
+                                    },
+                                    "gaussian_pyramid": {
+                                        "inputs": 2,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "levels": null
+                                        },
+                                        "outputNames": [
+                                            "pyramid"
+                                        ]
+                                    },
+                                    "laplacian_pyramid": {
+                                        "inputs": 2,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "levels": null
+                                        },
+                                        "outputNames": [
+                                            "laplacian"
+                                        ]
+                                    }
+                                }
+                            },
+                            "BlobsAndConnected": {
+                                "children": null,
+                                "methods": {
+                                    "simple_blob_detector": {
+                                        "inputs": 2,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "params": "None"
+                                        },
+                                        "outputNames": [
+                                            "keypoints"
+                                        ]
+                                    },
+                                    "connected_components_labeling": {
+                                        "inputs": 1,
+                                        "outputs": 2,
+                                        "inputNames": {
+                                            "binary_image": null
+                                        },
+                                        "outputNames": [
+                                            "num_labels",
+                                            "labels"
+                                        ]
+                                    },
+                                    "blob_statistics": {
+                                        "inputs": 1,
+                                        "outputs": 4,
+                                        "inputNames": {
+                                            "binary_image": null
+                                        },
+                                        "outputNames": [
+                                            "num_labels",
+                                            "labels",
+                                            "stats",
+                                            "centroids"
+                                        ]
+                                    },
+                                    "draw_bounding_boxes": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "stats": null,
+                                            "min_area": "50"
+                                        },
+                                        "outputNames": [
+                                            "output"
+                                        ]
+                                    },
+                                    "highlight_blobs_connected_components": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "output"
+                                        ]
+                                    }
+                                }
+                            },
+                            "HoughTransform": {
+                                "children": null,
+                                "methods": {
+                                    "hough_line_transform": {
+                                        "inputs": 4,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "rho": "1",
+                                            "theta": "np.pi / 180",
+                                            "threshold": "150"
+                                        },
+                                        "outputNames": [
+                                            "lines"
+                                        ]
+                                    },
+                                    "probabilistic_hough_line_transform": {
+                                        "inputs": 6,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "rho": "1",
+                                            "theta": "np.pi / 180",
+                                            "threshold": "100",
+                                            "min_line_length": "50",
+                                            "max_line_gap": "10"
+                                        },
+                                        "outputNames": [
+                                            "lines"
+                                        ]
+                                    },
+                                    "hough_circle_detection": {
+                                        "inputs": 7,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "dp": "1.2",
+                                            "min_dist": "20",
+                                            "param1": "100",
+                                            "param2": "30",
+                                            "min_radius": "0",
+                                            "max_radius": "0"
+                                        },
+                                        "outputNames": [
+                                            "circles"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "methods": null
+                    },
+                    "MeasurementTools": {
+                        "children": null,
+                        "methods": {
+                            "find_slope_and_intercept": {
+                                "inputs": 2,
+                                "outputs": 0,
+                                "inputNames": {
+                                    "X": null,
+                                    "y": null
+                                },
+                                "outputNames": []
+                            },
+                            "point_to_point": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "points": null
+                                },
+                                "outputNames": [
+                                    "distance"
+                                ]
+                            },
+                            "point_to_line_segment": {
+                                "inputs": 2,
+                                "outputs": 2,
+                                "inputNames": {
+                                    "point": null,
+                                    "line": null
+                                },
+                                "outputNames": [
+                                    "dist",
+                                    "angle"
+                                ]
+                            },
+                            "point_to_line": {
+                                "inputs": 2,
+                                "outputs": 2,
+                                "inputNames": {
+                                    "point": null,
+                                    "line": null
+                                },
+                                "outputNames": [
+                                    "dist",
+                                    "angle"
+                                ]
+                            },
+                            "line_to_line": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "line1": null,
+                                    "line2": null
+                                },
+                                "outputNames": [
+                                    "distance"
+                                ]
+                            },
+                            "find_angle_and_intersection": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "line1": null,
+                                    "line2": null
+                                },
+                                "outputNames": [
+                                    "angle"
+                                ]
+                            },
+                            "get_slope_at_certain_angle": {
+                                "inputs": 3,
+                                "outputs": 2,
+                                "inputNames": {
+                                    "line": "None",
+                                    "slope_intercept": "None",
+                                    "angle_degrees": "0"
+                                },
+                                "outputNames": [
+                                    "new_slope",
+                                    "intercept"
+                                ]
+                            },
+                            "calculate_new_line": {
+                                "inputs": 3,
+                                "outputs": 2,
+                                "inputNames": {
+                                    "line": null,
+                                    "offset_distance": "None",
+                                    "offset_point": "None"
+                                },
+                                "outputNames": [
+                                    "slope",
+                                    "new_int"
+                                ]
+                            },
+                            "calculate_polygon_area_centroid": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "polygon_points": "[[100, 50], [200, 80], [250, 200], [150, 250], [80, 180]]"
+                                },
+                                "outputNames": [
+                                    "area"
+                                ]
+                            },
+                            "overlay_grid": {
+                                "inputs": 5,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null,
+                                    "grid_size": "50",
+                                    "color": "(0, 255, 0)",
+                                    "thickness": "1",
+                                    "show_labels": "True"
+                                },
+                                "outputNames": [
+                                    "output"
+                                ]
+                            },
+                            "overlay_calibrated_grid": {
+                                "inputs": 9,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null,
+                                    "pt1": null,
+                                    "pt2": null,
+                                    "real_distance": null,
+                                    "unit": "'mm'",
+                                    "spacing": "10",
+                                    "color": "(255, 0, 0)",
+                                    "thickness": "1",
+                                    "show_labels": "True"
+                                },
+                                "outputNames": [
+                                    "output"
+                                ]
+                            }
+                        }
+                    },
+                    "ContourAnalysis": {
+                        "children": {
+                            "ShapeAnalysis": {
+                                "children": null,
+                                "methods": {
+                                    "find_contours": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "contours"
+                                        ]
+                                    },
+                                    "draw_distance_on_image": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "points": null,
+                                            "thickness": "2"
+                                        },
+                                        "outputNames": [
+                                            "image"
+                                        ]
+                                    },
+                                    "get_contour_centroids": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "contours": null
+                                        },
+                                        "outputNames": [
+                                            "centroids"
+                                        ]
+                                    },
+                                    "draw_contours": {
+                                        "inputs": 2,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "original_bgr_image": null,
+                                            "contours": null
+                                        },
+                                        "outputNames": [
+                                            "image_with_contours"
+                                        ]
+                                    },
+                                    "filter_contours": {
+                                        "inputs": 2,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "contours": null,
+                                            "min_area": "1000"
+                                        },
+                                        "outputNames": [
+                                            "filtered_contours"
+                                        ]
+                                    },
+                                    "convex_hull": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "contour": null
+                                        },
+                                        "outputNames": [
+                                            "hull"
+                                        ]
+                                    },
+                                    "contour_approximation": {
+                                        "inputs": 2,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "contour": null,
+                                            "epsilon_ratio": "0.01"
+                                        },
+                                        "outputNames": [
+                                            "approx"
+                                        ]
+                                    },
+                                    "contour_area_and_perimeter": {
+                                        "inputs": 1,
+                                        "outputs": 2,
+                                        "inputNames": {
+                                            "contour": null
+                                        },
+                                        "outputNames": [
+                                            "area",
+                                            "perimeter"
+                                        ]
+                                    },
+                                    "minimum_enclosing_circle_and_rectangle": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "contour": null
+                                        },
+                                        "outputNames": [
+                                            "rect"
+                                        ]
+                                    },
+                                    "bounded_rotated_rectangle": {
+                                        "inputs": 1,
+                                        "outputs": 2,
+                                        "inputNames": {
+                                            "contour": null
+                                        },
+                                        "outputNames": [
+                                            "box",
+                                            "rect"
+                                        ]
+                                    }
+                                }
+                            },
+                            "SegmentationClassical": {
+                                "children": null,
+                                "methods": {
+                                    "apply_grab_cut": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "rect": null,
+                                            "iter_count": "5"
+                                        },
+                                        "outputNames": [
+                                            "segmented_image"
+                                        ]
+                                    },
+                                    "watershed": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "filter_size": "(3, 3)",
+                                            "iterations": "2"
+                                        },
+                                        "outputNames": [
+                                            "image"
+                                        ]
+                                    },
+                                    "k_means_clustering": {
+                                        "inputs": 4,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "k": "3",
+                                            "criteria": "None",
+                                            "attempts": "10"
+                                        },
+                                        "outputNames": [
+                                            "segmented_image"
+                                        ]
+                                    },
+                                    "mean_shift_segmentation": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "spatial_radius": "10",
+                                            "color_radius": "30"
+                                        },
+                                        "outputNames": [
+                                            "segmented_image"
+                                        ]
+                                    },
+                                    "region_growing": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "seed": "None",
+                                            "threshold": "5"
+                                        },
+                                        "outputNames": [
+                                            "region_mask"
+                                        ]
+                                    },
+                                    "slic_segmentation": {
+                                        "inputs": 3,
+                                        "outputs": 2,
+                                        "inputNames": {
+                                            "image": null,
+                                            "num_segments": "100",
+                                            "compactness": "10"
+                                        },
+                                        "outputNames": [
+                                            "segmented_image",
+                                            "labels"
+                                        ]
+                                    },
+                                    "seeded_segmentation": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "seeds": "None",
+                                            "beta": "90"
+                                        },
+                                        "outputNames": [
+                                            "segmentation"
+                                        ]
+                                    },
+                                    "flood_fill": {
+                                        "inputs": 4,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "seed": "None",
+                                            "threshold": "30",
+                                            "fill_color": "(0, 255, 0)"
+                                        },
+                                        "outputNames": [
+                                            "filled_image"
+                                        ]
+                                    }
+                                }
+                            },
+                            "EdgeDetection": {
+                                "children": null,
+                                "methods": {
+                                    "sobel_x": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "image"
+                                        ]
+                                    },
+                                    "sobel_y": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "image"
+                                        ]
+                                    },
+                                    "laplacian": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "image"
+                                        ]
+                                    },
+                                    "canny_edge_detector": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "threshold1": "100",
+                                            "threshold2": "100"
+                                        },
+                                        "outputNames": [
+                                            "edges"
+                                        ]
+                                    },
+                                    "scharr_filter": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "image"
+                                        ]
+                                    },
+                                    "prewitt": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "image"
+                                        ]
+                                    },
+                                    "roberts_cross": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "image"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "methods": null
+                    },
+                    "ImageEnhancement": {
+                        "children": null,
+                        "methods": {
+                            "histogram_equalization": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null
+                                },
+                                "outputNames": [
+                                    "contrast_enhanced_image"
+                                ]
+                            },
+                            "clahe": {
+                                "inputs": 3,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null,
+                                    "clip_limit": "2.0",
+                                    "tile_grid_size": "(8, 8)"
+                                },
+                                "outputNames": [
+                                    "clahe_enhanced_image"
+                                ]
+                            },
+                            "gamma_correction": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null,
+                                    "gamma": null
+                                },
+                                "outputNames": [
+                                    "gamma_corrected_image"
+                                ]
+                            },
+                            "logarithmic_transform": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null
+                                },
+                                "outputNames": [
+                                    "log_image"
+                                ]
+                            },
+                            "power_law_transform": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null,
+                                    "gamma": null
+                                },
+                                "outputNames": [
+                                    "power_image"
+                                ]
+                            },
+                            "sharpening": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null
+                                },
+                                "outputNames": [
+                                    "sharpened_image"
+                                ]
+                            },
+                            "edge_enhancement": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null
+                                },
+                                "outputNames": [
+                                    "enhanced"
+                                ]
+                            }
+                        }
+                    },
+                    "ImageArithmetic": {
+                        "children": null,
+                        "methods": {
+                            "imageAddition": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image1": null,
+                                    "image2": null
+                                },
+                                "outputNames": [
+                                    "added_image"
+                                ]
+                            },
+                            "imageSubtraction": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image1": null,
+                                    "image2": null
+                                },
+                                "outputNames": [
+                                    "subtracted_image"
+                                ]
+                            },
+                            "imageBitwiseAnd": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image1": null,
+                                    "image2": null
+                                },
+                                "outputNames": [
+                                    "and_image"
+                                ]
+                            },
+                            "imageBitwiseOr": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image1": null,
+                                    "image2": null
+                                },
+                                "outputNames": [
+                                    "or_image"
+                                ]
+                            },
+                            "imageBitwiseXor": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image1": null,
+                                    "image2": null
+                                },
+                                "outputNames": [
+                                    "xor_image"
+                                ]
+                            },
+                            "imageBitwiseNot": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image1": null
+                                },
+                                "outputNames": [
+                                    "inverted_image"
+                                ]
+                            },
+                            "imageBlending": {
+                                "inputs": 3,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image1": null,
+                                    "image2": null,
+                                    "alpha": "0.5"
+                                },
+                                "outputNames": [
+                                    "blended_image"
+                                ]
+                            },
+                            "imageBackgroundSubtraction": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image1": null
+                                },
+                                "outputNames": [
+                                    "foreground_image"
+                                ]
+                            }
+                        }
+                    },
+                    "Visualization": {
+                        "children": null,
+                        "methods": {
+                            "putText": {
+                                "inputs": 8,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null,
+                                    "text": "'Sample Text'",
+                                    "starting_point": "(10, 30)",
+                                    "font": "cv2.FONT_HERSHEY_SIMPLEX",
+                                    "font_scale": "1",
+                                    "color": "(255, 0, 0)",
+                                    "thickness": "2",
+                                    "line_type": "cv2.LINE_AA"
+                                },
+                                "outputNames": [
+                                    "image"
+                                ]
+                            },
+                            "putRectangle": {
+                                "inputs": 6,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null,
+                                    "starting_point": "(0, 0)",
+                                    "ending_point": "(100, 100)",
+                                    "color": "(255, 0, 0)",
+                                    "thickness": "2",
+                                    "line_type": "cv2.LINE_AA"
+                                },
+                                "outputNames": [
+                                    "image"
+                                ]
+                            },
+                            "putCircle": {
+                                "inputs": 6,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null,
+                                    "center": "(50, 50)",
+                                    "radius": "20",
+                                    "color": "(255, 0, 0)",
+                                    "thickness": "2",
+                                    "line_type": "cv2.LINE_AA"
+                                },
+                                "outputNames": [
+                                    "image"
+                                ]
+                            },
+                            "putLine": {
+                                "inputs": 6,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null,
+                                    "starting_point": "(0, 0)",
+                                    "ending_point": "(100, 100)",
+                                    "color": "(255, 0, 0)",
+                                    "thickness": "2",
+                                    "line_type": "cv2.LINE_AA"
+                                },
+                                "outputNames": [
+                                    "image"
+                                ]
+                            },
+                            "writeImage": {
+                                "inputs": 2,
+                                "outputs": 0,
+                                "inputNames": {
+                                    "image": null,
+                                    "path": "'output.jpg'"
+                                },
+                                "outputNames": []
+                            }
+                        }
+                    },
+                    "ROIS": {
+                        "children": null,
+                        "methods": {
+                            "fixed_rectangle_roi": {
+                                "inputs": 5,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null,
+                                    "x": "50",
+                                    "y": "50",
+                                    "w": "100",
+                                    "h": "100"
+                                },
+                                "outputNames": [
+                                    "image"
+                                ]
+                            },
+                            "polygon_roi": {
+                                "inputs": 2,
+                                "outputs": 2,
+                                "inputNames": {
+                                    "image": null,
+                                    "points": null
+                                },
+                                "outputNames": [
+                                    "roi",
+                                    "mask"
+                                ]
+                            },
+                            "circular_roi": {
+                                "inputs": 3,
+                                "outputs": 2,
+                                "inputNames": {
+                                    "image": null,
+                                    "center": "(100, 100)",
+                                    "radius": "50"
+                                },
+                                "outputNames": [
+                                    "roi",
+                                    "mask"
+                                ]
+                            },
+                            "rectangle_drag_select_roi": {
+                                "inputs": 1,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null
+                                },
+                                "outputNames": [
+                                    "image"
+                                ]
+                            },
+                            "fiducial_marker_roi": {
+                                "inputs": 2,
+                                "outputs": 2,
+                                "inputNames": {
+                                    "image": null,
+                                    "dictionary": "cv2.aruco.DICT_4X4_50"
+                                },
+                                "outputNames": [
+                                    "roi",
+                                    "mask"
+                                ]
+                            },
+                            "mask_based_roi": {
+                                "inputs": 2,
+                                "outputs": 1,
+                                "inputNames": {
+                                    "image": null,
+                                    "mask": null
+                                },
+                                "outputNames": [
+                                    "image"
+                                ]
+                            }
+                        }
+                    },
+                    "Matching": {
+                        "children": {
+                            "Template": {
+                                "children": null,
+                                "methods": {
+                                    "single_template_match": {
+                                        "inputs": 8,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "template": null,
+                                            "scene": null,
+                                            "label": "'template'",
+                                            "mask": "None",
+                                            "method": "'TM_CCOEFF_NORMED'",
+                                            "score_threshold": "0.5",
+                                            "iou_threshold": "0.3",
+                                            "search_box": "None"
+                                        },
+                                        "outputNames": [
+                                            "final_hits"
+                                        ]
+                                    },
+                                    "_str_to_cv_method": {
+                                        "inputs": 1,
+                                        "outputs": 0,
+                                        "inputNames": {
+                                            "s": null
+                                        },
+                                        "outputNames": []
+                                    },
+                                    "_compute_iou": {
+                                        "inputs": 2,
+                                        "outputs": 0,
+                                        "inputNames": {
+                                            "boxA": null,
+                                            "boxB": null
+                                        },
+                                        "outputNames": []
+                                    },
+                                    "_non_max_suppression": {
+                                        "inputs": 2,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "hits": null,
+                                            "iou_thresh": null
+                                        },
+                                        "outputNames": [
+                                            "keep"
+                                        ]
+                                    }
+                                }
+                            },
+                            "FeatureDetectionClassical": {
+                                "children": null,
+                                "methods": {
+                                    "detect_harris": {
+                                        "inputs": 5,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "block_size": "2",
+                                            "ksize": "3",
+                                            "k": "0.04",
+                                            "thresh": "0.01"
+                                        },
+                                        "outputNames": [
+                                            "out"
+                                        ]
+                                    },
+                                    "detect_shi_tomasi": {
+                                        "inputs": 4,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "max_corners": "100",
+                                            "quality_level": "0.01",
+                                            "min_distance": "10"
+                                        },
+                                        "outputNames": [
+                                            "out"
+                                        ]
+                                    },
+                                    "detect_fast": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "threshold": "10",
+                                            "nonmax_suppression": "True"
+                                        },
+                                        "outputNames": [
+                                            "image"
+                                        ]
+                                    },
+                                    "detect_orb": {
+                                        "inputs": 2,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null,
+                                            "n_features": "500"
+                                        },
+                                        "outputNames": [
+                                            "image"
+                                        ]
+                                    },
+                                    "detect_mser": {
+                                        "inputs": 1,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "image": null
+                                        },
+                                        "outputNames": [
+                                            "out"
+                                        ]
+                                    }
+                                }
+                            },
+                            "AccumulationAndBackgroundModels": {
+                                "children": null,
+                                "methods": {
+                                    "running_average": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "bg": null,
+                                            "frame": null,
+                                            "alpha": "0.05"
+                                        },
+                                        "outputNames": [
+                                            "result"
+                                        ]
+                                    },
+                                    "accumulate_weighted": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "bg": null,
+                                            "frame": null,
+                                            "alpha": "0.05"
+                                        },
+                                        "outputNames": [
+                                            "bg"
+                                        ]
+                                    },
+                                    "frame_difference": {
+                                        "inputs": 3,
+                                        "outputs": 1,
+                                        "inputNames": {
+                                            "prev_frame": null,
+                                            "curr_frame": null,
+                                            "thresh": "25"
+                                        },
+                                        "outputNames": [
+                                            "fg_mask"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "methods": null
+                    }
+                }
+            },
+            "width": 173,
+            "height": 114,
+            "selected": false,
+            "dragging": false
+        }

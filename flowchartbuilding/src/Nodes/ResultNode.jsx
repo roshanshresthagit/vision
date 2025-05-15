@@ -59,7 +59,7 @@ const ResultNode = ({ data }) => {
         </div>
         <div 
           className="result-value" 
-          style={{ maxHeight: 700, overflow: "auto" }}
+          style={{ Height: "100%", overflow: "auto" }}
         >
           {isImage ? (
             <img 

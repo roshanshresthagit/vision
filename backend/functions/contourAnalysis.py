@@ -1,3 +1,4 @@
+import itertools
 import math
 import random
 import cv2
@@ -136,21 +137,69 @@ class ShapeAnalysis(ContourAnalysis):
         epsilon = epsilon_ratio * cv2.arcLength(contour, True)
         approx = cv2.approxPolyDP(contour, epsilon, True)
         return approx
-
-    def contour_area_and_perimeter(self, contour):
+    def draw_contour_diameters(self,image, contours, color=(0, 255, 0), thickness=2):
         """
-        Function: Contour Area & Perimeter
-        Description: Calculate the area and perimeter of a contour.
+        Draws the maximum Feret diameter (longest distance between two points) for each contour.
+
+        Parameters:
+            image (np.ndarray): The image to draw on.
+            contours (list): List of contours.
+            color (tuple): Color of the diameter line in BGR.
+            thickness (int): Thickness of the line.
+
+        Returns:
+            np.ndarray: Image with diameters drawn.
+        """
+        color =(0, 255, 0)  # Green color in BGR
+        for contour in contours:
+            if len(contour) < 2:
+                continue
+
+            # Flatten contour to a list of points
+            points = contour[:, 0, :]  # shape (N, 2)
+
+            # Compute the farthest pair of points (brute-force)
+            max_dist = 0
+            pt1, pt2 = None, None
+            for p1, p2 in itertools.combinations(points, 2):
+                dist = np.linalg.norm(p1 - p2)
+                if dist > max_dist:
+                    max_dist = dist
+                    pt1, pt2 = tuple(p1), tuple(p2)
+
+            if pt1 is not None and pt2 is not None:
+                cv2.line(image, pt1, pt2, color, thickness)
+                cv2.putText(
+                    image,
+                    f"{max_dist:.1f}px",
+                    (pt1[0], pt1[1] - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    color,
+                    1,
+                    cv2.LINE_AA
+                )
+
+        return image
+
+    def contours_diameter(self, contours):
+        """
+        Function: Contours Diameter
+        Description: Calculate the equivalent diameter of each contour based on its area.
         Input:
-            contour: The contour points as a NumPy array.
-        Output
-            area: The area of the contour.
-            perimeter: The perimeter (arc length) of the contour.
+            contours: A list of contours, where each contour is a NumPy array of points.
+        Output:
+        diameter: A list of equivalent diameters for each contour, rounded to two decimal places.
         """
-        area = cv2.contourArea(contour)
-        perimeter = cv2.arcLength(contour, True)
-        return area, perimeter
-
+        diameter =[]
+        for contour in contours:
+            area = cv2.contourArea(contour)
+            perimeter = cv2.arcLength(contour, True)
+            diameter.append(round(math.sqrt(area / math.pi) * 2,2))
+        
+        return diameter
+  
+    
     def minimum_enclosing_circle_and_rectangle(self, contour):
         """
         Function: Minimum Enclosing Circle / Rectangle

@@ -7,18 +7,18 @@ export default function FunctionNode({ id, data }) {
   const updateNodeInternals = useUpdateNodeInternals();
   const functionDict = data.functionDict;
 
+  console.log("functionDict", functionDict);
+  
   const getFunctionConfig = (func, dict) => {
-    for (const category in dict) {
-      if (dict[category].methods && typeof dict[category].methods === 'object') {
-        if (dict[category].methods[func]) return dict[category].methods[func];
-      }
-      if (dict[category].children && typeof dict[category].children === 'object') {
-        const result = getFunctionConfig(func, dict[category].children);
-        if (result) return result;
-      }
-    }
-    return null;
-  };
+    
+    if (func) {
+      const methods = dict[func];
+      if (methods) {
+        return methods;
+      } else {
+        console.error(`Function ${func} not found in functionDict.`);
+        return null;
+      }}};
 
   const methodConfig = getFunctionConfig(data.func, functionDict) || {
     inputs: 1,
@@ -28,6 +28,7 @@ export default function FunctionNode({ id, data }) {
   };
 
   const inputKeys = Object.keys(methodConfig.inputNames || {});
+  console.log("inputKeys", functionDict.inputNames);
   const totalInputs = inputKeys.length;
 
   useEffect(() => {

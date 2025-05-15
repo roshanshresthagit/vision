@@ -1,18 +1,19 @@
 export const useCodeGeneration = (nodes, edges, functionDefinitions) => {
   const generatePythonCode = () => {
     let code = "# Auto-generated Python script\n\n";
-    console.log("nodes", nodes);
-     
-    // Input nodes generation remains the same
-    const inputs = nodes.filter(node => node.type === "inputNode" || node.type === "imageInputNode");
-    inputs.forEach(input => {
-      if (input.data?.func && input.data?.value !== undefined) {
-        code += `${input.data.func}${input.id} = ${input.data.value}\n`;
-      }
-    });
+    code += "import cv2\n";
+    code += "import numpy as np\n";
     
-    code += "\ndef main():\n";
-
+     
+    // Handle image input separately (passed as argument to main)
+    const input = nodes.find(node => node.type === "imageInputNode");
+    if (input) {
+      code += "\ndef main(imageinput1):\n";
+    }
+    else {
+      code += "\ndef main():\n";
+    }
+    
     // Function extraction remains the same
     const functionNodes = nodes.filter(node => node.type === "functionNode");
     const usedFunctions = new Set(functionNodes.map(node => node.data.func));
@@ -60,17 +61,21 @@ export const useCodeGeneration = (nodes, edges, functionDefinitions) => {
         const sourceNode = nodes.find(n => n.id === sourceId);
         if (!sourceNode) return null;
 
-        const valuePrefix = sourceNode.type === "inputNode" || sourceNode.type === "imageInputNode"
-          ? sourceNode.data?.func
-          : sourceNode.data?.func?.toLowerCase();
-
-        return `${paramName}=${valuePrefix}${sourceNode.id}`;
+        // Handle different source types
+        if (sourceNode.type === "imageInputNode") {
+          return `${paramName}=imageinput1`;  // Use the main function argument
+        } else if (sourceNode.type === "inputNode") {
+          return `${paramName}=${sourceNode.data?.value}`;  // Use value directly
+        } else {
+          // For function nodes, use their generated variable name
+          return `${paramName}=${sourceNode.data?.func?.toLowerCase()}${sourceNode.id}`;
+        }
       }).filter(Boolean);
 
       code += `\t${funcName.toLowerCase()}${node.id} = ${funcName}(${args.join(', ')})\n`;
     });
 
-    // Handle result nodes (remains the same)
+    // Handle result nodes
     const resultNodes = nodes.filter(n => n.type === "resultNode");
     resultNodes.forEach(resultNode => {
       const lastEdge = edges.find(e => e.target === resultNode.id);

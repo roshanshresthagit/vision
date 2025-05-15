@@ -137,7 +137,7 @@ class ShapeAnalysis(ContourAnalysis):
         epsilon = epsilon_ratio * cv2.arcLength(contour, True)
         approx = cv2.approxPolyDP(contour, epsilon, True)
         return approx
-    def draw_contour_diameters(self,image, contours, color=(0, 255, 0), thickness=2):
+    def draw_contour_diameters(self,image, contours, thickness=2):
         """
         Draws the maximum Feret diameter (longest distance between two points) for each contour.
 

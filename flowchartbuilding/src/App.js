@@ -44,6 +44,16 @@ export default function App() {
   const toggleCodeVisibility = () => {
     setIsCodeVisible((prev) => !prev);
   };
+  const onExportCode = () => {
+    const code = generatedCode;
+    const blob = new Blob([code], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "generated_code.py";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="container">
@@ -98,7 +108,7 @@ export default function App() {
               style={{
                 position: "absolute",
                 top: "40px",
-                right: "4px",
+                right: "20px",
                 background: isCodeVisible ? "#e74c3c" : "#2ecc71", // Red for close, green for open
                 border: "none",
                 color: "#fff",
@@ -111,6 +121,26 @@ export default function App() {
             >
               {isCodeVisible ? "Hide Code" : "Show Code"}
             </button>
+
+            <button
+              onClick={onExportCode}
+              style={{
+                position: "absolute",
+                top: "40px",
+                left: "10px",
+                background:  "#2ecc71", // Red for close, green for open
+                border: "none",
+                color: "#fff",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "12px",
+                zIndex: 100,
+              }}
+            >
+              Export Code
+            </button>
+
             {isCodeVisible && (
               <SyntaxHighlighter
                 language="python"
@@ -122,6 +152,7 @@ export default function App() {
                   : JSON.stringify(generatedCode, null, 2)}
               </SyntaxHighlighter>
             )}
+            
           </div>
         </div>
       </div>

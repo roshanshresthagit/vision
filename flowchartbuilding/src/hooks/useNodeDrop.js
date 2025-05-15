@@ -45,6 +45,7 @@ export const useNodeDrop = ({
       };
 
       const functionMetadata = func.func ? findFunctionMetadata(func.func, functionDict) : null;
+      console.log("functionMetadata", functionMetadata);
 
       const newNode = {
         id: newNodeId,
@@ -83,7 +84,7 @@ export const useNodeDrop = ({
                     return updated;
                   })
               : undefined,
-              functionDict
+              // functionDict
         },
         
       };

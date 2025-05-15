@@ -4,7 +4,8 @@ import "./topbar.css";
 import { useCodeGeneration } from "../hooks/CodeGeneration";
 
 const TopBar = ({ 
-  executeFlow, 
+  executeFlow,
+  toggleCodeVisibility, 
   onDeleteNode, 
   selectedNodeId, 
   nodes, 
@@ -20,6 +21,7 @@ const TopBar = ({
   const handleGenerateCode = () => {
     const code = generatePythonCode();
     setGeneratedCode(code);
+    toggleCodeVisibility();
   };
 
   return (

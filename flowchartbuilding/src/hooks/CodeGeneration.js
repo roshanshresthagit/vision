@@ -1,91 +1,83 @@
 export const useCodeGeneration = (nodes, edges, functionDefinitions) => {
   const generatePythonCode = () => {
     let code = "# Auto-generated Python script\n\n";
+    console.log("nodes", nodes);
+     
+    // Input nodes generation remains the same
+    const inputs = nodes.filter(node => node.type === "inputNode" || node.type === "imageInputNode");
+    inputs.forEach(input => {
+      if (input.data?.func && input.data?.value !== undefined) {
+        code += `${input.data.func}${input.id} = ${input.data.value}\n`;
+      }
+    });
+    
+    code += "\ndef main():\n";
 
-    // 1. Find all used functions
+    // Function extraction remains the same
     const functionNodes = nodes.filter(node => node.type === "functionNode");
     const usedFunctions = new Set(functionNodes.map(node => node.data.func));
-
-    // 2. Extract relevant function definitions
     const extractedFunctions = {};
 
-    if (functionDefinitions && typeof functionDefinitions === 'object') {
+    if (functionDefinitions) {
       for (const fullFuncKey in functionDefinitions) {
         const funcCode = functionDefinitions[fullFuncKey];
-        const shortFuncNameMatch = fullFuncKey.match(/\.([^.]+)$/);
-        const shortFuncName = shortFuncNameMatch?.[1];
-
+        const shortFuncName = fullFuncKey.split('.').pop();
         if (shortFuncName && usedFunctions.has(shortFuncName) && funcCode) {
-          const processedCode = funcCode
-            .replace(/def\s+(\w+)\(/, `def ${shortFuncName}(`)         
-            .replace(/(def\s+\w+\()\s*self,?\s*/, '$1');              
-
-          extractedFunctions[shortFuncName] = processedCode;
+          extractedFunctions[shortFuncName] = funcCode
+            .replace(/def\s+(\w+)\(/, `def ${shortFuncName}(`)
+            .replace(/(def\s+\w+\()\s*self,?\s*/, '$1');
         }
       }
     }
 
-    // 3. Add function definitions to the code
     Object.keys(extractedFunctions).sort().forEach(fn => {
-      code += `${extractedFunctions[fn]}\n\n`;
+      code += `\n${extractedFunctions[fn]}\n`;
     });
 
-    // 4. Add input values
-    const inputs = nodes.filter(node => node.type === "inputNode" || node.type === "imageInputNode");
-    inputs.forEach(input => {
-      if (input.data?.func && input.data?.value !== undefined) {
-        code += `${input.data.func+ input.id} = ${input.data.value}\n`;
-      }
+    // Build connections map
+    const connections = {};
+    edges.forEach(edge => {
+      if (!connections[edge.target]) connections[edge.target] = {};
+      connections[edge.target][edge.targetHandle] = edge.source;
     });
 
-    code += "\n";
+    // Generate function calls with keyword arguments
+    nodes.filter(n => n.type === "functionNode").forEach(node => {
+      const funcName = node.data?.func;
+      const funcCode = extractedFunctions[funcName];
+      if (!funcName || !funcCode) return;
 
-    // 5. Generate function calls
-    const functionCalls = {};
-    edges.forEach(({ source, target }) => {
-      if (!functionCalls[target]) functionCalls[target] = [];
-      functionCalls[target].push(source);
+      // Get parameter names from function definition
+      const paramNames = funcCode.match(/\(([^)]*)\)/)?.[1]
+        ?.split(',')
+        ?.map(p => p.trim().split('=')[0]) || [];
+
+      // Generate keyword arguments
+      const args = paramNames.map(paramName => {
+        const sourceId = connections[node.id]?.[paramName];
+        if (!sourceId) return null;
+
+        const sourceNode = nodes.find(n => n.id === sourceId);
+        if (!sourceNode) return null;
+
+        const valuePrefix = sourceNode.type === "inputNode" || sourceNode.type === "imageInputNode"
+          ? sourceNode.data?.func
+          : sourceNode.data?.func?.toLowerCase();
+
+        return `${paramName}=${valuePrefix}${sourceNode.id}`;
+      }).filter(Boolean);
+
+      code += `\t${funcName.toLowerCase()}${node.id} = ${funcName}(${args.join(', ')})\n`;
     });
 
-    Object.entries(functionCalls).forEach(([target, sources]) => {
-      const targetNode = nodes.find(n => n.id === target);
-      if (targetNode?.type === "functionNode" && targetNode.data?.func) {
-        const funcName = targetNode.data.func;
-        const funcCode = extractedFunctions[funcName];
-
-        const paramNamesMatch = funcCode ? funcCode.match(/\(([^)]*)\)/) : null;
-        const paramNames = paramNamesMatch 
-          ? paramNamesMatch[1].split(',').map(p => p.trim()).filter(p => p) 
-          : [];
-
-        const sourceValues = sources.map((sourceId) => {
-          const sourceNode = nodes.find(n => n.id === sourceId);
-          if (!sourceNode) return null;
-
-          if (sourceNode.type === "inputNode" || sourceNode.type === "imageInputNode") {
-            return `${sourceNode.data?.func}${sourceNode.id}`;
-          } else if (sourceNode.type === "functionNode") {
-            return `${sourceNode.data?.func?.toLowerCase()}${sourceNode.id}`;
-          }
-          return null;
-        }).filter(Boolean);
-
-        const paramsWithValues = paramNames
-          .map((param, i) => sourceValues[i] || param)
-          .join(', ');
-
-        code += `${funcName.toLowerCase()}${targetNode.id} = ${funcName}(${paramsWithValues})\n`;
-      }
-    });
-
-    // 6. Add final output print(s)
-    const resultNodes = nodes.filter(node => node.type === "resultNode");
+    // Handle result nodes (remains the same)
+    const resultNodes = nodes.filter(n => n.type === "resultNode");
     resultNodes.forEach(resultNode => {
-      const lastEdge = edges.find(edge => edge.target === resultNode.id);
+      const lastEdge = edges.find(e => e.target === resultNode.id);
       if (lastEdge) {
-        const lastFunction = nodes.find(node => node.id === lastEdge.source);
-        if (lastFunction?.data?.func) {
-          code += `print("Final Result:", ${lastFunction.data.func.toLowerCase()}${lastFunction.id})\n`;
+        const lastFunc = nodes.find(n => n.id === lastEdge.source);
+        if (lastFunc?.data?.func) {
+          code += `\treturn ${lastFunc.data.func.toLowerCase()}${lastFunc.id}\n`;
         }
       }
     });

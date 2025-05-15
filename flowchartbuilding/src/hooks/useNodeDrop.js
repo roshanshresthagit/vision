@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { addEdge, MarkerType } from "reactflow";
 
 export const useNodeDrop = ({
   nodeId,
@@ -82,7 +83,9 @@ export const useNodeDrop = ({
                     return updated;
                   })
               : undefined,
+              functionDict
         },
+        
       };
 
       setNodes((nds) => [...nds, newNode]);
@@ -97,7 +100,7 @@ export const useNodeDrop = ({
         if (methodConfig?.inputNames) {
           Object.entries(methodConfig.inputNames).forEach(([key, value], index) => {
             if (typeof value === "number" || typeof value === "string") {
-              const inputNodeId = `${nodeId + index + 1}`;
+              const inputNodeId = `${nodeId +index+ 1}`;
               const inputNode = {
                 id: inputNodeId,
                 type: "inputNode",
@@ -107,6 +110,7 @@ export const useNodeDrop = ({
                 },
                 data: {
                   label: `Input${inputNodeCount + index}`,
+                  func:'input',
                   value,
                   setValue: (val) =>
                     setInputs((prev) => {
@@ -121,18 +125,18 @@ export const useNodeDrop = ({
                 },
               };
 
-              const newEdge = {
-                id: `e${inputNodeId}-${newNodeId}`,
-                source: inputNodeId,
-                animated: true,
-                style: { stroke: 'green' },
-                target: newNodeId,
-                targetHandle: key,
-                type: "straight",
-              };
-
+              setEdges(els => addEdge({
+                        id: `e${inputNodeId}-${newNodeId}`,
+                        source: inputNodeId,
+                        target: newNodeId,
+                        targetHandle: key,  
+                        sourceHandle: null,
+                        animated: true,
+                        style: { stroke: 'green' },
+                        type: "straight",
+                        markerEnd: { type: MarkerType.ArrowClosed, color: 'green' }
+                      }, els));
               setNodes((nds) => [...nds, inputNode]);
-              setEdges((eds) => [...eds, newEdge]);
               setInputs((prev) => ({ ...prev, [inputNodeId]: value }));
             }
           });

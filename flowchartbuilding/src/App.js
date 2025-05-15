@@ -15,7 +15,7 @@ import { useNodeDrop } from "./hooks/useNodeDrop";
 import { useNodeDeletion } from "./hooks/useNodeDeletion";
 
 export default function App() {
-  const {setViewport} = useReactFlow();
+  const { setViewport } = useReactFlow();
   const [nodeId, setNodeId] = useState(1);
   const [inputs, setInputs] = useState({});
   const [rfInstance, setRfInstance] = useState(null);
@@ -26,26 +26,31 @@ export default function App() {
   const [inputNodeCount, setInputNodeCount] = useState(DefaultInputList);
   const { functionDict, functionList, functionDefinitions } = useFlowData();
   const { onSave, onRestore } = useFlowStorage({ rfInstance, setNodes, setEdges, setViewport });
-  const { onConnect,onEdgeUpdateStart,onEdgeUpdate,onEdgeUpdateEnd } = useEdgeManagement(setEdges);
-  const { executeFlow, generatedCode, setGeneratedCode} = useFlowExecution(nodes, edges, inputs, setNodes);
-  const { onDrop } = useNodeDrop({ nodeId, inputNodeCount, functionDict, setInputs, setNodes, setEdges,setNodeId, setInputNodeCount,});
-  const { onDeleteNode } = useNodeDeletion({ selectedNodeId, setSelectedNodeId, setNodes, setEdges, });
-  const [isCodeVisible, setIsCodeVisible] = useState(true);
+  const { onConnect, onEdgeUpdateStart, onEdgeUpdate, onEdgeUpdateEnd } = useEdgeManagement(setEdges);
+  const { executeFlow, generatedCode, setGeneratedCode } = useFlowExecution(nodes, edges, inputs, setNodes);
+  const { onDrop } = useNodeDrop({ nodeId, inputNodeCount, functionDict, setInputs, setNodes, setEdges, setNodeId, setInputNodeCount });
+  const { onDeleteNode } = useNodeDeletion({ selectedNodeId, setSelectedNodeId, setNodes, setEdges });
+  const [isCodeVisible, setIsCodeVisible] = useState(false);
 
-
-  const toggleSidebar = () => {
+  const toggleSidebar = () => { 
     setIsSidebarVisible((prev) => !prev);
   };
 
   const onDragStart = (event, func) => {
     event.dataTransfer.setData("application/reactflow", JSON.stringify(func));
     event.dataTransfer.effectAllowed = "move";
-  }
+  };
+
+  const toggleCodeVisibility = () => {
+    setIsCodeVisible((prev) => !prev);
+  };
+
   return (
     <div className="container">
       <TopBar
         toggleSidebar={toggleSidebar}
         executeFlow={executeFlow}
+        toggleCodeVisibility={toggleCodeVisibility}
         onDeleteNode={onDeleteNode}
         selectedNodeId={selectedNodeId}
         nodes={nodes}
@@ -67,7 +72,7 @@ export default function App() {
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
-            onEdgeUpdate={onEdgeUpdate} 
+            onEdgeUpdate={onEdgeUpdate}
             onEdgeUpdateStart={onEdgeUpdateStart}
             onEdgeUpdateEnd={onEdgeUpdateEnd}
             onConnect={onConnect}
@@ -76,41 +81,37 @@ export default function App() {
             onDrop={onDrop}
             onInit={setRfInstance}
           />
-          {/* <SyntaxHighlighter language="python" style={coy}>
-            {typeof generatedCode === "string"
-              ? generatedCode
-              : JSON.stringify(generatedCode, null, 2)}
-          </SyntaxHighlighter> */}
-          {isCodeVisible && (
-            <div
+          <div
+            style={{
+              Width: "640px",
+              maxHeight: "100%",
+              overflow: "auto",
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              marginTop: "16px",
+              position: "relative",
+              backgroundColor: "#f9f9f9",
+            }}
+          >
+            <button
+              onClick={toggleCodeVisibility}
               style={{
-                maxWidth: "640px",
-                maxHeight: "400px",
-                overflow: "auto",
-                border: "1px solid #ccc",
-                borderRadius: "8px",
-                marginTop: "16px",
-                position: "relative",
-                backgroundColor: "#f9f9f9",
+                position: "absolute",
+                top: "40px",
+                right: "4px",
+                background: isCodeVisible ? "#e74c3c" : "#2ecc71", // Red for close, green for open
+                border: "none",
+                color: "#fff",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "12px",
+                zIndex: 100,
               }}
             >
-              <button
-                onClick={() => setIsCodeVisible(false)}
-                style={{
-                  position: "absolute",
-                  top: "40px",
-                  right: "4px",
-                  background: "#e74c3c",
-                  border: "none",
-                  color: "#fff",
-                  padding: "4px 8px",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  fontSize: "12px"
-                }}
-              >
-                Close
-              </button>
+              {isCodeVisible ? "Hide Code" : "Show Code"}
+            </button>
+            {isCodeVisible && (
               <SyntaxHighlighter
                 language="python"
                 style={coy}
@@ -120,8 +121,8 @@ export default function App() {
                   ? generatedCode
                   : JSON.stringify(generatedCode, null, 2)}
               </SyntaxHighlighter>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

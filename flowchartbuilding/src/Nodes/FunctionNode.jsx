@@ -7,7 +7,6 @@ export default function FunctionNode({ id, data }) {
   const updateNodeInternals = useUpdateNodeInternals();
   const functionDict = data.functionDict;
 
-  console.log("functionDict", functionDict);
   
   const getFunctionConfig = (func, dict) => {
     

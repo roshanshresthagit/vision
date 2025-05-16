@@ -1,0 +1,310 @@
+{
+    "nodes": [
+        {
+            "id": "1",
+            "type": "functionNode",
+            "position": {
+                "x": 990.7379940798628,
+                "y": 261.1376635456552
+            },
+            "data": {
+                "label": "Multiplication",
+                "func": "Multiplication",
+                "functionDict": {
+                    "Multiplication": {
+                        "inputs": 2,
+                        "outputs": 1,
+                        "inputNames": {
+                            "variable1": null,
+                            "variable2": null
+                        },
+                        "outputNames": [
+                            "multiplication"
+                        ]
+                    }
+                }
+            },
+            "width": 222,
+            "height": 82,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 990.7379940798628,
+                "y": 261.1376635456552
+            },
+            "dragging": false
+        },
+        {
+            "id": "4",
+            "type": "functionNode",
+            "position": {
+                "x": 247.5598695666207,
+                "y": 123.6915684806641
+            },
+            "data": {
+                "label": "Addition",
+                "func": "Addition",
+                "functionDict": {
+                    "Addition": {
+                        "inputs": 2,
+                        "outputs": 1,
+                        "inputNames": {
+                            "variable1": null,
+                            "variable2": null
+                        },
+                        "outputNames": [
+                            "addition"
+                        ]
+                    }
+                }
+            },
+            "width": 222,
+            "height": 82,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 247.5598695666207,
+                "y": 123.6915684806641
+            },
+            "dragging": false
+        },
+        {
+            "id": "7",
+            "type": "functionNode",
+            "position": {
+                "x": 625.7047471460397,
+                "y": 182.884833590421
+            },
+            "data": {
+                "label": "Subtraction",
+                "func": "Subtraction",
+                "functionDict": {
+                    "Subtraction": {
+                        "inputs": 2,
+                        "outputs": 1,
+                        "inputNames": {
+                            "variable1": null,
+                            "variable2": null
+                        },
+                        "outputNames": [
+                            "subtraction"
+                        ]
+                    }
+                }
+            },
+            "width": 222,
+            "height": 82,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 625.7047471460397,
+                "y": 182.884833590421
+            },
+            "dragging": false
+        },
+        {
+            "id": "10",
+            "type": "inputNode",
+            "position": {
+                "x": -92.02742480800862,
+                "y": 51.96661056037951
+            },
+            "data": {
+                "label": "Input[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]222",
+                "func": "input",
+                "functionDict": null,
+                "value": 5
+            },
+            "width": 254,
+            "height": 94,
+            "selected": false,
+            "positionAbsolute": {
+                "x": -92.02742480800862,
+                "y": 51.96661056037951
+            },
+            "dragging": false
+        },
+        {
+            "id": "11",
+            "type": "inputNode",
+            "position": {
+                "x": -102.07949060812723,
+                "y": 219.46844969526978
+            },
+            "data": {
+                "label": "Input[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]2221",
+                "func": "input",
+                "functionDict": null,
+                "value": 5
+            },
+            "width": 254,
+            "height": 94,
+            "selected": false,
+            "positionAbsolute": {
+                "x": -102.07949060812723,
+                "y": 219.46844969526978
+            },
+            "dragging": false
+        },
+        {
+            "id": "12",
+            "type": "inputNode",
+            "position": {
+                "x": 235.55986956662082,
+                "y": 384.68406943530533
+            },
+            "data": {
+                "label": "Input[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]22211",
+                "func": "input",
+                "functionDict": null,
+                "value": 2
+            },
+            "width": 254,
+            "height": 94,
+            "selected": true,
+            "positionAbsolute": {
+                "x": 235.55986956662082,
+                "y": 384.68406943530533
+            },
+            "dragging": false
+        },
+        {
+            "id": "13",
+            "type": "resultNode",
+            "position": {
+                "x": 1394.733658052491,
+                "y": 294.80896593552245
+            },
+            "data": {
+                "label": "Result",
+                "func": "result",
+                "functionDict": null,
+                "value": "None"
+            },
+            "width": 173,
+            "height": 114,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 1394.733658052491,
+                "y": 294.80896593552245
+            },
+            "dragging": false
+        }
+    ],
+    "edges": [
+        {
+            "source": "11",
+            "sourceHandle": null,
+            "target": "4",
+            "targetHandle": "variable2",
+            "animated": true,
+            "style": {
+                "stroke": "green"
+            },
+            "type": "straight",
+            "markerEnd": {
+                "type": "arrowclosed",
+                "color": "green"
+            },
+            "id": "reactflow__edge-11-4variable2"
+        },
+        {
+            "source": "10",
+            "sourceHandle": null,
+            "target": "4",
+            "targetHandle": "variable1",
+            "animated": true,
+            "style": {
+                "stroke": "green"
+            },
+            "type": "straight",
+            "markerEnd": {
+                "type": "arrowclosed",
+                "color": "green"
+            },
+            "id": "reactflow__edge-10-4variable1"
+        },
+        {
+            "source": "4",
+            "sourceHandle": "addition",
+            "target": "7",
+            "targetHandle": "variable1",
+            "animated": true,
+            "style": {
+                "stroke": "green"
+            },
+            "type": "straight",
+            "markerEnd": {
+                "type": "arrowclosed",
+                "color": "green"
+            },
+            "id": "reactflow__edge-4addition-7variable1"
+        },
+        {
+            "source": "12",
+            "sourceHandle": null,
+            "target": "7",
+            "targetHandle": "variable2",
+            "animated": true,
+            "style": {
+                "stroke": "green"
+            },
+            "type": "straight",
+            "markerEnd": {
+                "type": "arrowclosed",
+                "color": "green"
+            },
+            "id": "reactflow__edge-12-7variable2"
+        },
+        {
+            "source": "11",
+            "sourceHandle": null,
+            "target": "1",
+            "targetHandle": "variable2",
+            "animated": true,
+            "style": {
+                "stroke": "green"
+            },
+            "type": "straight",
+            "markerEnd": {
+                "type": "arrowclosed",
+                "color": "green"
+            },
+            "id": "reactflow__edge-11-1variable2"
+        },
+        {
+            "source": "7",
+            "sourceHandle": "subtraction",
+            "target": "1",
+            "targetHandle": "variable1",
+            "animated": true,
+            "style": {
+                "stroke": "green"
+            },
+            "type": "straight",
+            "markerEnd": {
+                "type": "arrowclosed",
+                "color": "green"
+            },
+            "id": "reactflow__edge-7subtraction-1variable1"
+        },
+        {
+            "source": "1",
+            "sourceHandle": "multiplication",
+            "target": "13",
+            "targetHandle": null,
+            "animated": true,
+            "style": {
+                "stroke": "green"
+            },
+            "type": "straight",
+            "markerEnd": {
+                "type": "arrowclosed",
+                "color": "green"
+            },
+            "id": "reactflow__edge-1multiplication-13"
+        }
+    ],
+    "inputValues": {
+        "10": 5,
+        "11": 5,
+        "12": 2
+    }
+}

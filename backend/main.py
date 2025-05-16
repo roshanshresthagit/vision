@@ -124,9 +124,6 @@ def find_function_handler(func_name: str) -> tuple[callable, bool]:
 @app.post("/execute_flow")
 async def execute_flow(request: Request):
     data = await request.json()
-    with open("flow.json", "w") as f:
-        json.dump(data, f, indent=4)
-        
     nodes = data.get("nodes", [])
     edges = data.get("edges", [])
     inputValues = data.get("inputValues", {})
@@ -185,7 +182,7 @@ async def execute_flow(request: Request):
 
             func_name = node["data"].get("func")
             found = False
-
+            instance_cache = {}
             for module in MODULES:
                 for name, obj in vars(module).items():
                     if inspect.isclass(obj) and func_name in vars(obj):
@@ -195,9 +192,14 @@ async def execute_flow(request: Request):
                                 sig = inspect.signature(method)
                                 params = list(sig.parameters.keys())
                                 args = [input_dict.get(p) for p in params if p != "self"]
-                                instance = obj()
+
+                                if obj not in instance_cache:
+                                    instance_cache[obj] = obj() 
+                                instance = instance_cache[obj]
+
                                 result = method(instance, *args)
                                 node_values[node_id] = result
+                                
                                 found = True
                                 break
                         except Exception as e:

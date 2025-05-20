@@ -5,6 +5,7 @@ import ResultNode from "../Nodes/ResultNode";
 import ModelInputNode from "../Nodes/ModelInputNode";
 import ModelNode from "../Nodes/ModelNode";
 import RoiInputNode from "../Nodes/ROINode";
+import DetectionResultNode from "../Nodes/DetectionResultNode";
 
 
 export const DefaultInputList = [
@@ -14,6 +15,7 @@ export const DefaultInputList = [
     { id: "model-input", label: "Model Input"},
     { id: "model-node", label: "Model Node"},
     { id: "roi-input", label: "ROI Input" },
+    { id: "detection-result", label: "Detection Result" },
 
   ];
   
@@ -25,4 +27,5 @@ export const DefaultInputList = [
     modelInputNode: ModelInputNode,
     modelNode: ModelNode,
     roiInputNode: RoiInputNode,
+    detectionResultNode: DetectionResultNode,
   };

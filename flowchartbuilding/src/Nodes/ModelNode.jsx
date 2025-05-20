@@ -81,7 +81,7 @@ const ModelNode = ({ id, data }) => {
 
                 const resultNode = {
                     id: resultNodeId,
-                    type: 'resultNode',
+                    type: 'detectionResultNode',
                     position: { x: 700 + xOffset, y: 100 + yOffset },
                     data: { value: handle.data, image: inputs.image },
                 };

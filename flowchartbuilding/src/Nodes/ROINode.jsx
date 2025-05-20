@@ -3,6 +3,7 @@ import { Handle, Position } from "reactflow";
 import "./HandleStyles.css";
 
 const RoiInputNode = ({ data }) => {
+  console.log("ROI Input Node Data:", data);
   const [imgWidth, setImgWidth] = useState("auto");
   const [imgHeight, setImgHeight] = useState("auto");
   const canvasRef = useRef(null);
@@ -11,11 +12,10 @@ const RoiInputNode = ({ data }) => {
   const [rectangles, setRectangles] = useState([]); // Store multiple rectangles
 
   const isImage =
-    typeof data.value === "string" &&
-    (data.value.startsWith("data:image/jpeg;base64") ||
-      data.value.startsWith("data:image/png;base64"));
+    typeof data.image === "string" &&
+    (data.image.startsWith("data:image/jpeg;base64") || data.image.startsWith("data:image/png;base64"));
 
-  const imageSrc = isImage ? data.value : null;
+  const imageSrc = isImage ? data.image : null;
 
   useEffect(() => {
     if (isImage && imageSrc) {

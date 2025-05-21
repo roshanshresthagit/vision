@@ -49,12 +49,18 @@ const DetectionResultNode = ({ data }) => {
             });
 
             setCroppedDetections(crops);
+
+            // Send cropped image(s) to the next node via output handle
+            if (data.onChange && typeof data.onChange === "function") {
+                data.onChange(crops.length === 1 ? crops[0].src : crops.map(c => c.src));
+            }
         };
-    }, [imageSrc, coordinates, confidence]);
+    }, [imageSrc, coordinates, confidence, data]);
 
     return (
-        <div className="result-node" style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <div className="result-node" style={{ display: "flex", flexDirection: "column", gap: "8px", position: "relative" }}>
             <Handle type="target" position={Position.Left} className="custom-handle" />
+            <Handle type="source" position={Position.Right} className="custom-handle" />
             <div className="node-label">Detected Crops</div>
 
             <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>

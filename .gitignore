@@ -2,7 +2,7 @@ env
 __pycache__
 *.jpg
 *.png
-test.py
+test*.py
 test.js
 *.pt
 new.json

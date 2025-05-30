@@ -2,13 +2,13 @@ import { useState } from "react";
 
 export const useFlowExecution = (nodes, edges, inputs, setNodes) => {
   const [generatedCode, setGeneratedCode] = useState("");
-
   const executeFlow = async () => {
-
     const nodeValues = {};
 
     nodes.forEach(({ id, type }) => {
       const value = inputs[id];
+      console.log("this is valuie",value)
+      
     
       if (type === "imageInputNode" && typeof value === "string" && value.startsWith("data:image")) {
         nodeValues[id] = value;
@@ -21,13 +21,58 @@ export const useFlowExecution = (nodes, edges, inputs, setNodes) => {
       }
     
       if (type === "inputNode") {
-        const parsed = parseFloat(value);
-        nodeValues[id] = isNaN(parsed) ? 0 : parsed;
+        try {
+          let parsedValue;
+
+          if (typeof value === 'string') {
+            const trimmed = value.trim();
+
+            if (
+              trimmed.startsWith('(') &&
+              trimmed.endsWith(')') &&
+              /^(\(\s*\d+(\s*,\s*\d+)*\s*\))$/.test(trimmed)
+            ) {
+              parsedValue = trimmed;
+            }
+
+            else if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+              parsedValue = JSON.parse(trimmed);
+            }
+
+            else if (!isNaN(trimmed)) {
+              parsedValue = parseFloat(trimmed);
+            }
+
+            else {
+              parsedValue = trimmed;
+            }
+          } else {
+            parsedValue = value;
+          }
+
+          if (
+            parsedValue === undefined ||
+            parsedValue === null ||
+            Number.isNaN(parsedValue)
+          ) {
+            nodeValues[id] = 0;
+          } else {
+            nodeValues[id] = parsedValue;
+          }
+        } catch (e) {
+          nodeValues[id] = 0;
+        }
+      }
+
+
+        
+      if (type === "detectionResultNode" && typeof value==="string" && value.startsWith("data:image")){
+        console.log("this is valueeeeeeeeeeee ",value)
       }
     });
     
     
-
+    console.log("this is input check",nodeValues)
     try {
       const response = await fetch("http://localhost:8000/execute_flow", {
         method: "POST",
@@ -53,7 +98,6 @@ export const useFlowExecution = (nodes, edges, inputs, setNodes) => {
           if (line) {
            
             const data = JSON.parse(line);
-            console.log("Received data:", data);
             if (data.resultNode) {
               setNodes((nds) =>
                 nds.map((node) =>

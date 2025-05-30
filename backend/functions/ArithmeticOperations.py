@@ -14,6 +14,7 @@ class ArithmeticOperations:
     # Output: Added Sum
     """
     def Addition(self, variable1, variable2):
+        print(variable1)
         addition= variable1+variable2
         return addition
 

@@ -3,16 +3,16 @@ import TopBar from "./Components/TopBar";
 import Sidebar from "./Components/Sidebar";
 import FlowCanvas from "./Components/FlowCanvas";
 import { useFlowData } from "./hooks/useFlowData";
-import { useState } from "react";
+import { useState,useRef,useEffect } from "react";
+import { useNodeDrop } from "./hooks/useNodeDrop";
+import { useFlowStorage } from "./hooks/useFlowStorage"
+import { useNodeDeletion } from "./hooks/useNodeDeletion";
+import { useFlowExecution } from "./hooks/useFlowExecution";
 import { useEdgeManagement } from "./hooks/useEdgeManagement";
 import { nodeTypes, DefaultInputList } from "./constants/nodes";
-import { useNodesState, useEdgesState, useReactFlow } from "reactflow";
-import { useFlowExecution } from "./hooks/useFlowExecution";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { useFlowStorage } from "./hooks/useFlowStorage";
-import { useNodeDrop } from "./hooks/useNodeDrop";
-import { useNodeDeletion } from "./hooks/useNodeDeletion";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { useNodesState, useEdgesState, useReactFlow } from "reactflow";
 
 export default function App() {
   const { setViewport } = useReactFlow();
@@ -31,6 +31,8 @@ export default function App() {
   const { onDrop } = useNodeDrop({ nodeId, inputNodeCount, functionDict, setInputs, setNodes, setEdges, setNodeId, setInputNodeCount });
   const { onDeleteNode } = useNodeDeletion({ selectedNodeId, setSelectedNodeId, setNodes, setEdges });
   const [isCodeVisible, setIsCodeVisible] = useState(false);
+  const [animatedCodeLines, setAnimatedCodeLines] = useState([])
+  const codeContainerRef = useRef(null)
 
   const toggleSidebar = () => { 
     setIsSidebarVisible((prev) => !prev);
@@ -54,7 +56,24 @@ export default function App() {
     a.click();
     URL.revokeObjectURL(url);
   };
+  useEffect(() => {
+    if (!isCodeVisible || typeof generatedCode !== "string") return;
 
+    const lines = generatedCode.split("\n");
+    setAnimatedCodeLines([]); 
+
+    lines.forEach((line, index) => {
+      setTimeout(() => {
+        setAnimatedCodeLines((prev) => [...prev, line]);
+      }, index * 100); //animation time
+    });
+  }, [generatedCode, isCodeVisible]);
+
+  useEffect(() => {
+    if (codeContainerRef.current) {
+      codeContainerRef.current.scrollTop = codeContainerRef.current.scrollHeight;
+    }
+  }, [animatedCodeLines]);
   return (
     <div className="container">
       <TopBar
@@ -109,7 +128,7 @@ export default function App() {
                 position: "absolute",
                 top: "40px",
                 right: "20px",
-                background: isCodeVisible ? "#e74c3c" : "#2ecc71", // Red for close, green for open
+                background: isCodeVisible ? "#e74c3c" : "#2ecc71", 
                 border: "none",
                 color: "#fff",
                 padding: "4px 8px",
@@ -128,7 +147,7 @@ export default function App() {
                 position: "absolute",
                 top: "40px",
                 left: "10px",
-                background:  "#2ecc71", // Red for close, green for open
+                background:  "#2ecc71", 
                 border: "none",
                 color: "#fff",
                 padding: "4px 8px",
@@ -140,18 +159,15 @@ export default function App() {
             >
               Export Code
             </button>
-
             {isCodeVisible && (
-              <SyntaxHighlighter
-                language="python"
-                style={coy}
-                customStyle={{ margin: 0, padding: "1em", overflowX: "auto" }}
-              >
-                {typeof generatedCode === "string"
-                  ? generatedCode
-                  : JSON.stringify(generatedCode, null, 2)}
-              </SyntaxHighlighter>
-            )}
+      <SyntaxHighlighter
+        language="python"
+        style={coy}
+        customStyle={{ margin: 0, padding: "1em", overflowX: "auto" }}
+      >
+        {animatedCodeLines.join("\n")}
+      </SyntaxHighlighter>
+    )}
             
           </div>
         </div>

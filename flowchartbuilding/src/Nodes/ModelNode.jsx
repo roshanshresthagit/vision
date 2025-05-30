@@ -65,7 +65,7 @@ const ModelNode = ({ id, data }) => {
             console.log("Detected cakes:", detectedCakes);
 
             const newHandles = Object.entries(detectedCakes).map(([key, value], index) => ({
-                id: `output-${key}`,
+                id: key,
                 position: Position.Right,
                 type: "source",
                 data: value,
@@ -75,7 +75,7 @@ const ModelNode = ({ id, data }) => {
             updateNodeInternals(id);
 
             newHandles.forEach((handle, index) => {
-                const resultNodeId = `result-${id}-${handle.id}`;
+                const resultNodeId = id + index;
                 const xOffset = 300;
                 const yOffset = (index - (newHandles.length / 2)) * 100;
 
@@ -87,7 +87,7 @@ const ModelNode = ({ id, data }) => {
                 };
 
                 const edge = {
-                    id: `edge-${id}-${handle.id}`,
+                    id: id+index,
                     source: id,
                     sourceHandle: handle.id,
                     target: resultNodeId,
@@ -111,14 +111,21 @@ const ModelNode = ({ id, data }) => {
                 id="model"
                 className="custom-handle"
                 style={{ top: '30%' }}
-            />
+            >model input</Handle>
             <Handle 
                 type="target" 
                 position={Position.Left} 
                 id="image"
                 className="custom-handle"
-                style={{ top: '70%' }}
-            />
+                style={{ top: '60%' }}
+            >Image</Handle>
+            <Handle 
+                type="target" 
+                position={Position.Left} 
+                id="string"
+                className="custom-handle"
+                style={{ top: '90%' }}
+            >No. of objects</Handle>
 
             <div className="node-header">
                 <span className="node-title">YOLO</span>

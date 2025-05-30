@@ -1,4 +1,3 @@
-import React from "react";
 import { Handle, Position } from "reactflow";
 import "./InputNode.css";
 
@@ -11,8 +10,7 @@ const InputNode = ({ data }) => {
       parsedValue = JSON.parse(input);
     } catch {
       parsedValue = input;
-    }
-
+    } 
     data.setValue(parsedValue);
   };
 
@@ -20,7 +18,7 @@ const InputNode = ({ data }) => {
     <div className="input-node">     
       <div className="node-content">
         <input
-          type="text"
+          type="string"
           className="text-input"
           placeholder="Enter value"
           value={data.value || ""}

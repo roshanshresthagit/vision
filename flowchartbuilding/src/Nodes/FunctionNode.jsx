@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Handle, useUpdateNodeInternals } from "reactflow";
 import "./FunctionNode.css";
 
@@ -27,7 +27,6 @@ export default function FunctionNode({ id, data }) {
   };
 
   const inputKeys = Object.keys(methodConfig.inputNames || {});
-  console.log("inputKeys", functionDict.inputNames);
   const totalInputs = inputKeys.length;
 
   useEffect(() => {

@@ -309,8 +309,6 @@ async def get_function_list_json():
     except Exception as e:
         return {"error": str(e)}
 
-
-
 #gets all used function code form function.py########
 @app.get("/get_functions")
 async def get_functions():

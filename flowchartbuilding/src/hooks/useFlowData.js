@@ -24,6 +24,6 @@ export const useFlowData = () => {
 
     fetchData();
   }, []);
-
+  
   return { functionDict, functionList, functionDefinitions };
 };

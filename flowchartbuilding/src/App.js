@@ -34,6 +34,8 @@ export default function App() {
   const [animatedCodeLines, setAnimatedCodeLines] = useState([])
   const codeContainerRef = useRef(null)
 
+
+  
   const toggleSidebar = () => { 
     setIsSidebarVisible((prev) => !prev);
   };
